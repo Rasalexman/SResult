@@ -15,4 +15,9 @@ object Builds {
         const val VERSION_CODE = 10000
         const val VERSION_NAME = "10000"
     }
+
+    object SResult {
+        const val VERSION_CODE = 10001
+        const val VERSION_NAME = "10001"
+    }
 }

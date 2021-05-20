@@ -2,19 +2,19 @@ import config.Builds
 import config.Libs
 
 plugins {
-    id("com.android.application")
+    id("com.android.library")
     kotlin("android")
+    kotlin("kapt")
 }
 
 android {
     compileSdkVersion(Builds.COMPILE_VERSION)
     buildToolsVersion = Builds.BUILD_TOOLS
     defaultConfig {
-        applicationId = Builds.APP_ID
         minSdkVersion(Builds.MIN_VERSION)
         targetSdkVersion(Builds.TARGET_VERSION)
-        versionCode = Builds.App.VERSION_CODE
-        versionName = Builds.App.VERSION_NAME
+        versionCode = Builds.SResult.VERSION_CODE
+        versionName = Builds.SResult.VERSION_NAME
         //testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -55,7 +55,6 @@ android {
 
     buildFeatures {
         dataBinding = true
-        viewBinding = true
     }
 
     kotlinOptions {
