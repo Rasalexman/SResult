@@ -78,7 +78,7 @@ dependencies {
     api(config.Libs.Lifecycle.livedataKtx)
     api(config.Libs.Lifecycle.viewmodelKtx)
     api(config.Libs.Lifecycle.savedStateViewModel)
-    //api(config.Libs.Lifecycle.common)
+    api(config.Libs.Lifecycle.common)
 
     api(config.Libs.Common.coroutinesmanager)
     api(config.Libs.Common.easyRecyclerBinding)
@@ -103,7 +103,7 @@ afterEvaluate {
         publications {
             create<MavenPublication>("release") {
                 //println("Component ${components.asMap}")
-                //from(components["release"])
+                from(components["release"])
 
                 // You can then customize attributes of the publication as shown below.
                 groupId = "com.rasalexman.sresultpresentation"
@@ -112,7 +112,7 @@ afterEvaluate {
             }
             create<MavenPublication>("debug") {
                 //println("Component ${components.asMap}")
-                //from(components["debug"])
+                from(components["debug"])
 
                 // You can then customize attributes of the publication as shown below.
                 groupId = "com.rasalexman.sresultpresentation"
