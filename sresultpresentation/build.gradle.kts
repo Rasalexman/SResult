@@ -74,6 +74,7 @@ dependencies {
     api(config.Libs.Core.coreKtx)
     api(config.Libs.Core.material)
     api(config.Libs.Core.constraintlayout)
+    api(config.Libs.Core.fragment_ktx)
 
     api(config.Libs.Lifecycle.livedataKtx)
     api(config.Libs.Lifecycle.viewmodelKtx)
@@ -81,7 +82,7 @@ dependencies {
     api(config.Libs.Lifecycle.common)
 
     api(config.Libs.Common.easyRecyclerBinding)
-    
+
     api(project(":sresult"))
 
     testImplementation(config.Libs.Tests.junit)

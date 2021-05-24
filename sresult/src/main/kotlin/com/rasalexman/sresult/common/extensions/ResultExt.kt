@@ -4,7 +4,7 @@ import androidx.navigation.NavDirections
 import com.rasalexman.sresult.common.typealiases.*
 import com.rasalexman.sresult.data.dto.ISResult
 import com.rasalexman.sresult.data.dto.SResult
-import com.rasalexman.sresult.data.exception.SException
+import com.rasalexman.sresult.data.exception.ISException
 import com.rasalexman.sresult.models.IConvertable
 import com.rasalexman.sresult.models.IConvertableSuspend
 import com.rasalexman.sresult.models.convert
@@ -121,7 +121,7 @@ suspend inline fun <reified O : Any, reified I : IConvertableSuspend> SResult<I>
 
 fun SResult.ErrorResult.getMessage(): Any? {
     return (this.message?.takeIf { (it as? String)?.isNotEmpty() == true || (it as? Int) != null && it > 0 }
-        ?: (this.exception as? SException)?.getErrorMessageResId()) ?: this.exception?.message
+        ?: (this.exception as? ISException)?.getErrorMessageResId()) ?: this.exception?.message
     ?: this.exception?.cause?.message
 }
 

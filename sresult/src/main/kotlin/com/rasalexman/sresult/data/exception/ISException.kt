@@ -1,5 +1,5 @@
 package com.rasalexman.sresult.data.exception
 
-interface SException {
+interface ISException {
     fun getErrorMessageResId(): Int
 }

@@ -2,6 +2,7 @@ package config
 
 object Versions {
 
+
     const val gradle = "4.2.1"
     const val kotlin = "1.5.0"
     const val maven = "2.1"
@@ -11,6 +12,7 @@ object Versions {
     const val material = "1.3.0"
     const val navigation = "2.3.5"
     const val lifecycle: String = "2.3.1"
+    const val fragment: String = "1.3.4"
 
     const val timber = "4.7.1"
     const val coroutinesManager: String = "1.3.2"

@@ -6,26 +6,9 @@ object Libs {
         const val coreKtx = "androidx.core:core-ktx:${Versions.appCoreX}"
         const val constraintlayout = "androidx.constraintlayout:constraintlayout:${Versions.constraintLayout}"
         const val navigationFragmentKtx = "androidx.navigation:navigation-fragment-ktx:${Versions.navigation}"
-        const val navigationUiKtx = "androidx.navigation:navigation-ui-ktx:${Versions.navigation}"
         const val material = "com.google.android.material:material:${Versions.material}"
-        /*const val viewPager2 = "androidx.viewpager2:viewpager2:${Versions.viewPager2}"
-        const val swipeRefreshLayout = "androidx.swiperefreshlayout:swiperefreshlayout:${Versions.swipeRefresh}"
-        const val paging = "androidx.paging:paging-runtime-ktx:${Versions.paging}"*/
+        const val fragment_ktx = "androidx.fragment:fragment-ktx:${Versions.fragment}"
     }
-
-    /*object Lifecycle {
-        const val extensions = "androidx.lifecycle:lifecycle-extensions:${lifecycle}"
-        //const val runtimeKtx = "androidx.lifecycle:lifecycle-runtime-ktx:${lifecycle}"
-        const val viewmodelKtx = "androidx.lifecycle:lifecycle-viewmodel-ktx:${lifecycle}"
-        // view model saved state handler
-        const val savedStateViewModel = "androidx.lifecycle:lifecycle-viewmodel-savedstate:${savedstate}"
-        // kotlin live data extensions
-        const val livedataKtx = "androidx.lifecycle:lifecycle-livedata-ktx:${lifecycle}"
-        // alternately - if using Java8, use the following instead of lifecycle-compiler
-        const val common = "androidx.lifecycle:lifecycle-common-java8:${lifecycle}"
-    }
-
-    */
 
     object Lifecycle {
         // kotlin view model
