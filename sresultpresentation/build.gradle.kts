@@ -80,10 +80,8 @@ dependencies {
     api(config.Libs.Lifecycle.savedStateViewModel)
     api(config.Libs.Lifecycle.common)
 
-    api(config.Libs.Common.coroutinesmanager)
     api(config.Libs.Common.easyRecyclerBinding)
-    api(config.Libs.Common.kodi)
-
+    
     api(project(":sresult"))
 
     testImplementation(config.Libs.Tests.junit)

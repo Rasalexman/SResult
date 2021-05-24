@@ -72,6 +72,8 @@ dependencies {
     api(Libs.Common.coroutinesmanager)
     api(Libs.Core.navigationFragmentKtx)
     api(Libs.Common.timber)
+    api(Libs.Common.kodi)
+    api(Libs.Common.coroutinesmanager)
 
     testImplementation(Libs.Tests.junit)
     androidTestImplementation(Libs.Tests.runner)
