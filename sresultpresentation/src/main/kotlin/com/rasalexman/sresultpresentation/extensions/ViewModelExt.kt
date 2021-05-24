@@ -6,18 +6,16 @@ import com.rasalexman.sresult.common.extensions.toErrorResult
 import com.rasalexman.sresult.data.dto.ISEvent
 import com.rasalexman.sresult.data.dto.ISResult
 import com.rasalexman.sresult.data.dto.SResult
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
+import kotlinx.coroutines.*
 
 fun BaseViewModel.launchUITryCatch(
+    dispatcher: CoroutineDispatcher = Dispatchers.Main,
     start: CoroutineStart = CoroutineStart.DEFAULT,
     catchBlock: ((Throwable) -> Unit)? = null, tryBlock: suspend CoroutineScope.() -> Unit
 ) {
     try {
-        viewModelScope.launch(viewModelScope.coroutineContext, start, tryBlock)
+        viewModelScope.launch(viewModelScope.coroutineContext + dispatcher, start, tryBlock)
     } catch (e: Throwable) {
         catchBlock?.invoke(e) ?: handleErrorState(e.toErrorResult())
     }
@@ -25,31 +23,34 @@ fun BaseViewModel.launchUITryCatch(
 
 fun BaseViewModel.launchAsyncTryCatch(catchBlock: ((Throwable) -> Unit)? = null, tryBlock: suspend CoroutineScope.() -> Unit) {
     try {
-        launchAsync(CoroutineStart.DEFAULT, tryBlock)
+        launchAsync(block = tryBlock)
     } catch (e: Throwable) {
         catchBlock?.invoke(e) ?: handleErrorState(e.toErrorResult())
     }
 }
 
 fun BaseViewModel.launchAsync(
+    dispatcher: CoroutineDispatcher = Dispatchers.IO,
     start: CoroutineStart = CoroutineStart.DEFAULT,
     block: suspend CoroutineScope.() -> Unit
 ) {
-    viewModelScope.launch(viewModelScope.coroutineContext + Dispatchers.IO, start, block)
+    viewModelScope.launch(viewModelScope.coroutineContext + dispatcher, start, block)
 }
 
 inline fun <reified T> BaseViewModel.asyncLiveData(
+    dispatcher: CoroutineDispatcher = Dispatchers.IO,
     noinline block: suspend LiveDataScope<T>.() -> Unit
-) = liveData(context = viewModelScope.coroutineContext + Dispatchers.IO, block = block)
+) = liveData(context = viewModelScope.coroutineContext + dispatcher, block = block)
 
 /**
  *
  */
 inline fun <reified E : ISEvent> BaseViewModel.onEventResult(
+    dispatcher: CoroutineDispatcher = Dispatchers.IO,
     crossinline block: suspend LiveDataScope<ISResult<*>>.(E) -> Unit
 ): LiveData<ISResult<*>> {
     return eventLiveData.switchMap { event ->
-        asyncLiveData {
+        asyncLiveData(dispatcher = dispatcher) {
             (event as? E)?.let {
                 try {
                     block(event)
@@ -66,13 +67,14 @@ inline fun <reified E : ISEvent> BaseViewModel.onEventResult(
  */
 @Suppress("UNCHECKED_CAST")
 inline fun <reified E : ISEvent, reified T : Any> BaseViewModel.onEvent(
+    dispatcher: CoroutineDispatcher = Dispatchers.IO,
     isDistincted: Boolean = false,
     autoObserved: Boolean = false,
     crossinline block: suspend LiveDataScope<T>.(E) -> Unit
 ): LiveData<T> {
     val eld = if(isDistincted) eventLiveData.distinctUntilChanged() else eventLiveData
     val eventLV: LiveData<T> = eld.switchMap { event ->
-        asyncLiveData {
+        asyncLiveData(dispatcher = dispatcher) {
             (event as? E)?.let {
                 try {
                     block(event)
@@ -83,7 +85,6 @@ inline fun <reified E : ISEvent, reified T : Any> BaseViewModel.onEvent(
                     }
                 }
             }
-            //event.applyIfSuspend(event is E) { this.block(event as E) }
         }
     }
     if (autoObserved) {
@@ -95,12 +96,13 @@ inline fun <reified E : ISEvent, reified T : Any> BaseViewModel.onEvent(
 
 @Suppress("UNCHECKED_CAST")
 inline fun <reified E : ISEvent, reified T : Any> BaseViewModel.onEventMutable(
+    dispatcher: CoroutineDispatcher = Dispatchers.IO,
     isDistincted: Boolean = false,
     crossinline block: suspend LiveDataScope<T>.(E) -> Unit
 ): MutableLiveData<T> {
     val eld = if(isDistincted) eventLiveData.distinctUntilChanged() else eventLiveData
     return eld.mutableSwitchMap { event ->
-        asyncLiveData<T> {
+        asyncLiveData<T>(dispatcher = dispatcher) {
             (event as? E)?.let {
                 try {
                     block(event)

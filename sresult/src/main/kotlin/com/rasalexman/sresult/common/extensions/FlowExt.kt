@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.flowOn
  *
  * @param flowBlock блок, выполняемый в flow, с литералом FlowCollector
  */
+@Suppress("EXPERIMENTAL_API_USAGE")
 fun <T> ioFlow(flowBlock: suspend FlowCollector<T>.() -> Unit) = flow(flowBlock)
     .flowOn(Dispatchers.IO)
 
@@ -20,6 +21,7 @@ fun <T> ioFlow(flowBlock: suspend FlowCollector<T>.() -> Unit) = flow(flowBlock)
  * @param defaultValue дефолтное значение, эмитится в flow, при ошибке
  * @param flowBlock блок, выполняемый в flow, с литералом FlowCollector
  */
+@Suppress("EXPERIMENTAL_API_USAGE")
 fun <T> safeIoFlow(defaultValue: T? = null, flowBlock: suspend FlowCollector<T>.() -> Unit) =
     ioFlow(flowBlock)
         .catch { throwable ->
