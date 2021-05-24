@@ -71,6 +71,7 @@ dependencies {
     implementation(Libs.Core.coreKtx)
     implementation(Libs.Core.material)
     implementation(Libs.Core.constraintlayout)
+    implementation(project(":sresultpresentation"))
 
     testImplementation(Libs.Tests.junit)
     androidTestImplementation(Libs.Tests.runner)

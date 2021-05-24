@@ -5,14 +5,6 @@ import android.widget.AutoCompleteTextView
 import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
-import com.google.android.material.textfield.TextInputLayout
-
-@BindingAdapter("hintLabel")
-fun setHintResource(view: TextInputLayout, hintResId: Int?) {
-    hintResId?.let {
-        view.hint = view.context.getString(hintResId)
-    }
-}
 
 @BindingAdapter(
     value = ["items", "selectedItem", "selectedValue", "positionAttrChanged", "valueAttrChanged"],

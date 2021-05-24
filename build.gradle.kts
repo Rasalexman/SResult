@@ -8,6 +8,7 @@ buildscript {
     dependencies {
         classpath("com.android.tools.build:gradle:${config.Versions.gradle}")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${config.Versions.kotlin}")
+        //classpath("com.github.dcendents:android-maven-gradle-plugin:${config.Versions.maven}")
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files

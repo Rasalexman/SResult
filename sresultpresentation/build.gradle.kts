@@ -1,8 +1,8 @@
 plugins {
     id("com.android.library")
     kotlin("android")
-    kotlin("kapt")
     id("maven-publish")
+    kotlin("kapt")
 }
 
 android {
@@ -71,33 +71,39 @@ dependencies {
     implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
     implementation(kotlin("stdlib-jdk8", config.Versions.kotlin))
 
-    api(project(":sresult"))
+    api(config.Libs.Core.coreKtx)
     api(config.Libs.Core.material)
     api(config.Libs.Core.constraintlayout)
 
     api(config.Libs.Lifecycle.livedataKtx)
     api(config.Libs.Lifecycle.viewmodelKtx)
     api(config.Libs.Lifecycle.savedStateViewModel)
-    api(config.Libs.Lifecycle.common)
+    //api(config.Libs.Lifecycle.common)
 
     api(config.Libs.Common.coroutinesmanager)
     api(config.Libs.Common.easyRecyclerBinding)
     api(config.Libs.Common.kodi)
+
+    api(project(":sresult"))
 
     testImplementation(config.Libs.Tests.junit)
     androidTestImplementation(config.Libs.Tests.runner)
     androidTestImplementation(config.Libs.Tests.espresso)
 }
 
-
 group = "com.rasalexman.sresultpresentation"
 version = config.Builds.SResult.VERSION_NAME
+
+tasks.create(name = "sourceJar", type = Jar::class) {
+    archiveName = "sources"
+}
 
 afterEvaluate {
     publishing {
         publications {
             create<MavenPublication>("release") {
-                from(components["release"])
+                //println("Component ${components.asMap}")
+                //from(components["release"])
 
                 // You can then customize attributes of the publication as shown below.
                 groupId = "com.rasalexman.sresultpresentation"
@@ -105,7 +111,8 @@ afterEvaluate {
                 version = config.Builds.SResult.VERSION_NAME
             }
             create<MavenPublication>("debug") {
-                from(components["debug"])
+                //println("Component ${components.asMap}")
+                //from(components["debug"])
 
                 // You can then customize attributes of the publication as shown below.
                 groupId = "com.rasalexman.sresultpresentation"
@@ -117,7 +124,7 @@ afterEvaluate {
         repositories {
             maven {
                 name = "sresultpresentation"
-                url = uri(layout.buildDirectory.dir("repo"))
+                url = uri(layout.buildDirectory.dir("repo-presentation"))
             }
         }
     }
