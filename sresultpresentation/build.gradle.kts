@@ -1,20 +1,18 @@
-import config.Builds
-import config.Libs
-
 plugins {
     id("com.android.library")
     kotlin("android")
+    kotlin("kapt")
     id("maven-publish")
 }
 
 android {
-    compileSdkVersion(Builds.COMPILE_VERSION)
-    buildToolsVersion = Builds.BUILD_TOOLS
+    compileSdkVersion(config.Builds.COMPILE_VERSION)
+    buildToolsVersion = config.Builds.BUILD_TOOLS
     defaultConfig {
-        minSdkVersion(Builds.MIN_VERSION)
-        targetSdkVersion(Builds.TARGET_VERSION)
-        versionCode = Builds.SResult.VERSION_CODE
-        versionName = Builds.SResult.VERSION_NAME
+        minSdkVersion(config.Builds.MIN_VERSION)
+        targetSdkVersion(config.Builds.TARGET_VERSION)
+        versionCode = config.Builds.SResult.VERSION_CODE
+        versionName = config.Builds.SResult.VERSION_NAME
         //testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -55,8 +53,12 @@ android {
 
     sourceSets {
         getByName("main") {
-            java.setSrcDirs(Builds.codeDirs)
+            java.setSrcDirs(config.Builds.codeDirs)
         }
+    }
+
+    buildFeatures {
+        dataBinding = true
     }
 
     kotlinOptions {
@@ -69,16 +71,27 @@ dependencies {
     implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
     implementation(kotlin("stdlib-jdk8", config.Versions.kotlin))
 
-    api(Libs.Core.navigationFragmentKtx)
-    api(Libs.Common.timber)
+    api(project(":sresult"))
+    api(config.Libs.Core.material)
+    api(config.Libs.Core.constraintlayout)
 
-    testImplementation(Libs.Tests.junit)
-    androidTestImplementation(Libs.Tests.runner)
-    androidTestImplementation(Libs.Tests.espresso)
+    api(config.Libs.Lifecycle.livedataKtx)
+    api(config.Libs.Lifecycle.viewmodelKtx)
+    api(config.Libs.Lifecycle.savedStateViewModel)
+    api(config.Libs.Lifecycle.common)
+
+    api(config.Libs.Common.coroutinesmanager)
+    api(config.Libs.Common.easyRecyclerBinding)
+    api(config.Libs.Common.kodi)
+
+    testImplementation(config.Libs.Tests.junit)
+    androidTestImplementation(config.Libs.Tests.runner)
+    androidTestImplementation(config.Libs.Tests.espresso)
 }
 
-group = "com.rasalexman.sresult"
-version = Builds.SResult.VERSION_NAME
+
+group = "com.rasalexman.sresultpresentation"
+version = config.Builds.SResult.VERSION_NAME
 
 afterEvaluate {
     publishing {
@@ -87,23 +100,23 @@ afterEvaluate {
                 from(components["release"])
 
                 // You can then customize attributes of the publication as shown below.
-                groupId = "com.rasalexman.sresult"
-                artifactId = "sresult"
-                version = Builds.SResult.VERSION_NAME
+                groupId = "com.rasalexman.sresultpresentation"
+                artifactId = "sresultpresentation"
+                version = config.Builds.SResult.VERSION_NAME
             }
             create<MavenPublication>("debug") {
                 from(components["debug"])
 
                 // You can then customize attributes of the publication as shown below.
-                groupId = "com.rasalexman.sresult"
-                artifactId = "sresult-debug"
-                version = Builds.SResult.VERSION_NAME
+                groupId = "com.rasalexman.sresultpresentation"
+                artifactId = "sresultpresentation-debug"
+                version = config.Builds.SResult.VERSION_NAME
             }
         }
 
         repositories {
             maven {
-                name = "sresult"
+                name = "sresultpresentation"
                 url = uri(layout.buildDirectory.dir("repo"))
             }
         }

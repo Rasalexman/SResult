@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="toolbarTitleTextView" type="id" />
+    <item name="toolbarSubTitleTextView" type="id" />
+    <item name="contentLayout" type="id" />
+    <item name="loadingLayout" type="id" />
+    <item name="errorLayout" type="id" />
+    <item name="toolbarLayout" type="id" />
+    <item name="mainHostFragment" type="id" />
+    <item name="errorImageView" type="id" />
+    <item name="errorTextView" type="id" />
+    <item name="errorActionButton" type="id" />
+</resources>

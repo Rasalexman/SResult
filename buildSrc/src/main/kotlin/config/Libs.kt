@@ -5,8 +5,8 @@ object Libs {
         //const val appcompat = "androidx.appcompat:appcompat:$appCompatX"
         const val coreKtx = "androidx.core:core-ktx:${Versions.appCoreX}"
         const val constraintlayout = "androidx.constraintlayout:constraintlayout:${Versions.constraintLayout}"
-       /* const val navigationFragmentKtx = "androidx.navigation:navigation-fragment-ktx:${Versions.Navigation.fragment}"
-        const val navigationUiKtx = "androidx.navigation:navigation-ui-ktx:${Versions.Navigation.ui}"*/
+        const val navigationFragmentKtx = "androidx.navigation:navigation-fragment-ktx:${Versions.navigation}"
+        const val navigationUiKtx = "androidx.navigation:navigation-ui-ktx:${Versions.navigation}"
         const val material = "com.google.android.material:material:${Versions.material}"
         /*const val viewPager2 = "androidx.viewpager2:viewpager2:${Versions.viewPager2}"
         const val swipeRefreshLayout = "androidx.swiperefreshlayout:swiperefreshlayout:${Versions.swipeRefresh}"
@@ -25,53 +25,33 @@ object Libs {
         const val common = "androidx.lifecycle:lifecycle-common-java8:${lifecycle}"
     }
 
-    ///------ RECYCLER VIEW ADAPTER
-    object FastAdapter {
-        const val core = "com.mikepenz:fastadapter:$fastAdapterLib@aar"
-        const val ui = "com.mikepenz:fastadapter-extensions-ui:${fastAdapterLib}"
-        const val diff = "com.mikepenz:fastadapter-extensions-diff:${fastAdapterLib}"
-        const val paged = "com.mikepenz:fastadapter-extensions-paged:${fastAdapterLib}"
-        const val uiExt = "com.mikepenz:fastadapter-extensions-ui:${fastAdapterLib}"
-        const val scroll = "com.mikepenz:fastadapter-extensions-scroll:${fastAdapterLib}" // scroll helpers
-    }
+    */
 
-    //--- ROOM DB
-    object Room {
-        const val runtime = "androidx.room:room-runtime:$room"
-        const val ktx = "androidx.room:room-ktx:$room"
-        const val kapt = "androidx.room:room-compiler:$room"
-    }
-
-    //------ HTTP
-    object Retrofit {
-        const val core = "com.squareup.retrofit2:retrofit:${Versions.retrofit}"
-        const val moshi = "com.squareup.retrofit2:converter-moshi:${Versions.retrofit}"
-        const val logging = ("com.github.ihsanbal:LoggingInterceptor:${retrofitLogging}")
-    }
-
-    ///------ VIEWS
-    object ImageLoading {
-        const val coil = "io.coil-kt:coil:${Versions.coil}"
-    }
-
-    object KotPref {
-        //--- SHARED PREFERENCE
-        const val core = "com.chibatching.kotpref:kotpref:${Versions.kotPref}"
-        const val liveData = "com.chibatching.kotpref:livedata-support:${Versions.kotPref}"
+    object Lifecycle {
+        // kotlin view model
+        const val viewmodelKtx = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.lifecycle}"
+        // view model saved state handler
+        const val savedStateViewModel = "androidx.lifecycle:lifecycle-viewmodel-savedstate:${Versions.lifecycle}"
+        // kotlin live data extensions
+        const val livedataKtx = "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.lifecycle}"
+        // alternately - if using Java8, use the following instead of lifecycle-compiler
+        const val common = "androidx.lifecycle:lifecycle-common-java8:${Versions.lifecycle}"
     }
 
     object Common {
+        //---- COROUTINES MANAGER
+        const val coroutinesmanager = "com.github.Rasalexman:coroutinesmanager:${Versions.coroutinesManager}"
 
-        const val circleimageview = "de.hdodenhof:circleimageview:${Versions.circleImageView}"
+        //--- Data Binding
+        const val easyRecyclerBinding = "com.github.Rasalexman.easy-recycler-binding:easyrecyclerbinding:${Versions.easyBinding}"
 
-        // COROUTINES MANAGER
-        const val coroutinesmanager = "com.rasalexman.coroutinesmanager:coroutinesmanager:${Versions.coroutinesManager}"
+        //----- DI
+        const val kodi = "com.github.Rasalexman.KODI:kodi:${Versions.kodi}"
+        const val kodigen = "com.github.Rasalexman.KODI:kodigen:${Versions.kodi}"
 
         //---- LOGGING TIMER =)
         const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
-
-        const val sticky = "com.github.Rasalexman:Sticky:${Versions.sticky}"
-    }*/
+    }
 
     object Tests {
         const val junit = "junit:junit:${Versions.junit}"
