@@ -1,11 +1,8 @@
 package config
 
 object Versions {
-
-
     const val gradle = "4.2.1"
-    const val kotlin = "1.5.0"
-    const val maven = "2.1"
+    const val kotlin = "1.5.10"
 
     const val appCoreX = "1.3.2"
     const val constraintLayout = "2.0.4"
