@@ -12,8 +12,8 @@ object Builds {
     )
 
     object App {
-        const val VERSION_CODE = 10000
-        const val VERSION_NAME = "10000"
+        const val VERSION_CODE = 10001
+        const val VERSION_NAME = "10001"
     }
 
     object SResult {
