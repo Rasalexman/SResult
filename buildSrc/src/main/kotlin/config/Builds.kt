@@ -13,11 +13,11 @@ object Builds {
 
     object App {
         const val VERSION_CODE = 10001
-        const val VERSION_NAME = "10001"
+        const val VERSION_NAME = "1.0.1"
     }
 
     object SResult {
         const val VERSION_CODE = 10001
-        const val VERSION_NAME = "10001"
+        const val VERSION_NAME = "1.0.1"
     }
 }
