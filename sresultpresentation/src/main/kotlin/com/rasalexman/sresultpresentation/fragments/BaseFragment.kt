@@ -70,7 +70,7 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
      * Back button resourceId
      */
     protected open val toolbarBackButtonResId: Int
-        get() = R.drawable.ic_arrow_back_black_24dp
+        get() = R.drawable.ic_arrow_back_white_24dp
 
     /**
      * Need to center toolbar title

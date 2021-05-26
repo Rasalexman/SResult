@@ -8,15 +8,15 @@ import timber.log.Timber
 const val DEFAULT_TAG = "------> "
 
 inline fun Any.logg(lambda: () -> String?) {
-    if (BuildConfig.DEBUG) {
+    //if (BuildConfig.DEBUG) {
         Timber.d("$DEFAULT_TAG${this::class.java} ${lambda().orEmpty()}")
-    }
+    //}
 }
 
 fun Any.logg(message: String?, tag: String = DEFAULT_TAG) {
-    if (BuildConfig.DEBUG) {
+    //if (BuildConfig.DEBUG) {
         Timber.d("$tag ${this::class.java} ${message.orEmpty()}")
-    }
+   // }
 }
 
 fun Any.loggE(exception: Throwable? = null, message: String? = null) {
