@@ -149,6 +149,7 @@ abstract class BaseDialogFragment<VM : IBaseViewModel> : AppCompatDialogFragment
     override fun onToolbarBackPressed() = Unit
     override fun showEmptyLayout() = Unit
     override fun onNextPressed() = Unit
+    override fun showProgress(progress: Int) = Unit
 
     override fun navigateTo(direction: NavDirections) {
         findNavController().navigate(direction)

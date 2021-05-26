@@ -91,4 +91,9 @@ interface IBaseFragment<out VM : IBaseViewModel> : Toolbar.OnMenuItemClickListen
         intent: Intent?,
         requestCode: Int
     )
+
+    /**
+     * Update progress from [SResult.Progress] state
+     */
+    fun showProgress(progress: Int)
 }

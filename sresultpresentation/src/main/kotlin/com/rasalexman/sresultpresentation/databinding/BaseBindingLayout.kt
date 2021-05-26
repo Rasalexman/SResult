@@ -287,6 +287,8 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel> : Fra
         contentViewLayout?.show()
     }
 
+    override fun showProgress(progress: Int) = Unit
+
     override fun showError(error: SResult.ErrorResult) {
         this.showResultError(error)
     }

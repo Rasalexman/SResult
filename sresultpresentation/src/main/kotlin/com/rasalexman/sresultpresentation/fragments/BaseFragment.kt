@@ -334,6 +334,11 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
     override fun onNextPressed() = Unit
 
     /**
+     * Show [SResult.Progress] state with data
+     */
+    override fun showProgress(progress: Int) = Unit
+
+    /**
      * For support navigation handle
      */
     override fun onSupportNavigateUp(): Boolean {

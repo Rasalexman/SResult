@@ -280,6 +280,7 @@ fun<VM : IBaseViewModel> IBaseFragment<VM>.onBaseResultHandler(result: ISResult<
         is SResult.AnySuccess,
         is SResult.Success -> hideLoading()
         is SResult.Loading -> showLoading()
+        is SResult.Progress -> showProgress(result.data)
         is SResult.Empty -> showEmptyLayout()
 
         is SResult.ErrorResult -> {
