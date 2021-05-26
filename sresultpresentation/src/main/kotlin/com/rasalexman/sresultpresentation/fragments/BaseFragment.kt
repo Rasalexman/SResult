@@ -381,7 +381,7 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
     /**
      * Observe only [SResult] live data
      */
-    protected open fun observeResultLiveData(data: LiveData<SResult<*>>) {
+    protected open fun observeResultLiveData(data: LiveData<ISResult<*>>) {
         onResultChange(data) { result ->
             result.applyIf(!result.isHandled, ::onResultHandler)
         }

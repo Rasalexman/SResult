@@ -2,6 +2,7 @@ package com.rasalexman.sresult.common.typealiases
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.rasalexman.sresult.data.dto.ISResult
 import com.rasalexman.sresult.data.dto.SResult
 
 typealias UnitHandler = () -> Unit
@@ -20,16 +21,16 @@ typealias SInOutHandler<T, R> = suspend (T) -> R
 typealias SDoubleInOutHandler<T, R, P> = suspend (T, R) -> P
 typealias SParentInOutHandler<P, T, R> = suspend P.(T) -> R
 
-typealias AnyResult = SResult<Any>
+typealias AnyResult = ISResult<Any>
 typealias AnyResultLiveData = LiveData<AnyResult>
 typealias AnyResultMutableLiveData = MutableLiveData<AnyResult>
-typealias ResultLiveData<T> = LiveData<SResult<T>>
-typealias ResultListLiveData<T> = LiveData<SResult<List<T>>>
-typealias ResultMutableLiveData<T> = MutableLiveData<SResult<T>>
+typealias ResultLiveData<T> = LiveData<ISResult<T>>
+typealias ResultListLiveData<T> = LiveData<ISResult<List<T>>>
+typealias ResultMutableLiveData<T> = MutableLiveData<ISResult<T>>
 
-typealias ResultList<T> = SResult<List<T>>
-typealias ResultMutableList<T> = SResult<MutableList<T>>
-typealias ResultInHandler<T> = (SResult<T>) -> Unit
-typealias ResultInOutHandler<T, R> = (SResult<T>) -> SResult<R>
+typealias ResultList<T> = ISResult<List<T>>
+typealias ResultMutableList<T> = ISResult<MutableList<T>>
+typealias ResultInHandler<T> = (ISResult<T>) -> Unit
+typealias ResultInOutHandler<T, R> = (ISResult<T>) -> ISResult<R>
 
 typealias ResultCloseDialog = SResult.NavigateResult.CloseBottomSheet

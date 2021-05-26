@@ -10,12 +10,16 @@ import com.rasalexman.sresult.models.IConvertableSuspend
 import com.rasalexman.sresult.models.convert
 
 // /------ ViewResult extensions
-inline fun <reified T : Any> Any.successResult(data: T): SResult<T> = SResult.Success(data)
+inline fun <reified T : Any> Any.successResult(data: T): ISResult<T> = SResult.Success(data)
 
 fun Any?.loadingResult(isNeedHandle: Boolean = true) = SResult.Loading(isNeedHandle)
 fun Any?.emptyResult() = SResult.Empty
 
 fun Any.anySuccess() = SResult.AnySuccess
+
+fun Any.progressResult(progress: Int, isNeedHandle: Boolean = true) = SResult.Progress(data = progress, isNeedHandle = isNeedHandle)
+
+fun Int.toProgress(isNeedHandle: Boolean = true) = SResult.Progress(data = this, isNeedHandle = isNeedHandle)
 
 fun Any.navigateToResult(
     to: NavDirections
@@ -53,7 +57,7 @@ fun Any.alertResult(
 fun Any.toastResult(message: Any?) = SResult.Toast(message)
 
 // /-------- toState Convertables
-inline fun <reified T : Any> T?.toSuccessResult(orDefault: SResult<T> = emptyResult()): SResult<T> =
+inline fun <reified T : Any> T?.toSuccessResult(orDefault: ISResult<T> = emptyResult()): ISResult<T> =
     this?.let {
         successResult(it)
     } ?: orDefault
@@ -100,22 +104,22 @@ inline fun <reified O : Any> ResultList<O>.getList(): List<O> {
 }
 
 @Suppress("UNCHECKED_CAST")
-inline fun <reified O : Any, reified I : IConvertable> SResult<I>.convertTo(): SResult<O> {
+inline fun <reified O : Any, reified I : IConvertable> SResult<I>.convertTo(): ISResult<O> {
     return when (this) {
         is SResult.Success -> {
             this.data.convert<O>()?.toSuccessResult() ?: emptyResult()
         }
-        else -> this as SResult<O>
+        else -> this as ISResult<O>
     }
 }
 
 @Suppress("UNCHECKED_CAST")
-suspend inline fun <reified O : Any, reified I : IConvertableSuspend> SResult<I>.convertToSuspend(): SResult<O> {
+suspend inline fun <reified O : Any, reified I : IConvertableSuspend> SResult<I>.convertToSuspend(): ISResult<O> {
     return when (this) {
         is SResult.Success -> {
             this.data.convert<O>()?.toSuccessResult() ?: emptyResult()
         }
-        else -> this as SResult<O>
+        else -> this as ISResult<O>
     }
 }
 
@@ -126,154 +130,154 @@ fun SResult.ErrorResult.getMessage(): Any? {
 }
 
 ///--- Inline Applying functions
-inline fun <reified I : Any> SResult<I>.doIfSuccess(block: UnitHandler): SResult<I> {
+inline fun <reified I : Any> ISResult<I>.doIfSuccess(block: UnitHandler): ISResult<I> {
     if (this is SResult.Success) block()
     return this
 }
 
 ///--- Inline Applying functions
-inline fun <reified I : Any> SResult<I>.doIfError(block: UnitHandler): SResult<I> {
+inline fun <reified I : Any> ISResult<I>.doIfError(block: UnitHandler): ISResult<I> {
     if (this is SResult.ErrorResult) block()
     return this
 }
 
 ///--- Inline Applying functions
-inline fun <reified I : Any> SResult<I>.logIfError(textToLog: String): SResult<I> {
+inline fun <reified I : Any> ISResult<I>.logIfError(textToLog: String): ISResult<I> {
     if (this is SResult.ErrorResult) logg { textToLog }
     return this
 }
 
-suspend inline fun <reified I : Any> SResult<I>.doIfSuccessSuspend(crossinline block: suspend () -> Unit): SResult<I> {
+suspend inline fun <reified I : Any> ISResult<I>.doIfSuccessSuspend(crossinline block: suspend () -> Unit): ISResult<I> {
     if (this is SResult.Success) block()
     return this
 }
 
 // /--- Inline Applying functions
-inline fun <reified I : Any> SResult<I>.applyIfSuccess(block: InHandler<I>): SResult<I> {
+inline fun <reified I : Any> ISResult<I>.applyIfSuccess(block: InHandler<I>): ISResult<I> {
     if (this is SResult.Success) block(this.data)
     return this
 }
 
 // /--- Inline Applying functions
-inline fun <reified I> SResult<Any>.applyIfSuccessTyped(block: InHandler<I>): SResult<Any> {
+inline fun <reified I> ISResult<Any>.applyIfSuccessTyped(block: InHandler<I>): AnyResult {
     if (this is SResult.Success && this.data is I) block(this.data as I)
     return this
 }
 
-inline fun <reified I : Any> SResult<I>.applyIfError(block: InHandler<SResult.ErrorResult>): SResult<I> {
+inline fun <reified I : Any> ISResult<I>.applyIfError(block: InHandler<SResult.ErrorResult>): ISResult<I> {
     if (this is SResult.ErrorResult) block(this)
     return this
 }
 
-inline fun <reified I : SResult<*>> SResult<*>.applyIfType(block: I.() -> Unit): SResult<*> {
+inline fun <reified I : ISResult<*>> ISResult<*>.applyIfType(block: I.() -> Unit): ISResult<*> {
     if (this::class == I::class) block(this as I)
     return this
 }
 
 @Suppress("REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE")
-suspend inline fun <reified I : SResult<*>> SResult<*>.applyIfTypeSuspend(crossinline block: suspend I.() -> Unit): SResult<*> {
+suspend inline fun <reified I : ISResult<*>> ISResult<*>.applyIfTypeSuspend(crossinline block: suspend I.() -> Unit): ISResult<*> {
     if (this::class == I::class) block(this as I)
     return this
 }
 
 @Suppress("UNCHECKED_CAST")
-inline fun <reified I : Any, reified O : Any> SResult<I>.mapIfSuccess(block: I.() -> SResult<O>): SResult<O> {
+inline fun <reified I : Any, reified O : Any> ISResult<I>.mapIfSuccess(block: I.() -> ISResult<O>): ISResult<O> {
     return if (this is SResult.Success) block(this.data)
-    else this as SResult<O>
+    else this as ISResult<O>
 }
 
 @Suppress("UNCHECKED_CAST")
-inline fun <reified I : Any, reified O : Any> SResult<I>.flatMapIfSuccess(block: (I) -> SResult<O>): SResult<O> {
+inline fun <reified I : Any, reified O : Any> ISResult<I>.flatMapIfSuccess(block: (I) -> ISResult<O>): ISResult<O> {
     return if (this is SResult.Success) block(this.data)
-    else this as SResult<O>
+    else this as ISResult<O>
 }
 
-inline fun <reified T : List<*>> T.mapToResult(): SResult<T> {
+inline fun <reified T : List<*>> T.mapToResult(): ISResult<T> {
     return this.takeIf { it.isNotEmpty() }?.toSuccessResult() ?: emptyResult()
 }
 
-inline fun <reified T : Any> T?.mapToResult(): SResult<T> {
+inline fun <reified T : Any> T?.mapToResult(): ISResult<T> {
     return this.toSuccessResult()
 }
 
 
 @Suppress("REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE")
-suspend inline fun <reified I : Any> SResult<I>.applyIfSuccessSuspend(crossinline block: SInHandler<I>): SResult<I> {
+suspend inline fun <reified I : Any> ISResult<I>.applyIfSuccessSuspend(crossinline block: SInHandler<I>): ISResult<I> {
     if (this is SResult.Success) block(this.data)
     return this
 }
 
 @Suppress("REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE")
-suspend inline fun <reified I : Any> SResult<I>.applyIfEmptySuspend(crossinline block: SUnitHandler): SResult<I> {
+suspend inline fun <reified I : Any> ISResult<I>.applyIfEmptySuspend(crossinline block: SUnitHandler): ISResult<I> {
     if (this is SResult.Empty) block()
     return this
 }
 
 @Suppress("REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE")
-suspend inline fun <reified I : Any> SResult<I>.applyIfErrorSuspend(crossinline block: SInHandler<SResult.ErrorResult>): SResult<I> {
+suspend inline fun <reified I : Any> ISResult<I>.applyIfErrorSuspend(crossinline block: SInHandler<SResult.ErrorResult>): ISResult<I> {
     if (this is SResult.ErrorResult) block(this)
     return this
 }
 
 @Suppress("UNCHECKED_CAST")
-inline fun <reified I : Any> SResult<*>.mapIfSuccessTyped(block: I.() -> SResult<*>): SResult<*> {
+inline fun <reified I : Any> ISResult<*>.mapIfSuccessTyped(block: I.() -> ISResult<*>): ISResult<*> {
     return if (this is SResult.Success && this.data is I) block(this.data as I)
     else this
 }
 
 @Suppress("UNCHECKED_CAST")
-suspend inline fun <reified I : Any, reified O : Any> SResult<I>.mapIfSuccessSuspend(crossinline block: suspend I.() -> SResult<O>): SResult<O> {
+suspend inline fun <reified I : Any, reified O : Any> ISResult<I>.mapIfSuccessSuspend(crossinline block: suspend I.() -> ISResult<O>): ISResult<O> {
     return if (this is SResult.Success) block(this.data)
-    else this as SResult<O>
+    else this as ISResult<O>
 }
 
 @Suppress("UNCHECKED_CAST")
-suspend inline fun <reified I : Any, reified O : Any> SResult<I>.mapIfErrorSuspend(crossinline block: suspend () -> SResult<O>): SResult<O> {
+suspend inline fun <reified I : Any, reified O : Any> ISResult<I>.mapIfErrorSuspend(crossinline block: suspend () -> ISResult<O>): ISResult<O> {
     return if (this is SResult.ErrorResult) block()
-    else this as SResult<O>
+    else this as ISResult<O>
 }
 
 @Suppress("UNCHECKED_CAST")
-suspend inline fun <reified I : Any, reified O : Any> SResult<I>.mapIfEmptySuspend(crossinline block: suspend () -> SResult<O>): SResult<O> {
+suspend inline fun <reified I : Any, reified O : Any> ISResult<I>.mapIfEmptySuspend(crossinline block: suspend () -> ISResult<O>): ISResult<O> {
     return if (this is SResult.Empty) block()
-    else this as SResult<O>
+    else this as ISResult<O>
 }
 
 @Suppress("UNCHECKED_CAST")
-suspend inline fun <reified I : Any, reified O : Any> SResult<I>.flatMapIfSuccessSuspend(crossinline block: suspend (I) -> SResult<O>): SResult<O> {
+suspend inline fun <reified I : Any, reified O : Any> ISResult<I>.flatMapIfSuccessSuspend(crossinline block: suspend (I) -> ISResult<O>): ISResult<O> {
     return if (this is SResult.Success) block(this.data)
-    else this as SResult<O>
+    else this as ISResult<O>
 }
 
 @Suppress("UNCHECKED_CAST")
-suspend inline fun <reified I : Any, reified O : Any> SResult<I>.flatMapIfErrorSuspend(crossinline block: suspend () -> SResult<O>): SResult<O> {
+suspend inline fun <reified I : Any, reified O : Any> ISResult<I>.flatMapIfErrorSuspend(crossinline block: suspend () -> ISResult<O>): ISResult<O> {
     return if (this is SResult.ErrorResult) block()
-    else this as SResult<O>
+    else this as ISResult<O>
 }
 
 @Suppress("UNCHECKED_CAST")
-suspend inline fun <reified I : Any, reified O : Any> SResult<I>.flatMapIfEmptySuspend(crossinline block: suspend () -> SResult<O>): SResult<O> {
+suspend inline fun <reified I : Any, reified O : Any> ISResult<I>.flatMapIfEmptySuspend(crossinline block: suspend () -> ISResult<O>): ISResult<O> {
     return if (this is SResult.Empty) block()
-    else this as SResult<O>
+    else this as ISResult<O>
 }
 
-inline fun <reified I : SResult<*>> SResult<*>.mapIfType(block: I.() -> SResult<*>): SResult<*> {
+inline fun <reified I : ISResult<*>> ISResult<*>.mapIfType(block: I.() -> ISResult<*>): ISResult<*> {
     return if (this::class == I::class) block(this as I)
     else this
 }
 
-suspend inline fun <reified I : SResult<*>> SResult<*>.mapIfTypeSuspend(crossinline block: suspend I.() -> SResult<*>): SResult<*> {
+suspend inline fun <reified I : ISResult<*>> ISResult<*>.mapIfTypeSuspend(crossinline block: suspend I.() -> SResult<*>): ISResult<*> {
     return if (this::class == I::class) block(this as I)
     else this
 }
 
-val <T : Any> SResult<T>.isSuccess: Boolean
+val <T : Any> ISResult<T>.isSuccess: Boolean
     get() = this is SResult.Success<T>
 
-val <T : Any> SResult<T>.isError: Boolean
+val <T : Any> ISResult<T>.isError: Boolean
     get() = this is SResult.ErrorResult
 
-fun <T : Any> SResult<T>?.orError(
+fun <T : Any> ISResult<T>?.orError(
     message: Any? = null,
     code: Int = 0,
-    exception: Throwable? = null): SResult<T> = this ?: SResult.ErrorResult.Error(message, code, exception)
+    exception: Throwable? = null): ISResult<T> = this ?: SResult.ErrorResult.Error(message, code, exception)

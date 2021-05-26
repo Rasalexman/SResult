@@ -80,7 +80,7 @@ inline fun <reified E : ISEvent, reified T : Any> BaseViewModel.onEvent(
                     block(event)
                 } catch (e: Exception) {
                     loggE(e, "There is an exception in ${this@onEvent}")
-                    (this as? LiveDataScope<SResult<*>>)?.apply {
+                    (this as? LiveDataScope<ISResult<*>>)?.apply {
                         emit(SResult.ErrorResult.Error(exception = e))
                     }
                 }
@@ -108,7 +108,7 @@ inline fun <reified E : ISEvent, reified T : Any> BaseViewModel.onEventMutable(
                     block(event)
                 } catch (e: Exception) {
                     loggE(e, "There is an exception in ${this@onEventMutable}")
-                    (this as? LiveDataScope<SResult<*>>)?.apply {
+                    (this as? LiveDataScope<ISResult<*>>)?.apply {
                         emit(SResult.ErrorResult.Error(exception = e))
                     }
                 }

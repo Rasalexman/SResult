@@ -29,6 +29,14 @@ sealed class SResult<out T : Any> : ISResult<T> {
     data class Loading(override var isNeedHandle: Boolean = true) : SResult<Nothing>()
 
     /**
+     * Progress event type
+     */
+    data class Progress(
+        override var isNeedHandle: Boolean = true,
+        override val data: Int = 0
+    ) : SResult<Int>()
+
+    /**
      * State to show toast on ui
      */
     data class Toast(val message: Any?) : SResult<Any>() {
