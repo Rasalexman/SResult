@@ -11,9 +11,10 @@ import com.rasalexman.sresultpresentation.BR
 import com.rasalexman.sresultpresentation.dialogs.BaseDialogFragment
 import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
 
-abstract class BaseBindingDialogFragment<B : ViewDataBinding, VM : BaseViewModel>() :
+abstract class BaseBindingDialogFragment<B : ViewDataBinding, VM : BaseViewModel> :
     BaseDialogFragment<VM>(),
-    IBaseBindingFragment<B, VM>, Parcelable {
+    IBaseBindingFragment<B, VM> {
+
     override var binding: B? = null
 
     override fun onCreateView(

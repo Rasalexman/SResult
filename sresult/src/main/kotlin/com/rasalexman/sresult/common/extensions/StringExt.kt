@@ -1,5 +1,7 @@
 package com.rasalexman.sresult.common.extensions
 
+import java.text.ParseException
+import java.text.SimpleDateFormat
 import java.util.*
 
 fun Iterable<String>.toSQliteSet(): String {
@@ -72,3 +74,40 @@ fun String?.takeIfNotEmpty() = this?.takeIf { it.isNotEmpty() }
 
 fun String.normalizeSapMessage() = this.lowercase()
     .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+
+/**
+ * Extension method to check if String is Email.
+ */
+fun String.isEmail(): Boolean {
+    val emailRegex = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$".toRegex(RegexOption.IGNORE_CASE)
+    return matches(emailRegex)
+}
+
+/**
+ * Extension method to check if String is Number.
+ */
+fun String.isNumeric(): Boolean {
+    val p = "^[0-9]+$".toRegex()
+    return matches(p)
+}
+
+/**
+ * Extension method to check String equalsIgnoreCase
+ */
+fun String.equalsIgnoreCase(other: String) = this.lowercase(Locale.getDefault()).contentEquals(other.lowercase(
+    Locale.getDefault()
+))
+
+/**
+ * Extension method to get Date for String with specified format.
+ */
+fun String.dateInFormat(format: String): Date? {
+    val dateFormat = SimpleDateFormat(format, Locale.getDefault())
+    var parsedDate: Date? = null
+    try {
+        parsedDate = dateFormat.parse(this)
+    } catch (ignored: ParseException) {
+        ignored.printStackTrace()
+    }
+    return parsedDate
+}

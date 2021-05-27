@@ -1,9 +1,8 @@
 package com.rasalexman.sresultpresentation.extensions
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.map
-import androidx.lifecycle.switchMap
+import android.os.Handler
+import android.os.Looper
+import androidx.lifecycle.*
 import com.rasalexman.sresult.common.extensions.emptyResult
 import com.rasalexman.sresult.common.extensions.loggE
 import com.rasalexman.sresult.common.typealiases.AnyResult
@@ -40,4 +39,71 @@ fun MutableLiveData<Boolean>.reverseAsync() {
 
 fun LiveData<AnyResult>.setupAsEmpty() {
     (this as? MutableLiveData<AnyResult>)?.value = emptyResult()
+}
+
+fun <X, Y> LiveData<X>.mapWith(func: (X?) -> Y?): MutableLiveData<Y> {
+    return MediatorLiveData<Y>().apply {
+        addSource(this@mapWith) { x -> value = func(x) }
+    }
+}
+
+fun <X, Y> LiveData<X>.mapImmediately(func: (X?) -> Y?): MutableLiveData<Y> {
+    return MediatorLiveData<Y>().apply {
+        addSource(this@mapImmediately) { x -> value = func(x) }
+        value = func(this@mapImmediately.value)
+    }
+}
+
+fun <X, Y> LiveData<X>.mapSkipNulls(func: (X) -> Y): MutableLiveData<Y> {
+    return MediatorLiveData<Y>().apply {
+        addSource(this@mapSkipNulls) { x ->
+            x ?: return@addSource
+            value = func(x)
+        }
+    }
+}
+
+fun <A, B> LiveData<A>.combineLatest(b: LiveData<B>): LiveData<Pair<A?, B?>> {
+    return MediatorLiveData<Pair<A?, B?>>().apply {
+        var lastA: A? = null
+        var lastB: B? = null
+
+        addSource(this@combineLatest) {
+            lastA = it
+            value = lastA to lastB
+        }
+
+        addSource(b) {
+            lastB = it
+            value = lastA to lastB
+        }
+    }
+}
+
+fun <A> MutableLiveData<A?>.executeWhenChanged(f: (A?) -> Unit): MutableLiveData<A?> {
+    return MediatorLiveData<A?>().apply {
+        addSource(this@executeWhenChanged) {
+            value = it
+            f(it)
+        }
+    }
+}
+
+fun MutableLiveData<Boolean>.toggle() {
+    val currentValue = value ?: return
+    postValue(!currentValue)
+}
+
+fun <T> LiveData<T>.debounce(duration: Long = 500L) = MediatorLiveData<T>().also { mld ->
+    val source = this
+    val handler = Handler(Looper.getMainLooper())
+
+    val runnable = Runnable {
+        mld.value = source.value
+    }
+
+    mld.addSource(source) {
+        handler.removeCallbacks(runnable)
+        handler.postDelayed(runnable, duration)
+    }
 }
