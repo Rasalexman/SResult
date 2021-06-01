@@ -49,6 +49,11 @@ inline fun <reified I : Any> Any.applyForType(block: (I) -> Unit): Any {
     return this
 }
 
+inline fun <reified I : Any, reified R : Any> Any.flatMapForType(block: (I) -> R): Any {
+    return if (this is I) block(this)
+    else this
+}
+
 inline fun <reified T, reified R> R.unsafeLazy(noinline init: () -> T): Lazy<T> =
     lazy(LazyThreadSafetyMode.NONE, init)
 
