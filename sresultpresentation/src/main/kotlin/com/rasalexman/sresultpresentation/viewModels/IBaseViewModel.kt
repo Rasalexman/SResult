@@ -8,6 +8,7 @@ import com.rasalexman.sresult.data.dto.SResult
 
 interface IBaseViewModel {
     fun processViewEvent(viewEvent: ISEvent)
+    fun processEventAsync(viewEvent: ISEvent)
 
     val selectedPage: MutableLiveData<Int>
     val eventLiveData: MutableLiveData<ISEvent>

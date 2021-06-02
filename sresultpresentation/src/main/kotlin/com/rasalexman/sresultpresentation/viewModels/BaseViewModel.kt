@@ -46,6 +46,15 @@ open class BaseViewModel : ViewModel(), IKodi, IBaseViewModel {
     }
 
     /**
+     * Process [SEvent] from Presentation View Controller (such as Activity or Fragment) to ViewModel
+     *
+     * @param viewEvent [SEvent] - any implementation to handler with this fragment
+     */
+    override fun processEventAsync(viewEvent: ISEvent) {
+        eventLiveData.postValue(viewEvent)
+    }
+
+    /**
      * When need to go back from layout
      * Don't forget to set canGoBack in Fragment to true
      */

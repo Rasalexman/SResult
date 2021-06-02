@@ -1,5 +1,6 @@
 package com.rasalexman.sresultpresentation.extensions
 
+import com.rasalexman.sresult.data.dto.ISEvent
 import com.rasalexman.sresult.data.dto.SEvent
 import com.rasalexman.sresultpresentation.fragments.IBaseFragment
 import com.rasalexman.sresultpresentation.viewModels.IBaseViewModel
@@ -17,3 +18,6 @@ inline fun <reified T : IBaseViewModel> IBaseFragment<T>.refresh() =
 
 fun IBaseFragment<IBaseViewModel>.validateData() =
     this.viewModel?.processViewEvent(SEvent.Validate)
+
+inline fun <reified T : IBaseViewModel> IBaseFragment<T>.postEvent(event: ISEvent) =
+    this.viewModel?.processViewEvent(event)

@@ -5,7 +5,10 @@ import android.os.Looper
 import androidx.lifecycle.*
 import com.rasalexman.sresult.common.extensions.emptyResult
 import com.rasalexman.sresult.common.extensions.loggE
+import com.rasalexman.sresult.common.extensions.toSuccessResult
 import com.rasalexman.sresult.common.typealiases.AnyResult
+import com.rasalexman.sresult.common.typealiases.ResultList
+import com.rasalexman.sresult.data.dto.ISResult
 import com.rasalexman.sresult.models.IConvertableTo
 
 @Suppress("UNCHECKED_CAST")
@@ -106,4 +109,27 @@ fun <T> LiveData<T>.debounce(duration: Long = 500L) = MediatorLiveData<T>().also
         handler.removeCallbacks(runnable)
         handler.postDelayed(runnable, duration)
     }
+}
+
+fun <T : Any> LiveData<ResultList<T>>?.getList(): List<T> {
+    return this?.value?.data.orEmpty()
+}
+
+fun <T : Any> LiveData<ISResult<T>>?.postResultValue(result: ISResult<T>): ISResult<T> {
+    (this as? MutableLiveData<ISResult<T>>)?.postValue(result)
+    return result
+}
+
+fun <T : Any> LiveData<ResultList<T>>?.postListValue(result: List<T>): ResultList<T> {
+    val newResultList = result.toSuccessResult()
+    (this as? MutableLiveData<ResultList<T>>)?.postValue(newResultList)
+    return newResultList
+}
+
+fun <T : Any> LiveData<ResultList<T>>?.addListValue(result: List<T>): ResultList<T> {
+    val oldValue = getList()
+    val newList = result + oldValue
+    val newResultList = newList.toSuccessResult()
+    (this as? MutableLiveData<ResultList<T>>)?.postValue(newResultList)
+    return newResultList
 }

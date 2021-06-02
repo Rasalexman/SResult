@@ -96,7 +96,7 @@ inline fun <reified O : Any> ResultList<IConvertable>.mapListTo(): ResultList<O>
 }
 
 @Suppress("UNCHECKED_CAST")
-inline fun <reified O : Any> ResultList<O>.getList(): List<O> {
+inline fun <reified O : Any> ResultList<O>?.getList(): List<O> {
     return when (this) {
         is SResult.Success -> data
         else -> emptyList()
