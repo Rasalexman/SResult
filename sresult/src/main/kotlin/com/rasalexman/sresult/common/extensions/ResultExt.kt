@@ -281,3 +281,8 @@ fun <T : Any> ISResult<T>?.orError(
     message: Any? = null,
     code: Int = 0,
     exception: Throwable? = null): ISResult<T> = this ?: SResult.ErrorResult.Error(message, code, exception)
+
+fun <T : Any> T?.orErrorResult(
+    message: Any? = null,
+    code: Int = 0,
+    exception: Throwable? = null): ISResult<T> = this?.run { SResult.Success(this) } ?: SResult.ErrorResult.Error(message, code, exception)

@@ -25,14 +25,14 @@ typealias SInOutHandler<T, R> = suspend (T) -> R
 typealias SDoubleInOutHandler<T, R, P> = suspend (T, R) -> P
 typealias SParentInOutHandler<P, T, R> = suspend P.(T) -> R
 
-typealias FlowResult<T> = Flow<SResult<T>>
+typealias FlowResult<T> = Flow<ISResult<T>>
 typealias FlowList<T> = Flow<List<T>>
-typealias FlowResultList<T> = Flow<SResult<List<T>>>
+typealias FlowResultList<T> = Flow<ISResult<List<T>>>
 typealias SharedFlowList<T> = SharedFlow<List<T>>
-typealias SharedFlowResultList<T> = SharedFlow<SResult<List<T>>>
+typealias SharedFlowResultList<T> = SharedFlow<ISResult<List<T>>>
 typealias MutableSharedFlowList<T> = MutableSharedFlow<List<T>>
 typealias MutableStateFlowList<T> = MutableStateFlow<List<T>>
-typealias MutableStateFlowResultList<T> = MutableStateFlow<SResult<List<T>>>
+typealias MutableStateFlowResultList<T> = MutableStateFlow<ISResult<List<T>>>
 
 typealias AnyResult = ISResult<Any>
 typealias AnyResultLiveData = LiveData<AnyResult>
