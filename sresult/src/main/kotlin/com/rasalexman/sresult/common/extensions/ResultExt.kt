@@ -129,8 +129,8 @@ suspend inline fun <reified O : Any, reified I : IConvertableSuspend> SResult<I>
 }
 
 fun SResult.ErrorResult.getMessage(): Any? {
-    return (this.message?.takeIf { (it as? String)?.isNotEmpty() == true || (it as? Int) != null && it > 0 }
-        ?: (this.exception as? ISException)?.getErrorMessageResId()) ?: this.exception?.message
+    return (this.message?.takeIf { (it as? String)?.isNotEmpty() == true || ((it as? Int) != null && it > 0) }
+        ?: (this.exception as? ISException)?.getErrorMessageResId()?.takeIf { it > 0 }) ?: this.exception?.message
     ?: this.exception?.cause?.message
 }
 
