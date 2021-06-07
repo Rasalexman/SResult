@@ -62,6 +62,11 @@ inline fun <reified T : Any> T?.toSuccessResult(orDefault: ISResult<T> = emptyRe
         successResult(it)
     } ?: orDefault
 
+inline fun <reified T : Any> List<T>?.toSuccessListResult(orDefault: ResultList<T> = emptyResult()): ResultList<T> =
+    this?.run {
+        if(this.isNotEmpty()) successResult(this) else orDefault
+    } ?: orDefault
+
 inline fun <reified T : Throwable> T.toErrorResult() =
     errorResult(this.message ?: this.cause?.message.orEmpty(), 0, this)
 
