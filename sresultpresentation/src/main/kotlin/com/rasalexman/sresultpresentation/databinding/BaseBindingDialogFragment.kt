@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
 import com.rasalexman.easyrecyclerbinding.createBindingWithViewModel
+import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultpresentation.BR
 import com.rasalexman.sresultpresentation.dialogs.BaseDialogFragment
 import com.rasalexman.sresultpresentation.viewModels.BaseViewModel

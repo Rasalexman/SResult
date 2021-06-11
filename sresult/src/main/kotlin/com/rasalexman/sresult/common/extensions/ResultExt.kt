@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.rasalexman.sresult.common.extensions
 
 import androidx.navigation.NavDirections
@@ -7,6 +9,8 @@ import com.rasalexman.sresult.data.exception.ISException
 import com.rasalexman.sresult.models.IConvertable
 import com.rasalexman.sresult.models.IConvertableSuspend
 import com.rasalexman.sresult.models.convert
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 
 // /------ ViewResult extensions
 inline fun <reified T : Any> Any.successResult(data: T): SResult<T> = SResult.Success<T>(data)
@@ -20,13 +24,12 @@ fun Any?.emptyResult(isNeedHandle: Boolean = true) = if(isNeedHandle) {
 
 fun Any.anySuccess() = SResult.AnySuccess
 
-fun <T : Any> Any.progressResult(
+fun Any.progressResult(
     progress: Int,
     message: Any? = null,
     isPlus: Boolean = false,
     isNeedHandle: Boolean = true
-): SResult<T> =
-    SResult.Progress(
+) = SResult.Progress(
         progress = progress, message = message, isPlus = isPlus, isNeedHandle = isNeedHandle
     )
 
@@ -122,6 +125,12 @@ inline fun <reified O : Any> ResultList<IConvertable>.mapListTo(): ResultList<O>
     }
 }
 
+inline fun <reified O : Any> FlowResultList<IConvertable>.mapFlowListTo(): FlowResultList<O> {
+    return this.map {
+        it.mapListTo()
+    }
+}
+
 @Suppress("UNCHECKED_CAST")
 inline fun <reified O : Any> ResultList<O>?.getList(): List<O> {
     return when (this) {
@@ -137,6 +146,12 @@ inline fun <reified O : Any, reified I : IConvertable> SResult<I>.convertTo(): S
             this.data.convert<O>()?.toSuccessResult() ?: emptyResult()
         }
         else -> this as SResult<O>
+    }
+}
+
+inline fun <reified O : Any, reified I : IConvertable> FlowResult<I>.convertFlowTo(): FlowResult<O> {
+    return this.map {
+        it.convertTo()
     }
 }
 
@@ -187,6 +202,12 @@ inline fun <reified I : Any> SResult<I>.applyIfSuccess(block: InHandler<I>): SRe
     return this
 }
 
+inline fun <reified I : Any> FlowResult<I>.applyIfFlowSuccess(crossinline block: InHandler<I>): FlowResult<I> {
+    return this.onEach {
+        if (it is SResult.Success) block(it.data)
+    }
+}
+
 // /--- Inline Applying functions
 inline fun <reified I> SResult<Any>.applyIfSuccessTyped(block: InHandler<I>): AnyResult {
     if (this is SResult.Success && this.data is I) block(this.data as I)
@@ -196,6 +217,12 @@ inline fun <reified I> SResult<Any>.applyIfSuccessTyped(block: InHandler<I>): An
 inline fun <reified I : Any> SResult<I>.applyIfError(block: InHandler<SResult.AbstractFailure>): SResult<I> {
     if (this is SResult.AbstractFailure) block(this)
     return this
+}
+
+inline fun <reified I : Any> FlowResult<I>.applyIfFlowError(crossinline block: InHandler<SResult.AbstractFailure>): FlowResult<I> {
+    return this.onEach {
+        if (it is SResult.AbstractFailure) block(it)
+    }
 }
 
 inline fun <reified I : SResult<*>> SResult<*>.applyIfType(block: I.() -> Unit): SResult<*> {
@@ -221,6 +248,14 @@ inline fun <reified I : Any, reified O : Any> SResult<I>.flatMapIfSuccess(block:
     else this as SResult<O>
 }
 
+@Suppress("UNCHECKED_CAST")
+inline fun <reified I : Any, reified O : Any> FlowResult<I>.flatMapIfFlowSuccess(crossinline block: (I) -> SResult<O>): FlowResult<O> {
+    return this.map {
+        if (it is SResult.Success) block(it.data)
+        else it as SResult<O>
+    }
+}
+
 inline fun <reified T : List<*>> T.mapToResult(): SResult<T> {
     return this.takeIf { it.isNotEmpty() }?.toSuccessResult() ?: emptyResult()
 }
@@ -231,9 +266,10 @@ inline fun <reified T : Any> T?.mapToResult(): SResult<T> {
 
 
 @Suppress("REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE")
-suspend inline fun <reified I : Any> SResult<I>.applyIfSuccessSuspend(crossinline block: SInHandler<I>): SResult<I> {
-    if (this is SResult.Success) block(this.data)
-    return this
+suspend inline fun <reified I : Any> FlowResult<I>.applyIfFlowSuccessSuspend(crossinline block: SInHandler<I>): FlowResult<I> {
+    return this.onEach { result ->
+        if (result is SResult.Success) block(result.data)
+    }
 }
 
 @Suppress("REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE")
@@ -242,10 +278,22 @@ suspend inline fun <reified I : Any> SResult<I>.applyIfEmptySuspend(crossinline 
     return this
 }
 
+suspend inline fun <reified I : Any> FlowResult<I>.applyIfFlowEmptySuspend(crossinline block: SUnitHandler): FlowResult<I> {
+    return this.onEach { result ->
+        if (result is SResult.Empty) block()
+    }
+}
+
 @Suppress("REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE")
 suspend inline fun <reified I : Any> SResult<I>.applyIfErrorSuspend(crossinline block: SInHandler<SResult.AbstractFailure>): SResult<I> {
     if (this is SResult.AbstractFailure) block(this)
     return this
+}
+
+suspend inline fun <reified I : Any> FlowResult<I>.applyIfFlowErrorSuspend(crossinline block: SInHandler<SResult.AbstractFailure>): FlowResult<I> {
+    return this.onEach { result ->
+        if (result is SResult.AbstractFailure) block(result)
+    }
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -261,8 +309,8 @@ suspend inline fun <reified I : Any, reified O : Any> SResult<I>.mapIfSuccessSus
 }
 
 @Suppress("UNCHECKED_CAST")
-suspend inline fun <reified I : Any, reified O : Any> SResult<I>.mapIfErrorSuspend(crossinline block: suspend () -> SResult<O>): SResult<O> {
-    return if (this is SResult.AbstractFailure) block()
+suspend inline fun <reified I : Any, reified O : Any> SResult<I>.mapIfErrorSuspend(crossinline block: suspend (SResult.AbstractFailure) -> SResult<O>): SResult<O> {
+    return if (this is SResult.AbstractFailure) block(this)
     else this as SResult<O>
 }
 
@@ -281,15 +329,41 @@ suspend inline fun <reified I : Any, reified O : Any> SResult<I>.flatMapIfSucces
 }
 
 @Suppress("UNCHECKED_CAST")
-suspend inline fun <reified I : Any, reified O : Any> SResult<I>.flatMapIfErrorSuspend(crossinline block: suspend () -> SResult<O>): SResult<O> {
-    return if (this is SResult.AbstractFailure) block()
+suspend inline fun <reified I : Any, reified O : Any> FlowResult<I>.flatMapIfFlowSuccessSuspend(
+    crossinline block: suspend (I) -> SResult<O>
+): FlowResult<O> {
+    return this.map {
+        if (it is SResult.Success) block(it.data)
+        else it as SResult<O>
+    }
+}
+
+@Suppress("UNCHECKED_CAST")
+suspend inline fun <reified I : Any, reified O : Any> SResult<I>.flatMapIfErrorSuspend(crossinline block: suspend (SResult.AbstractFailure) -> SResult<O>): SResult<O> {
+    return if (this is SResult.AbstractFailure) block(this)
     else this as SResult<O>
+}
+
+@Suppress("UNCHECKED_CAST")
+suspend inline fun <reified I : Any, reified O : Any> FlowResult<I>.flatMapIfFlowErrorSuspend(crossinline block: suspend (SResult.AbstractFailure) -> SResult<O>): FlowResult<O> {
+    return this.map {
+        if (it is SResult.AbstractFailure) block(it)
+        else it as SResult<O>
+    }
 }
 
 @Suppress("UNCHECKED_CAST")
 suspend inline fun <reified I : Any, reified O : Any> SResult<I>.flatMapIfEmptySuspend(crossinline block: suspend () -> SResult<O>): SResult<O> {
     return if (this is SResult.Empty) block()
     else this as SResult<O>
+}
+
+@Suppress("UNCHECKED_CAST")
+suspend inline fun <reified I : Any, reified O : Any> FlowResult<I>.flatMapIfFlowEmptySuspend(crossinline block: suspend () -> SResult<O>): FlowResult<O> {
+    return this.map {
+        if (it is SResult.Empty) block()
+        else it as SResult<O>
+    }
 }
 
 inline fun <reified I : SResult<*>> SResult<*>.mapIfType(block: I.() -> SResult<*>): SResult<*> {

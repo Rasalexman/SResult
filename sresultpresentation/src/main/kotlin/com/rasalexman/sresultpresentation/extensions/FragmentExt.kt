@@ -1,5 +1,7 @@
 package com.rasalexman.sresultpresentation.extensions
 
+import android.app.Activity
+import android.content.Context
 import android.graphics.drawable.Drawable
 import android.view.Gravity
 import android.view.WindowManager
@@ -127,7 +129,7 @@ fun IBaseFragment<*>.initToolbarTitle(toolbarView: Toolbar, titleMarginEnd: Int 
 }
 
 
-fun IBaseFragment<*>.navigatePopTo(navigator: NavController?, navResId: Int?, isInclusive: Boolean) {
+fun IBaseFragment<*>.navigatePopTo(context: Context?, navigator: NavController?, navResId: Int?, isInclusive: Boolean) {
     if(navigator != null) {
         try {
             navigator.apply {
@@ -138,7 +140,7 @@ fun IBaseFragment<*>.navigatePopTo(navigator: NavController?, navResId: Int?, is
         } catch (e: Exception) {
             loggE(e, "There is no navigation direction from ${this::class.java.simpleName} with id = $navResId")
             try {
-                (navigator.context as? FragmentActivity)?.let {
+                (context as? FragmentActivity)?.let {
                     Navigation.findNavController(
                         it,
                         mainHostFragmentId
@@ -155,14 +157,14 @@ fun IBaseFragment<*>.navigatePopTo(navigator: NavController?, navResId: Int?, is
     }
 }
 
-fun IBaseFragment<*>.navigateBy(navigator: NavController?, navResId: Int?) {
+fun IBaseFragment<*>.navigateBy(context: Context?, navigator: NavController?, navResId: Int?) {
     if(navResId != null && navigator != null) {
         try {
             navigator.navigate(navResId)
         } catch (e: Exception) {
             loggE(e, "There is no navigation direction from ${this::class.java.simpleName} with id = $navResId")
             try {
-                (navigator.context as? FragmentActivity)?.let {
+                (context as? FragmentActivity)?.let {
                     Navigation.findNavController(
                         it,
                         mainHostFragmentId
@@ -175,14 +177,14 @@ fun IBaseFragment<*>.navigateBy(navigator: NavController?, navResId: Int?) {
     }
 }
 
-fun IBaseFragment<*>.navigateTo(navigator: NavController?, direction: NavDirections?) {
+fun IBaseFragment<*>.navigateTo(context: Context?, navigator: NavController?, direction: NavDirections?) {
     if(direction != null && navigator != null) {
         try {
             navigator.navigate(direction)
         } catch (e: Exception) {
             loggE(e, "There is no navigation direction from ${this::class.java.simpleName} with id = ${direction.actionId}")
             try {
-                (navigator.context as? FragmentActivity)?.let {
+                (context as? FragmentActivity)?.let {
                     Navigation.findNavController(
                         it,
                         mainHostFragmentId

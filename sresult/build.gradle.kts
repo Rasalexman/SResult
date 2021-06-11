@@ -69,7 +69,6 @@ dependencies {
     implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
     implementation(kotlin("stdlib-jdk8", config.Versions.kotlin))
 
-    api(Libs.Common.coroutinesmanager)
     api(Libs.Core.navigationFragmentKtx)
     api(Libs.Common.timber)
     api(Libs.Common.kodi)

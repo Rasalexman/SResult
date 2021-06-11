@@ -430,21 +430,21 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
      * Navigate by direction [NavDirections]
      */
     override fun navigateTo(direction: NavDirections) {
-        this.navigateTo(findNavController(), direction)
+        this.navigateTo(context, findNavController(), direction)
     }
 
     /**
      * Navigate by navResId [Int]
      */
     override fun navigateBy(navResId: Int) {
-        this.navigateBy(findNavController(), navResId)
+        this.navigateBy(context, findNavController(), navResId)
     }
 
     /**
      * Navigate back by pop with navResId
      */
     override fun navigatePopTo(navResId: Int?, isInclusive: Boolean) {
-        this.navigatePopTo(findNavController(), navResId, isInclusive)
+        this.navigatePopTo(context, findNavController(), navResId, isInclusive)
     }
 
     /**

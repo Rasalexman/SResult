@@ -148,26 +148,28 @@ abstract class BaseDialogFragment<VM : IBaseViewModel> : AppCompatDialogFragment
     override fun showEmptyLayout() = Unit
     override fun onNextPressed() = Unit
     override fun showProgress(progress: Int, message: Any?) = Unit
+    override fun showNavigationError(e: Exception?, navResId: Int?) = Unit
+    override fun showSuccess(result: SResult.Success<*>) = Unit
 
     /**
      * Navigate by direction [NavDirections]
      */
     override fun navigateTo(direction: NavDirections) {
-        this.navigateTo(findNavController(), direction)
+        this.navigateTo(context, findNavController(), direction)
     }
 
     /**
      * Navigate by navResId [Int]
      */
     override fun navigateBy(navResId: Int) {
-        this.navigateBy(findNavController(), navResId)
+        this.navigateBy(context, findNavController(), navResId)
     }
 
     /**
      * Navigate back by pop with navResId
      */
     override fun navigatePopTo(navResId: Int?, isInclusive: Boolean) {
-        this.navigatePopTo(findNavController(), navResId, isInclusive)
+        this.navigatePopTo(context, findNavController(), navResId, isInclusive)
     }
 
     override fun showToast(message: Any?, interval: Int) {
