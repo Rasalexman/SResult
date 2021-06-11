@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="title_try_again">Снова</string>
+    <string name="title_ok">OK</string>
     <string name="title_cancel">Отмена</string>
     <string name="title_warning">Внимание</string>
 

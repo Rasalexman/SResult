@@ -3,11 +3,12 @@ package com.rasalexman.sresultpresentation.extensions
 import androidx.lifecycle.*
 import com.rasalexman.sresult.common.extensions.loggE
 import com.rasalexman.sresult.common.extensions.toErrorResult
+import com.rasalexman.sresult.common.typealiases.AnyResult
 import com.rasalexman.sresult.data.dto.ISEvent
-import com.rasalexman.sresult.data.dto.ISResult
 import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 
 fun BaseViewModel.launchUITryCatch(
     dispatcher: CoroutineDispatcher = Dispatchers.Main,
@@ -47,15 +48,15 @@ inline fun <reified T> BaseViewModel.asyncLiveData(
  */
 inline fun <reified E : ISEvent> BaseViewModel.onEventResult(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
-    crossinline block: suspend LiveDataScope<ISResult<*>>.(E) -> Unit
-): LiveData<ISResult<*>> {
+    crossinline block: suspend LiveDataScope<SResult<*>>.(E) -> Unit
+): LiveData<SResult<*>> {
     return eventLiveData.switchMap { event ->
         asyncLiveData(dispatcher = dispatcher) {
             (event as? E)?.let {
                 try {
                     block(event)
                 } catch (e: Exception) {
-                    emit(SResult.ErrorResult.Error(exception = e))
+                    emit(SResult.AbstractFailure.Error(exception = e))
                 }
             }
         }
@@ -80,8 +81,8 @@ inline fun <reified E : ISEvent, reified T : Any> BaseViewModel.onEvent(
                     block(event)
                 } catch (e: Exception) {
                     loggE(e, "There is an exception in ${this@onEvent}")
-                    (this as? LiveDataScope<ISResult<*>>)?.apply {
-                        emit(SResult.ErrorResult.Error(exception = e))
+                    (this as? LiveDataScope<SResult<*>>)?.apply {
+                        emit(SResult.AbstractFailure.Error(exception = e))
                     }
                 }
             }
@@ -108,11 +109,83 @@ inline fun <reified E : ISEvent, reified T : Any> BaseViewModel.onEventMutable(
                     block(event)
                 } catch (e: Exception) {
                     loggE(e, "There is an exception in ${this@onEventMutable}")
-                    (this as? LiveDataScope<ISResult<*>>)?.apply {
-                        emit(SResult.ErrorResult.Error(exception = e))
+                    (this as? LiveDataScope<SResult<*>>)?.apply {
+                        emit(SResult.AbstractFailure.Error(exception = e))
                     }
                 }
             }
         }
     }
 }
+
+inline fun <reified E : ISEvent, reified T : Any> BaseViewModel.onEventFlow(
+    dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    isDistincted: Boolean = false,
+    eventDelay: Long = 0,
+    asMutable: Boolean = false,
+    noinline emitOnStart: (() -> T)? = null,
+    crossinline block: suspend FlowCollector<T>.(E) -> Unit
+): LiveData<T> {
+    return flow<T> {
+        eventLiveData.asFlow().collect {
+            if(it is E) {
+                if(eventDelay > 0) {
+                    delay(eventDelay)
+                }
+                this@flow.block(it)
+            }
+        }
+    }.flowOn(dispatcher).apply {
+        if(isDistincted) distinctUntilChanged()
+
+        emitOnStart?.let { startAction ->
+            onStart {
+                emit(startAction())
+            }
+        }
+    }.run {
+        if(asMutable) {
+            asLiveData() as MutableLiveData<T>
+        } else {
+            asLiveData()
+        }
+    }
+}
+
+inline fun <reified T : Any> BaseViewModel.onAnyEventFlow(
+    dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    isDistincted: Boolean = false,
+    eventDelay: Long = 0,
+    asMutable: Boolean = false,
+    noinline emitOnStart: (() -> T)? = null,
+    crossinline block: suspend FlowCollector<T>.(ISEvent) -> Unit
+): LiveData<T> = onEventFlow<ISEvent, T>(dispatcher, isDistincted, eventDelay, asMutable, emitOnStart, block)
+
+
+inline fun <reified E : ISEvent, reified T : Any> BaseViewModel.onEventFlowResult(
+    dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    isDistincted: Boolean = false,
+    eventDelay: Long = 0,
+    asMutable: Boolean = false,
+    noinline emitOnStart: (() -> SResult<T>)? = null,
+    crossinline block: suspend FlowCollector<SResult<T>>.(E) -> Unit
+): LiveData<SResult<T>> = onEventFlow<E, SResult<T>>(dispatcher, isDistincted, eventDelay, asMutable, emitOnStart, block)
+
+inline fun <reified T : Any> BaseViewModel.onAnyEventFlowResult(
+    dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    isDistincted: Boolean = false,
+    eventDelay: Long = 0,
+    asMutable: Boolean = false,
+    noinline emitOnStart: (() -> SResult<T>)? = null,
+    crossinline block: suspend FlowCollector<SResult<T>>.(ISEvent) -> Unit
+): LiveData<SResult<T>> = onEventFlow<ISEvent, SResult<T>>(dispatcher, isDistincted, eventDelay, asMutable, emitOnStart, block)
+
+fun BaseViewModel.onAnyEventFlowAnyResult(
+    dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    isDistincted: Boolean = false,
+    eventDelay: Long = 0,
+    asMutable: Boolean = false,
+    emitOnStart: (() -> AnyResult)? = null,
+    block: suspend FlowCollector<AnyResult>.(ISEvent) -> Unit
+): LiveData<AnyResult> = onEventFlow<ISEvent, AnyResult>(dispatcher, isDistincted, eventDelay, asMutable, emitOnStart, block)
+

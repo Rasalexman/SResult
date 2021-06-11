@@ -1,19 +1,12 @@
 package com.rasalexman.sresultpresentation.fragments
 
-import android.content.Intent
 import android.view.View
-import android.widget.Toast
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.appcompat.widget.Toolbar
-import androidx.navigation.NavDirections
-import com.rasalexman.sresult.common.typealiases.UnitHandler
-import com.rasalexman.sresult.data.dto.ISResult
-import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultpresentation.R
+import com.rasalexman.sresultpresentation.base.IComplexHandler
 import com.rasalexman.sresultpresentation.viewModels.IBaseViewModel
 
-interface IBaseFragment<out VM : IBaseViewModel> : Toolbar.OnMenuItemClickListener {
+interface IBaseFragment<out VM : IBaseViewModel> : IComplexHandler, Toolbar.OnMenuItemClickListener {
 
     val viewModel: VM?
     val layoutId: Int
@@ -25,6 +18,12 @@ interface IBaseFragment<out VM : IBaseViewModel> : Toolbar.OnMenuItemClickListen
     val toolbarMenuId: Int?
 
     val contentView: View?
+
+    /**
+     * Main navigation host graph id for current element
+     */
+    val mainHostFragmentId: Int
+        get() = R.id.mainHostFragment
 
     /**
      * Toolbar instance
@@ -43,57 +42,4 @@ interface IBaseFragment<out VM : IBaseViewModel> : Toolbar.OnMenuItemClickListen
      */
     val loadingViewLayout: View?
         get() = contentView?.findViewById(R.id.loadingLayout)
-
-    /**
-     * Error Layout
-     */
-    val errorViewLayout: View?
-        get() = contentView?.findViewById(R.id.errorLayout)
-
-    fun hideLoading()
-    fun showLoading()
-    fun showEmptyLayout()
-
-    fun inflateToolBarMenu(toolbar: Toolbar, menuResId: Int)
-
-    fun onBackPressed(): Boolean
-    fun onToolbarBackPressed()
-    fun onNextPressed()
-
-    fun onResultHandler(result: ISResult<*>)
-
-    fun navigateTo(direction: NavDirections)
-    fun navigateBy(navResId: Int)
-    fun navigatePopTo(
-        navResId: Int? = null,
-        isInclusive: Boolean = false
-    )
-
-    fun showError(error: SResult.ErrorResult)
-    fun showToast(message: Any, interval: Int = Toast.LENGTH_SHORT)
-    fun showAlertDialog(
-        message: Any,
-        okTitle: Int? = null,
-        okHandler: UnitHandler?
-    )
-
-    fun showErrorLayout(
-        @DrawableRes imageResId: Int? = null,
-        @StringRes textResId: Int? = null,
-        @StringRes buttonTitleResId: Int? = null,
-        tryAgainHandler: UnitHandler? = null
-    )
-
-    /**
-     * Adapter function for start intent with activity
-     */
-    fun startActivityForResult(
-        intent: Intent?,
-        requestCode: Int
-    )
-
-    /**
-     * Update progress from [SResult.Progress] state
-     */
-    fun showProgress(progress: Int)
 }

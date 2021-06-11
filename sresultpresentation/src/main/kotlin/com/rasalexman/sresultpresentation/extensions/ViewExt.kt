@@ -20,13 +20,12 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.rasalexman.sresult.common.extensions.handle
 import com.rasalexman.sresult.common.extensions.loggE
+import com.rasalexman.sresult.common.extensions.or
 import com.rasalexman.sresult.common.typealiases.UnitHandler
-import com.rasalexman.sresult.data.dto.ISResult
 import com.rasalexman.sresult.data.dto.SResult
-import com.rasalexman.sresultpresentation.fragments.IBaseFragment
+import com.rasalexman.sresultpresentation.base.*
 import com.rasalexman.sresultpresentation.tools.DebouncedOnClickListener
 import com.rasalexman.sresultpresentation.tools.ReflectionTextWatcher
-import com.rasalexman.sresultpresentation.viewModels.IBaseViewModel
 
 data class ScrollPosition(var index: Int = 0, var top: Int = 0) {
     fun drop() {
@@ -35,31 +34,10 @@ data class ScrollPosition(var index: Int = 0, var top: Int = 0) {
     }
 }
 
-
-fun View.setVisible(visibility: Boolean = true) {
-    this.visibility = if (visibility) View.VISIBLE else View.GONE
-}
-
-fun View.setVisibleGone(isGone: Boolean = true) {
-    setVisible(!isGone)
-}
-
-fun View.setInvisible(invisible: Boolean = true) {
-    visibility = if (invisible) View.INVISIBLE else View.VISIBLE
-}
-
-fun View.setOnDebounceClickListener(l: (() -> Unit)?) {
-    setOnClickListener(object : DebouncedOnClickListener(400) {
+fun View.setOnDebounceClickListener(debounceMillis: Long = 400L, listener: UnitHandler?) {
+    setOnClickListener(object : DebouncedOnClickListener(debounceMillis) {
         override fun onDebouncedClick(v: View?) {
-            l?.invoke()
-        }
-    })
-}
-
-fun View.setOnLongDebounceClickListener(l: (() -> Unit)?) {
-    setOnClickListener(object : DebouncedOnClickListener(800) {
-        override fun onDebouncedClick(v: View?) {
-            l?.invoke()
+            listener?.invoke()
         }
     })
 }
@@ -113,21 +91,21 @@ private fun TextView.setDrawables(start: Drawable?, top: Drawable?, end: Drawabl
 }
 
 fun View.toast(
-    message: Any,
+    message: Any?,
     duration: Int = Toast.LENGTH_SHORT
 ) = context?.toast(message, duration)
 
 fun Fragment.toast(
-    message: Any,
+    message: Any?,
     duration: Int = Toast.LENGTH_SHORT
 ) = context?.toast(message, duration)
 
 fun Fragment.alert(
-    message: Any,
+    message: Any?,
     dialogTitle: Any? = null,
-    okTitle: Int? = null,
+    okTitle: Any? = null,
     showCancel: Boolean = true,
-    cancelTitle: Int? = null,
+    cancelTitle: Any? = null,
     cancelHandler: UnitHandler? = null,
     okHandler: UnitHandler? = null
 ) = context?.alert(message, dialogTitle, okTitle, showCancel, cancelTitle, cancelHandler, okHandler)
@@ -272,41 +250,56 @@ fun View.focusAndShowKeyboard() {
     }
 }
 
-fun<VM : IBaseViewModel> IBaseFragment<VM>.onBaseResultHandler(result: ISResult<*>) {
+fun ISResultHandler.onBaseResultHandler(result: SResult<*>) {
     if (result.isHandled) return
     result.handle()
 
     when (result) {
-        is SResult.AnySuccess,
-        is SResult.Success -> hideLoading()
-        is SResult.Loading -> showLoading()
-        is SResult.Progress -> showProgress(result.data)
-        is SResult.Empty -> showEmptyLayout()
-
-        is SResult.ErrorResult -> {
-            loggE(exception = result.exception, message = result.message.toString())
-            showError(result)
+        is SResult.Success -> (this as? ISuccessHandler)?.apply {
+            hideLoading()
+            showSuccess(result = result)
         }
+        is SResult.Loading -> (this as? ILoadingHandler)?.showLoading()
+        is SResult.Progress -> (this as? IProgressHandler)?.showProgress(result.progress, result.message)
+        is SResult.Empty -> (this as? IEmptyHandler)?.showEmptyLayout()
 
-        is SResult.Toast -> {
-            result.message?.let {
-                showToast(it)
+        is SResult.AbstractFailure.Failure -> {
+            loggE(exception = result.exception, message = result.message.toString())
+            (this as? IFailureHandler)?.apply {
+                if(result is SResult.AbstractFailure.Alert) {
+                    showAlert(result)
+                } else {
+                    showFailure(result)
+                }
             }
         }
 
-        is SResult.NavigateResult.NavigateTo -> {
-            hideLoading()
-            val direction = result.navDirection
-            navigateTo(direction)
+        is SResult.Toast -> {
+            (this as? IToastHandler)?.showToast(result.message, result.interval)
         }
-        is SResult.NavigateResult.NavigateBy -> {
-            navigateBy(result.navigateResourceId)
+
+        is SResult.NavigateResult.BaseNavigationResult -> {
+            (this as? INavigateHandler)?.apply {
+                when(result) {
+                    is SResult.NavigateResult.NavigatePopTo -> navigatePopTo(
+                        navResId = result.navigateResourceId,
+                        isInclusive = result.isInclusive
+                    )
+                    is SResult.NavigateResult.NavigateBack -> onBackPressed()
+                    is SResult.NavigateResult.NavigateNext -> onNextPressed()
+                    else -> {
+                        result.navDirection?.let { direction ->
+                            navigateTo(direction)
+                        }.or {
+                            result.navigateResourceId?.let { navResId ->
+                                navigateBy(navResId)
+                            }
+                        }
+                    }
+                }
+            }
         }
-        is SResult.NavigateResult.NavigatePopTo -> {
-            navigatePopTo(result.navigateResourceId, result.isInclusive)
-        }
-        is SResult.NavigateResult.NavigateBack -> onBackPressed()
-        is SResult.NavigateResult.NavigateNext -> onNextPressed()
+
         else -> Unit
     }
 }

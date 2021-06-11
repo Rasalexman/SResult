@@ -18,7 +18,7 @@ import com.rasalexman.sresultpresentation.R
 
 private var alertDialog: Dialog? = null
 
-fun Context.toast(message: Any, duration: Int = Toast.LENGTH_SHORT) {
+fun Context.toast(message: Any?, duration: Int = Toast.LENGTH_SHORT) {
     when (message) {
         is String -> {
             if (message.isNotEmpty())
@@ -48,24 +48,40 @@ fun Context?.closeAlert(dismiss: Boolean = true) {
 }
 
 fun Context.alert(
-    message: Any,
+    message: Any?,
     dialogTitle: Any? = null,
-    okTitle: Int? = null,
+    okTitle: Any? = null,
     showCancel: Boolean = true,
-    cancelTitle: Int? = null,
+    cancelTitle: Any? = null,
     cancelHandler: UnitHandler? = null,
     okHandler: UnitHandler? = null
 ) {
     closeAlert()
+
+    val okTitleString = when (okTitle) {
+        is String -> okTitle
+        is Int -> string(okTitle)
+        else -> string(R.string.title_ok)
+    }
+
+    val cancelTitleString = when (cancelTitle) {
+        is String -> cancelTitle
+        is Int -> string(cancelTitle)
+        else -> string(R.string.title_cancel)
+    }
+
     alertDialog = AlertDialog
         .Builder(this)
         .setCancelable(false)
-        .setPositiveButton(okTitle ?: R.string.title_try_again) { dialogInterface, _ ->
+        .apply {
+
+        }
+        .setPositiveButton(okTitleString) { dialogInterface, _ ->
             dialogInterface.dismiss()
             closeAlert(dismiss = false)
             okHandler?.invoke()
         }.applyIf(showCancel) {
-            it.setNegativeButton(cancelTitle ?: R.string.title_cancel) { dialogInterface, _ ->
+            it.setNegativeButton(cancelTitleString) { dialogInterface, _ ->
                 dialogInterface.dismiss()
                 closeAlert(dismiss = false)
                 cancelHandler?.invoke()
@@ -80,7 +96,7 @@ fun Context.alert(
             when (message) {
                 is String -> setMessage(message)
                 is Int -> setMessage(message)
-                else -> setMessage(message.toString())
+                else -> setMessage(message.takeIf { it != null }?.toString() ?: "")
             }
             show()
         }

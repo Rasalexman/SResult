@@ -8,7 +8,7 @@ import com.rasalexman.sresult.common.extensions.loggE
 import com.rasalexman.sresult.common.extensions.toSuccessResult
 import com.rasalexman.sresult.common.typealiases.AnyResult
 import com.rasalexman.sresult.common.typealiases.ResultList
-import com.rasalexman.sresult.data.dto.ISResult
+import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresult.models.IConvertableTo
 
 @Suppress("UNCHECKED_CAST")
@@ -115,8 +115,8 @@ fun <T : Any> LiveData<ResultList<T>>?.getList(): List<T> {
     return this?.value?.data.orEmpty()
 }
 
-fun <T : Any> LiveData<ISResult<T>>?.postResultValue(result: ISResult<T>): ISResult<T> {
-    (this as? MutableLiveData<ISResult<T>>)?.postValue(result)
+fun <T : Any> LiveData<SResult<T>>?.postResultValue(result: SResult<T>): SResult<T> {
+    (this as? MutableLiveData<SResult<T>>)?.postValue(result)
     return result
 }
 

@@ -4,23 +4,39 @@ import android.view.View
 import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
-import com.rasalexman.sresultpresentation.extensions.setInvisible
-import com.rasalexman.sresultpresentation.extensions.setOnDebounceClickListener
-import com.rasalexman.sresultpresentation.extensions.setVisible
+import com.rasalexman.sresultpresentation.extensions.*
 
 @BindingAdapter("isGone")
 fun setIsGone(view: View, isGone: Boolean?) {
-    view.setVisible(!(isGone ?: false))
+    view.apply {
+        if(isGone == true) {
+            hide()
+        } else {
+            show()
+        }
+    }
 }
 
 @BindingAdapter("android:visibility")
 fun setVisibility(view: View, visible: Boolean?) {
-    view.setVisible(visible ?: false)
+    view.apply {
+        if(visible == true) {
+            show()
+        } else {
+            hide()
+        }
+    }
 }
 
 @BindingAdapter("invisible")
 fun setInvisible(view: View, invisible: Boolean?) {
-    view.setInvisible(invisible ?: false)
+    view.apply {
+        if(invisible == true) {
+            hide(false)
+        } else {
+            show()
+        }
+    }
 }
 
 @BindingAdapter("selected")
