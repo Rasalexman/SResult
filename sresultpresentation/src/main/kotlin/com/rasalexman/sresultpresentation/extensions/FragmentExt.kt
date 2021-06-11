@@ -15,6 +15,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.Navigation
 import com.rasalexman.sresult.common.extensions.loggE
+import com.rasalexman.sresult.common.extensions.or
 import com.rasalexman.sresult.common.typealiases.InHandler
 import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultpresentation.R
@@ -82,7 +83,7 @@ fun IBaseFragment<*>.initToolbarTitle(toolbarView: Toolbar, titleMarginEnd: Int 
     toolbarView.findViewById<TextView>(R.id.toolbarTitleTextView)?.let { toolbarTitleTextView ->
         toolbarTitleResId?.let {
             toolbarTitleTextView.setText(it)
-        } ?: toolbarTitleTextView.setText(toolbarTitle)
+        }.or { toolbarTitleTextView.setText(toolbarTitle) }
 
         if (centerToolbarTitle) {
             toolbarTitleTextView.gravity = Gravity.CENTER
@@ -97,6 +98,10 @@ fun IBaseFragment<*>.initToolbarTitle(toolbarView: Toolbar, titleMarginEnd: Int 
                 }
             }
         }
+    }.or {
+        toolbarTitleResId?.let {
+            toolbarView.setTitle(it)
+        }.or { toolbarView.title = toolbarTitle }
     }
 
     if (toolbarSubTitle.isNotEmpty()) {

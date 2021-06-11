@@ -1,7 +1,9 @@
 package com.rasalexman.sresultexample
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.liveData
+import com.rasalexman.sresult.common.extensions.loadingResult
 import com.rasalexman.sresult.common.extensions.progressResult
 import com.rasalexman.sresult.common.extensions.toSuccessResult
 import com.rasalexman.sresult.common.extensions.toastResult
@@ -25,7 +27,9 @@ class MainViewModel : BaseViewModel() {
         emitSource(loadWithProgress().flowOn(Dispatchers.IO).asLiveData())
     }
 
-    val eventFetchCatcher = onEventFlowResult<SEvent.Fetch, UserModel> {
+    override val resultLiveData = onEventFlowResult<SEvent.Fetch, UserModel> {
+        emit(loadingResult())
+
         emit(progressResult(10))
         delay(PROGRESS_DELAY)
 
@@ -35,7 +39,8 @@ class MainViewModel : BaseViewModel() {
             name = "Alex",
             email = "sphc@yandex.ru"
         )
-        emit(user.toSuccessResult())
+        emit(progressResult(70))
+        //emit(user.toSuccessResult())
     }
 
     private fun loadWithProgress(): FlowResult<UserModel> = flow<SResult<UserModel>> {
@@ -49,5 +54,9 @@ class MainViewModel : BaseViewModel() {
             email = "sphc@yandex.ru"
         )
         emit(user.toSuccessResult())
+    }
+
+    fun onProfileClicked() {
+        processViewEvent(SEvent.Fetch)
     }
 }
