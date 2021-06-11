@@ -144,7 +144,7 @@ inline fun <reified O : Any, reified I : IConvertable> SResult<I>.convertTo(): S
 suspend inline fun <reified O : Any, reified I : IConvertableSuspend> SResult<I>.convertToSuspend(): SResult<O> {
     return when (this) {
         is SResult.Success -> {
-            this.data.convert<O>()?.toSuccessResult() ?: emptyResult()
+            this.data.convert<O>().toSuccessResult(emptyResult())
         }
         else -> this as SResult<O>
     }
@@ -158,14 +158,14 @@ fun SResult.AbstractFailure.getMessage(): Any? {
 }
 
 ///--- Inline Applying functions
-inline fun <reified I : Any> SResult<I>.doIfSuccess(block: UnitHandler): SResult<I> {
-    if (this is SResult.Success) block()
+inline fun <reified I : Any> SResult<I>.doIfSuccess(block: InHandler<I>): SResult<I> {
+    if (this is SResult.Success) block(this.data)
     return this
 }
 
 ///--- Inline Applying functions
-inline fun <reified I : Any> SResult<I>.doIfError(block: UnitHandler): SResult<I> {
-    if (this is SResult.AbstractFailure) block()
+inline fun <reified I : Any> SResult<I>.doIfError(block: InHandler<Throwable?>): SResult<I> {
+    if (this is SResult.AbstractFailure) block(this.exception)
     return this
 }
 
@@ -175,9 +175,10 @@ inline fun <reified I : Any> SResult<I>.logIfError(textToLog: String): SResult<I
     return this
 }
 
-suspend inline fun <reified I : Any> SResult<I>.doIfSuccessSuspend(crossinline block: suspend () -> Unit): SResult<I> {
-    if (this is SResult.Success) block()
-    return this
+@Suppress("UNCHECKED_CAST")
+suspend inline fun <reified I : Any> SResult<I>.doIfSuccessSuspend(crossinline block: suspend (I) -> SResult<I>): SResult<I> {
+    return if (this is SResult.Success) block(this.data)
+    else this
 }
 
 // /--- Inline Applying functions

@@ -29,6 +29,7 @@ import com.rasalexman.sresultpresentation.R
 import com.rasalexman.sresultpresentation.extensions.*
 import com.rasalexman.sresultpresentation.fragments.IBaseFragment
 import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
+import kotlin.properties.Delegates
 
 abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel> : FrameLayout,
     LifecycleOwner, IBaseFragment<VM>, IBaseBindingFragment<VB, VM> {
@@ -61,7 +62,7 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel> : Fra
         return this.findViewById(loadingLayoutResId)
     }
 
-    override var binding: VB? = null
+    override var binding: VB by Delegates.notNull<VB>()
 
     /**
      * Fragment ViewModel instance
@@ -102,7 +103,7 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel> : Fra
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        binding?.let {
+        binding.let {
             it.lifecycleOwner = this
             it.setVariable(BR.vm, viewModel)
             initBinding(it)
@@ -111,7 +112,7 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel> : Fra
     }
 
     override fun onDetachedFromWindow() {
-        binding?.unbind()
+        binding.unbind()
         val lifecycleOwner = this
         viewModel?.apply {
             resultLiveData?.removeObservers(lifecycleOwner)

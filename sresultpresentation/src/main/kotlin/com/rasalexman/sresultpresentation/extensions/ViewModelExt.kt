@@ -180,6 +180,15 @@ inline fun <reified T : Any> BaseViewModel.onAnyEventFlowResult(
     crossinline block: suspend FlowCollector<SResult<T>>.(ISEvent) -> Unit
 ): LiveData<SResult<T>> = onEventFlow<ISEvent, SResult<T>>(dispatcher, isDistincted, eventDelay, asMutable, emitOnStart, block)
 
+inline fun <reified E : ISEvent> BaseViewModel.onEventFlowAnyResult(
+    dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    isDistincted: Boolean = false,
+    eventDelay: Long = 0,
+    asMutable: Boolean = false,
+    noinline emitOnStart: (() -> AnyResult)? = null,
+    crossinline block: suspend FlowCollector<AnyResult>.(E) -> Unit
+): LiveData<AnyResult> = onEventFlow<E, AnyResult>(dispatcher, isDistincted, eventDelay, asMutable, emitOnStart, block)
+
 fun BaseViewModel.onAnyEventFlowAnyResult(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
     isDistincted: Boolean = false,

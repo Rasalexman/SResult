@@ -1,33 +1,26 @@
 package com.rasalexman.sresultexample
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.liveData
 import com.rasalexman.sresult.common.extensions.loadingResult
+import com.rasalexman.sresult.common.extensions.logg
 import com.rasalexman.sresult.common.extensions.progressResult
-import com.rasalexman.sresult.common.extensions.toSuccessResult
-import com.rasalexman.sresult.common.extensions.toastResult
-import com.rasalexman.sresult.common.typealiases.FlowResult
+import com.rasalexman.sresult.common.typealiases.AnyResultMutableLiveData
+import com.rasalexman.sresult.data.dto.ISEvent
 import com.rasalexman.sresult.data.dto.SEvent
-import com.rasalexman.sresult.data.dto.SResult
-import com.rasalexman.sresultpresentation.extensions.onEventFlowResult
+import com.rasalexman.sresultpresentation.extensions.onEventFlowAnyResult
 import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
+import java.util.*
+import kotlin.random.Random
 
 class MainViewModel : BaseViewModel() {
 
     companion object {
-        private const val PROGRESS_DELAY = 200L
+        private const val PROGRESS_DELAY = 1200L
     }
 
-    val stateViewModel = liveData<SResult<UserModel>> {
-        emitSource(loadWithProgress().flowOn(Dispatchers.IO).asLiveData())
-    }
+    override val resultLiveData = onEventFlowAnyResult<SEvent.Fetch> {
+        logg { "-------> resultLiveData event is $it" }
 
-    override val resultLiveData = onEventFlowResult<SEvent.Fetch, UserModel> {
         emit(loadingResult())
 
         emit(progressResult(10))
@@ -37,26 +30,23 @@ class MainViewModel : BaseViewModel() {
         delay(PROGRESS_DELAY)
         val user = UserModel(
             name = "Alex",
-            email = "sphc@yandex.ru"
+            email = "sphc@yandex.ru",
+            token = UUID.randomUUID().toString()
         )
         emit(progressResult(70))
-        //emit(user.toSuccessResult())
+
+        emit(UserAuthState.Success(user))
     }
 
-    private fun loadWithProgress(): FlowResult<UserModel> = flow<SResult<UserModel>> {
-        emit(progressResult(10))
-        delay(PROGRESS_DELAY)
-        emit(progressResult(40))
-        delay(PROGRESS_DELAY)
-        emit(toastResult(message = "Hello World"))
-        val user = UserModel(
-            name = "Alex",
-            email = "sphc@yandex.ru"
-        )
-        emit(user.toSuccessResult())
-    }
+    override val supportLiveData = onEventFlowAnyResult<SEvent.Refresh> {
+        logg { "-------> supportLiveData event is $it" }
+        val rand = Random.nextInt(10, 54)
+        emit(progressResult(rand))
+    } as AnyResultMutableLiveData
 
     fun onProfileClicked() {
-        processViewEvent(SEvent.Fetch)
+        val rand = Random.nextInt(10, 54)
+        val event: ISEvent = if(rand % 2 == 0) SEvent.Fetch else SEvent.Refresh
+        processViewEvent(event)
     }
 }

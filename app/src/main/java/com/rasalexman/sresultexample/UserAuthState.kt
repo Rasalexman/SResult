@@ -8,10 +8,10 @@ sealed class UserAuthState : SResult.NothingResult(), IUserState {
     object UserSuccessState : UserAuthState(), IUserSuccessState
     object UserFailureState : UserAuthState(), IUserFailureState
 
-    data class Success(
-        val token: String,
-        val userState: UserState = UserState()
-    ) : SResult.EmptySuccess(),
+    class Success(
+        userData: UserModel,
+        private val userState: UserState = UserState()
+    ) : SResult.Success<UserModel>(userData),
         IUserSuccessState by UserSuccessState,
         IUserState by userState
 

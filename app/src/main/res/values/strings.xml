@@ -2,5 +2,6 @@
     <string name="app_name">SResultExample</string>
 
     <string name="title_main">HELLO SResult</string>
+    <string name="title_progress">Loading progress: %s</string>
     <string name="button_profile">Show Profile</string>
 </resources>

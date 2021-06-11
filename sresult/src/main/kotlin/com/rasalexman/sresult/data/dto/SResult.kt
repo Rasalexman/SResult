@@ -41,7 +41,7 @@ sealed class SResult<out T : Any> {
     /**
      * Any Success result
      */
-    object AnySuccess : Success<Any>(SUCCESS_DEFAULT_VALUE)
+    object AnySuccess : EmptySuccess()
 
     /**
      * Loading result state
