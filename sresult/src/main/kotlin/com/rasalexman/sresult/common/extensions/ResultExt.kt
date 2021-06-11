@@ -264,6 +264,11 @@ inline fun <reified T : Any> T?.mapToResult(): SResult<T> {
     return this.toSuccessResult()
 }
 
+@Suppress("REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE")
+suspend inline fun <reified I : Any> SResult<I>.applyIfSuccessSuspend(crossinline block: SInHandler<I>): SResult<I> {
+    if (this is SResult.Success) block(this.data)
+    return this
+}
 
 @Suppress("REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE")
 suspend inline fun <reified I : Any> FlowResult<I>.applyIfFlowSuccessSuspend(crossinline block: SInHandler<I>): FlowResult<I> {
