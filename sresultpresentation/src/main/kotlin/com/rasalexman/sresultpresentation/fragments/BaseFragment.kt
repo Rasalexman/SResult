@@ -9,29 +9,25 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.annotation.DrawableRes
 import androidx.annotation.MenuRes
-import androidx.annotation.StringRes
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.rasalexman.sresult.common.extensions.applyIf
 import com.rasalexman.sresult.common.extensions.loggE
 import com.rasalexman.sresult.common.extensions.unsafeLazy
 import com.rasalexman.sresult.common.typealiases.AnyResultLiveData
 import com.rasalexman.sresult.common.typealiases.InHandler
-import com.rasalexman.sresult.common.typealiases.UnitHandler
 import com.rasalexman.sresult.data.dto.ISEvent
-import com.rasalexman.sresult.data.dto.ISResult
 import com.rasalexman.sresult.data.dto.SEvent
 import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultpresentation.R
@@ -204,7 +200,10 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
                 }
             }
         }
+        setupOnBackPressCallback()
+    }
 
+    protected open fun setupOnBackPressCallback() {
         if (canPressBack) {
             onBackPressedCallback.isEnabled = true
             this.requireActivity()
@@ -219,9 +218,10 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
      * When need to inflate menu
      */
     override fun inflateToolBarMenu(toolbar: Toolbar, menuResId: Int) {
-        toolbar.menu?.clear()
-        toolbar.inflateMenu(menuResId)
-        toolbar.setOnMenuItemClickListener(this)
+        toolbar.apply {
+            menu?.clear()
+            inflateMenu(menuResId)
+        }.setOnMenuItemClickListener(this)
     }
 
     /**
@@ -237,44 +237,34 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
      */
     open fun initLayout() = Unit
 
-    /**
-     * Show alert dialog for [SResult.ErrorResult.Alert]
-     */
-    override fun showAlertDialog(
-        message: Any,
-        okTitle: Int?,
-        okHandler: UnitHandler?
-    ) {
-        hideKeyboard()
-        hideLoading()
-        alert(message = message, okTitle = okTitle, okHandler = okHandler)
-    }
-
-    /**
-     * Show toast message for [SResult.ErrorResult.Error]
-     */
-    override fun showToast(message: Any, interval: Int) {
-        hideKeyboard()
-        hideLoading()
-        toast(message, interval)
-    }
 
     override fun onResume() {
         super.onResume()
-        fragmentInputMode?.let {
+        applyInputMode()
+    }
 
+    override fun onPause() {
+        cancelInputMode()
+        super.onPause()
+    }
+
+    protected open fun applyInputMode() {
+        fragmentInputMode?.let {
             Handler(Looper.getMainLooper()).postDelayed({
                 activityOriginalInputMode = activity?.window?.attributes?.softInputMode
                 activity?.window?.setSoftInputMode(it)
             }, SAVE_INPUT_MODE_DELAY_MS)
         }
-
     }
 
-    override fun onPause() {
+    protected open fun cancelInputMode() {
         activityOriginalInputMode?.let { activity?.window?.setSoftInputMode(it) }
-        super.onPause()
     }
+
+    /**
+     * When [SResult.Success] is coming from any observer
+     */
+    override fun showSuccess(result: SResult.Success<*>) = Unit
 
     /**
      * Show loading state for [SResult.Loading]
@@ -283,9 +273,11 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
         showLayoutLoading()
     }
 
-    protected fun showLayoutLoading() {
+    /**
+     * Show layouts for loading
+     */
+    protected open fun showLayoutLoading() {
         hideKeyboard()
-        errorViewLayout?.hide()
         contentViewLayout?.hide()
         loadingViewLayout?.show()
     }
@@ -297,18 +289,44 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
         hideLayoutLoading()
     }
 
-    protected fun hideLayoutLoading() {
+    /**
+     * Hide laouts for loading
+     */
+    protected open fun hideLayoutLoading() {
         hideKeyboard()
-        errorViewLayout?.hide()
         loadingViewLayout?.hide()
         contentViewLayout?.show()
     }
 
     /**
-     * Show error result handler
+     * Show toast message for [SResult.AbstractFailure.Error]
      */
-    override fun showError(error: SResult.ErrorResult) {
-        this.showResultError(error)
+    override fun showToast(message: Any?, interval: Int) {
+        hideKeyboard()
+        hideLoading()
+        toast(message, interval)
+    }
+
+    /**
+     * Show toast error from error result data
+     */
+    override fun showFailure(error: SResult.AbstractFailure.Failure) {
+        this.toast(error.message, error.interval)
+    }
+
+    /**
+     * Show simple alert dialog from result data
+     */
+    override fun showAlert(alert: SResult.AbstractFailure.Alert) {
+        this.alert(
+            message = alert.message,
+            dialogTitle = alert.dialogTitle,
+            okTitle = alert.okTitle,
+            cancelTitle = alert.cancelTitle,
+            cancelHandler = alert.cancelHandler,
+            okHandler = alert.okHandler,
+            showCancel = alert.cancelHandler != null
+        )
     }
 
     /**
@@ -336,7 +354,7 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
     /**
      * Show [SResult.Progress] state with data
      */
-    override fun showProgress(progress: Int) = Unit
+    override fun showProgress(progress: Int, message: Any?) = Unit
 
     /**
      * For support navigation handle
@@ -360,7 +378,7 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
     /**
      * Base [SResult] handle function
      */
-    override fun onResultHandler(result: ISResult<*>) {
+    override fun onResultHandler(result: SResult<*>) {
         onBaseResultHandler(result)
     }
 
@@ -386,7 +404,7 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
     /**
      * Observe only [SResult] live data
      */
-    protected open fun observeResultLiveData(data: LiveData<ISResult<*>>) {
+    protected open fun observeResultLiveData(data: LiveData<SResult<*>>) {
         onResultChange(data) { result ->
             result.applyIf(!result.isHandled, ::onResultHandler)
         }
@@ -409,36 +427,32 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
     }
 
     /**
-     * Navigate to direction
+     * Navigate by direction [NavDirections]
      */
     override fun navigateTo(direction: NavDirections) {
-        try {
-            navController.navigate(direction)
-        } catch (e: Exception) {
-            loggE(e, "There is no navigation direction with id = ${direction.actionId}")
-            Navigation.findNavController(
-                requireActivity(),
-                R.id.mainHostFragment
-            ).navigate(direction)
-        }
+        this.navigateTo(findNavController(), direction)
     }
 
     /**
-     * Navigate by navResId
+     * Navigate by navResId [Int]
      */
     override fun navigateBy(navResId: Int) {
-        navResId.let(navController::navigate)
+        this.navigateBy(findNavController(), navResId)
     }
 
     /**
      * Navigate back by pop with navResId
      */
     override fun navigatePopTo(navResId: Int?, isInclusive: Boolean) {
-        navController.apply {
-            navResId?.let {
-                popBackStack(it, isInclusive)
-            } ?: popBackStack()
-        }
+        this.navigatePopTo(findNavController(), navResId, isInclusive)
+    }
+
+    /**
+     * When navigation is broke
+     */
+    override fun showNavigationError(e: Exception?, navResId: Int?) {
+        loggE(e, "There is no navigation direction from ${this::class.java.simpleName} with contentViewLayout id = $navResId")
+        showToast(R.string.error_internal, Toast.LENGTH_LONG)
     }
 
     /**
@@ -446,48 +460,6 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
      */
     override fun showEmptyLayout() {
         hideLoading()
-    }
-
-    /**
-     * Show error layout with needed resources
-     *
-     * @param imageResId - drawable image
-     * @param textResId - string text
-     */
-    override fun showErrorLayout(
-        @DrawableRes imageResId: Int?,
-        @StringRes textResId: Int?,
-        @StringRes buttonTitleResId: Int?,
-        tryAgainHandler: UnitHandler?
-    ) {
-        errorViewLayout?.apply {
-            loadingViewLayout?.hide()
-            contentViewLayout?.hide()
-            show()
-            findViewById<ImageView>(R.id.errorImageView)?.apply {
-                imageResId?.let {
-                    this.show()
-                    this.setImageResource(imageResId)
-                } ?: this.hide()
-            }
-            findViewById<TextView>(R.id.errorTextView)?.apply {
-                textResId?.let {
-                    this.show()
-                    this.text = string(textResId)
-                } ?: this.hide()
-            }
-            if (needTryAgainButton || buttonTitleResId != null) {
-                findViewById<Button>(R.id.errorActionButton)?.apply {
-                    buttonTitleResId?.let(this::setText)
-                    show()
-                    setOnClickListener {
-                        tryAgainHandler?.invoke() ?: processViewEvent(SEvent.TryAgain)
-                    }
-                }
-            } else {
-                findViewById<Button>(R.id.errorActionButton)?.hide()
-            }
-        }
     }
 
     /**

@@ -4,6 +4,8 @@ import config.Libs
 plugins {
     id("com.android.application")
     kotlin("android")
+    id("androidx.navigation.safeargs.kotlin")
+    kotlin("kapt")
 }
 
 android {
@@ -72,6 +74,8 @@ dependencies {
     implementation(Libs.Core.material)
     implementation(Libs.Core.constraintlayout)
     implementation(project(":sresultpresentation"))
+
+    implementation(Libs.Core.navigationFragmentKtx)
 
     testImplementation(Libs.Tests.junit)
     androidTestImplementation(Libs.Tests.runner)

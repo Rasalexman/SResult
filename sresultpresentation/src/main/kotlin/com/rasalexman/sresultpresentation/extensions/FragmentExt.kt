@@ -9,10 +9,14 @@ import androidx.annotation.*
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.postDelayed
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
-import com.rasalexman.sresult.common.extensions.getMessage
+import androidx.navigation.NavController
+import androidx.navigation.NavDirections
+import androidx.navigation.Navigation
+import com.rasalexman.sresult.common.extensions.loggE
+import com.rasalexman.sresult.common.extensions.or
 import com.rasalexman.sresult.common.typealiases.InHandler
-import com.rasalexman.sresult.data.dto.ISResult
 import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultpresentation.R
 import com.rasalexman.sresultpresentation.fragments.BaseFragment
@@ -40,13 +44,13 @@ fun Fragment.string(@StringRes resource: Int): String = requireContext().string(
 fun Fragment.stringArr(@ArrayRes resource: Int): Array<String> = resources.getStringArray(resource)
 fun Fragment.drawable(@DrawableRes resource: Int): Drawable? = requireActivity().drawable(resource)
 
-fun <T : ISResult<*>> BaseFragment<*>.onResultChange(data: LiveData<T>?, stateHandle: InHandler<T>) {
+fun <T : SResult<*>> BaseFragment<*>.onResultChange(data: LiveData<T>?, stateHandle: InHandler<T>) {
     data?.observe(viewLifecycleOwner, {
         stateHandle(it)
     })
 }
 
-fun <T : ISResult<*>> androidx.lifecycle.LifecycleOwner.onResultChange(data: LiveData<T>?, stateHandle: InHandler<T>) {
+fun <T : SResult<*>> androidx.lifecycle.LifecycleOwner.onResultChange(data: LiveData<T>?, stateHandle: InHandler<T>) {
     data?.observe(this, {
         stateHandle(it)
     })
@@ -75,22 +79,11 @@ fun Fragment.setSoftInputMode(mode: Int = -1) {
     }
 }
 
-fun IBaseFragment<*>.showResultError(error: SResult.ErrorResult) {
-    hideLoading()
-    error.getMessage()?.let {
-        if (error is SResult.ErrorResult.Error) {
-            showToast(it)
-        } else if (error is SResult.ErrorResult.Alert) {
-            showAlertDialog(it, error.okTitle, error.okHandler)
-        }
-    }
-}
-
 fun IBaseFragment<*>.initToolbarTitle(toolbarView: Toolbar, titleMarginEnd: Int = 0, titleMarginStart: Int = 0) {
     toolbarView.findViewById<TextView>(R.id.toolbarTitleTextView)?.let { toolbarTitleTextView ->
         toolbarTitleResId?.let {
             toolbarTitleTextView.setText(it)
-        } ?: toolbarTitleTextView.setText(toolbarTitle)
+        }.or { toolbarTitleTextView.setText(toolbarTitle) }
 
         if (centerToolbarTitle) {
             toolbarTitleTextView.gravity = Gravity.CENTER
@@ -105,6 +98,10 @@ fun IBaseFragment<*>.initToolbarTitle(toolbarView: Toolbar, titleMarginEnd: Int 
                 }
             }
         }
+    }.or {
+        toolbarTitleResId?.let {
+            toolbarView.setTitle(it)
+        }.or { toolbarView.title = toolbarTitle }
     }
 
     if (toolbarSubTitle.isNotEmpty()) {
@@ -124,6 +121,75 @@ fun IBaseFragment<*>.initToolbarTitle(toolbarView: Toolbar, titleMarginEnd: Int 
                 (layoutParams as? LinearLayout.LayoutParams)?.apply {
                     marginStart = titleMarginStart
                 }
+            }
+        }
+    }
+}
+
+
+fun IBaseFragment<*>.navigatePopTo(navigator: NavController?, navResId: Int?, isInclusive: Boolean) {
+    if(navigator != null) {
+        try {
+            navigator.apply {
+                navResId?.let {
+                    popBackStack(it, isInclusive)
+                } ?: popBackStack()
+            }
+        } catch (e: Exception) {
+            loggE(e, "There is no navigation direction from ${this::class.java.simpleName} with id = $navResId")
+            try {
+                (navigator.context as? FragmentActivity)?.let {
+                    Navigation.findNavController(
+                        it,
+                        mainHostFragmentId
+                    ).apply {
+                        navResId?.let { currentNavID ->
+                            popBackStack(currentNavID, isInclusive)
+                        } ?: popBackStack()
+                    }
+                } ?: showNavigationError(e, navResId)
+            } catch (e: Exception) {
+                showNavigationError(e, navResId)
+            }
+        }
+    }
+}
+
+fun IBaseFragment<*>.navigateBy(navigator: NavController?, navResId: Int?) {
+    if(navResId != null && navigator != null) {
+        try {
+            navigator.navigate(navResId)
+        } catch (e: Exception) {
+            loggE(e, "There is no navigation direction from ${this::class.java.simpleName} with id = $navResId")
+            try {
+                (navigator.context as? FragmentActivity)?.let {
+                    Navigation.findNavController(
+                        it,
+                        mainHostFragmentId
+                    ).navigate(navResId)
+                } ?: showNavigationError(null, navResId)
+            } catch (e: Exception) {
+                showNavigationError(e, navResId)
+            }
+        }
+    }
+}
+
+fun IBaseFragment<*>.navigateTo(navigator: NavController?, direction: NavDirections?) {
+    if(direction != null && navigator != null) {
+        try {
+            navigator.navigate(direction)
+        } catch (e: Exception) {
+            loggE(e, "There is no navigation direction from ${this::class.java.simpleName} with id = ${direction.actionId}")
+            try {
+                (navigator.context as? FragmentActivity)?.let {
+                    Navigation.findNavController(
+                        it,
+                        mainHostFragmentId
+                    ).navigate(direction)
+                } ?: showNavigationError(null, direction.actionId)
+            } catch (e: Exception) {
+                showNavigationError(e, direction.actionId)
             }
         }
     }

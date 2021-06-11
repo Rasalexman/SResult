@@ -30,9 +30,9 @@ open class BaseViewModel : ViewModel(), IKodi, IBaseViewModel {
     override val selectedPage: MutableLiveData<Int> = MutableLiveData()
 
     /**
-     * Handle Some error states with [SResult.ErrorResult]
+     * Handle Some error states with [SResult.AbstractFailure]
      */
-    open fun handleErrorState(errorResult: SResult.ErrorResult) {
+    open fun handleErrorState(errorResult: SResult.AbstractFailure) {
         supportLiveData.value = errorResult(message = errorResult.message.toString(), exception = errorResult.exception)
     }
 

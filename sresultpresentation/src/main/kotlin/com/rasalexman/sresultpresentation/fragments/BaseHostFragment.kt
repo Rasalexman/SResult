@@ -14,9 +14,6 @@ abstract class BaseHostFragment<VM : IBaseViewModel> : BaseFragment<VM>(), IBase
             navControllerId
         )
 
-    override val errorViewLayout: View?
-        get() = null
-
     override val loadingViewLayout: View?
         get() = null
 

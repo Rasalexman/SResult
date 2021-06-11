@@ -13,8 +13,6 @@ import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import com.rasalexman.sresult.common.extensions.applyIf
 import com.rasalexman.sresult.common.typealiases.AnyResultLiveData
-import com.rasalexman.sresult.common.typealiases.UnitHandler
-import com.rasalexman.sresult.data.dto.ISResult
 import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultpresentation.extensions.*
 import com.rasalexman.sresultpresentation.fragments.IBaseFragment
@@ -137,7 +135,7 @@ abstract class BaseDialogFragment<VM : IBaseViewModel> : AppCompatDialogFragment
         }
     }
 
-    override fun onResultHandler(result: ISResult<*>) {
+    override fun onResultHandler(result: SResult<*>) {
         onBaseResultHandler(result)
     }
 
@@ -149,44 +147,33 @@ abstract class BaseDialogFragment<VM : IBaseViewModel> : AppCompatDialogFragment
     override fun onToolbarBackPressed() = Unit
     override fun showEmptyLayout() = Unit
     override fun onNextPressed() = Unit
-    override fun showProgress(progress: Int) = Unit
+    override fun showProgress(progress: Int, message: Any?) = Unit
 
+    /**
+     * Navigate by direction [NavDirections]
+     */
     override fun navigateTo(direction: NavDirections) {
-        findNavController().navigate(direction)
+        this.navigateTo(findNavController(), direction)
     }
 
     /**
-     * Navigate by navResId
+     * Navigate by navResId [Int]
      */
     override fun navigateBy(navResId: Int) {
-        findNavController().navigate(navResId)
+        this.navigateBy(findNavController(), navResId)
     }
 
     /**
      * Navigate back by pop with navResId
      */
     override fun navigatePopTo(navResId: Int?, isInclusive: Boolean) {
-        findNavController().apply {
-            navResId?.let {
-                popBackStack(it, isInclusive)
-            } ?: popBackStack()
-        }
+        this.navigatePopTo(findNavController(), navResId, isInclusive)
     }
 
-    override fun showToast(message: Any, interval: Int) {
+    override fun showToast(message: Any?, interval: Int) {
         hideKeyboard()
         hideLoading()
         toast(message, interval)
-    }
-
-    override fun showAlertDialog(
-        message: Any,
-        okTitle: Int?,
-        okHandler: UnitHandler?
-    ) {
-        hideKeyboard()
-        hideLoading()
-        alert(message = message, okTitle = okTitle, okHandler = okHandler)
     }
 
     /**
@@ -194,7 +181,6 @@ abstract class BaseDialogFragment<VM : IBaseViewModel> : AppCompatDialogFragment
      */
     override fun showLoading() {
         hideKeyboard()
-        errorViewLayout?.hide()
         contentViewLayout?.hide()
         loadingViewLayout?.show()
     }
@@ -204,23 +190,27 @@ abstract class BaseDialogFragment<VM : IBaseViewModel> : AppCompatDialogFragment
      */
     override fun hideLoading() {
         hideKeyboard()
-        errorViewLayout?.hide()
         loadingViewLayout?.hide()
         contentViewLayout?.show()
     }
-    
+
     protected open fun initLayout() = Unit
 
-    override fun showError(error: SResult.ErrorResult) {
-        this.showResultError(error)
+    override fun showFailure(error: SResult.AbstractFailure.Failure) {
+        this.toast(error.message, error.interval)
     }
 
-    override fun showErrorLayout(
-        imageResId: Int?,
-        textResId: Int?,
-        buttonTitleResId: Int?,
-        tryAgainHandler: UnitHandler?
-    ) = Unit
+    override fun showAlert(alert: SResult.AbstractFailure.Alert) {
+        this.alert(
+            message = alert.message,
+            dialogTitle = alert.dialogTitle,
+            okTitle = alert.okTitle,
+            cancelTitle = alert.cancelTitle,
+            cancelHandler = alert.cancelHandler,
+            okHandler = alert.okHandler,
+            showCancel = alert.cancelHandler != null
+        )
+    }
 
     override fun onDestroyView() {
         toolbarView?.setOnMenuItemClickListener(null)
