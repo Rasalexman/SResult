@@ -261,11 +261,15 @@ fun ISResultHandler.onBaseResultHandler(result: SResult<*>) {
         }
         is SResult.Loading -> (this as? ILoadingHandler)?.showLoading()
         is SResult.Progress -> (this as? IProgressHandler)?.showProgress(result.progress, result.message)
-        is SResult.Empty -> (this as? IEmptyHandler)?.showEmptyLayout()
+        is SResult.Empty -> (this as? IEmptyHandler)?.apply {
+            hideLoading()
+            showEmptyLayout()
+        }
 
         is SResult.AbstractFailure.Failure -> {
             loggE(exception = result.exception, message = result.message.toString())
             (this as? IFailureHandler)?.apply {
+                hideLoading()
                 if(result is SResult.AbstractFailure.Alert) {
                     showAlert(result)
                 } else {
@@ -275,11 +279,16 @@ fun ISResultHandler.onBaseResultHandler(result: SResult<*>) {
         }
 
         is SResult.Toast -> {
-            (this as? IToastHandler)?.showToast(result.message, result.interval)
+            (this as? IToastHandler)?.apply {
+                hideLoading()
+                showToast(result.message, result.interval)
+            }
         }
 
         is SResult.NavigateResult.BaseNavigationResult -> {
             (this as? INavigateHandler)?.apply {
+                hideLoading()
+
                 when(result) {
                     is SResult.NavigateResult.NavigatePopTo -> navigatePopTo(
                         navResId = result.navigateResourceId,

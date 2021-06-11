@@ -1,5 +1,5 @@
 package com.rasalexman.sresultpresentation.base
 
-interface IEmptyHandler : ISResultHandler {
+interface IEmptyHandler : ILoadingHandler {
     fun showEmptyLayout()
 }
