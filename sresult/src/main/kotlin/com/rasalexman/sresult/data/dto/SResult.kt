@@ -72,9 +72,7 @@ sealed class SResult<out T : Any> {
     /**
      * Any empty State with no result
      */
-    object Empty : NothingResult() {
-        override var isNeedHandle: Boolean = true
-    }
+    object Empty : NothingResult()
 
     /**
      * Any empty State with no result
