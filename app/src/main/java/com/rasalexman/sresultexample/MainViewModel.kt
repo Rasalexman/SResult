@@ -31,7 +31,19 @@ class MainViewModel : BaseViewModel() {
         listOf(Item("11", "Hello"), Item("112", "World"))
     )
 
+    val items2 = MutableLiveData<List<IDropDownItem>>(
+        listOf(
+            Item("121", "Full text"),
+            Item("1212", "Abracadabra"),
+            Item("122", "Simple Text")
+        )
+    )
+
     val selectedValue = items.mutableMap {
+        it.first()
+    }
+
+    val selectedValue2 = items2.mutableMap {
         it.first()
     }
 

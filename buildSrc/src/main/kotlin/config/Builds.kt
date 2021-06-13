@@ -1,7 +1,7 @@
 package config
 
 object Builds {
-    const val MIN_VERSION = 19
+    const val MIN_VERSION = 21
     const val COMPILE_VERSION = 30
     const val TARGET_VERSION = 30
     const val BUILD_TOOLS = "30.0.2"
@@ -17,7 +17,7 @@ object Builds {
     }
 
     object SResult {
-        const val VERSION_CODE = 102006
-        const val VERSION_NAME = "1.2.6"
+        const val VERSION_CODE = 102007
+        const val VERSION_NAME = "1.2.7"
     }
 }

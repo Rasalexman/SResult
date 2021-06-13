@@ -16,6 +16,10 @@ fun <T> Any?.implementationOf(clazz: Class<T>): T? {
 
 }
 
+fun<T : Any> List<T>?.listSize(): Int {
+    return this?.size.orZero()
+}
+
 /**
  * Do action if caller is null or return caller
  */

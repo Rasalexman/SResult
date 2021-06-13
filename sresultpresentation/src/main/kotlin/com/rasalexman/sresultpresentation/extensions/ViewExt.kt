@@ -266,6 +266,13 @@ fun ISResultHandler.onBaseResultHandler(result: SResult<*>) {
             showEmptyLayout()
         }
 
+        is SResult.Toast -> {
+            (this as? IToastHandler)?.apply {
+                hideLoading()
+                showToast(result.message, result.interval)
+            }
+        }
+
         is SResult.AbstractFailure.Failure -> {
             loggE(exception = result.exception, message = result.message.toString())
             (this as? IFailureHandler)?.apply {
@@ -275,13 +282,6 @@ fun ISResultHandler.onBaseResultHandler(result: SResult<*>) {
                 } else {
                     showFailure(result)
                 }
-            }
-        }
-
-        is SResult.Toast -> {
-            (this as? IToastHandler)?.apply {
-                hideLoading()
-                showToast(result.message, result.interval)
             }
         }
 
@@ -308,6 +308,8 @@ fun ISResultHandler.onBaseResultHandler(result: SResult<*>) {
                 }
             }
         }
+        is SResult.AbstractFailure,
+        is SResult.NothingResult -> (this as? ILoadingHandler)?.hideLoading()
 
         else -> Unit
     }
