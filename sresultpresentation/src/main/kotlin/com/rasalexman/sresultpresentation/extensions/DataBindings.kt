@@ -5,15 +5,14 @@ import android.widget.AutoCompleteTextView
 import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
-import com.rasalexman.sresult.common.extensions.orZero
+import com.rasalexman.sresult.models.IDropDownItem
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 
 val selectedPosition = WeakHashMap<Int, IDropDownItem>()
-
-interface IDropDownItem {
-    val id: String
-    val title: String
-}
 
 @BindingAdapter(
     value = ["items", "selectedItem", "positionAttrChanged"],
@@ -27,12 +26,18 @@ fun setItemsAdapter(
 ) {
     selectedPosition.clear()
 
-    val adapter = ArrayAdapter(
-        view.context,
-        android.R.layout.simple_dropdown_item_1line,
-        items.orEmpty().map { it.title }
-    )
-    view.setAdapter(adapter)
+    val scope = CoroutineScope(Dispatchers.Main)
+    scope.launch {
+        val itemsTitle = withContext(Dispatchers.Default) {
+            items.orEmpty().map { it.title }
+        }
+        val adapter = ArrayAdapter(
+            view.context,
+            android.R.layout.simple_dropdown_item_1line,
+            itemsTitle
+        )
+        view.setAdapter(adapter)
+    }
 
     selectedItem?.let {
         view.setText(it.title, false)

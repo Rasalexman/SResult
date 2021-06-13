@@ -18,11 +18,11 @@
 
         <variable
             name="dropdownItems"
-            type="androidx.lifecycle.LiveData&lt;java.util.List&lt;com.rasalexman.sresultpresentation.extensions.IDropDownItem>>" />
+            type="androidx.lifecycle.LiveData&lt;java.util.List&lt;com.rasalexman.sresult.models.IDropDownItem>>" />
 
         <variable
             name="selectedItem"
-            type="androidx.lifecycle.MutableLiveData&lt;com.rasalexman.sresultpresentation.extensions.IDropDownItem>" />
+            type="androidx.lifecycle.MutableLiveData&lt;com.rasalexman.sresult.models.IDropDownItem>" />
 
         <variable
             name="error"

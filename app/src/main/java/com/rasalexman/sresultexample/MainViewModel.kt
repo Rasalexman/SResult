@@ -1,7 +1,6 @@
 package com.rasalexman.sresultexample
 
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.map
 import com.rasalexman.sresult.common.extensions.loadingResult
 import com.rasalexman.sresult.common.extensions.logg
 import com.rasalexman.sresult.common.extensions.progressResult
@@ -9,7 +8,7 @@ import com.rasalexman.sresult.common.extensions.toNavigateResult
 import com.rasalexman.sresult.common.typealiases.AnyResultMutableLiveData
 import com.rasalexman.sresult.data.dto.ISEvent
 import com.rasalexman.sresult.data.dto.SEvent
-import com.rasalexman.sresultpresentation.extensions.IDropDownItem
+import com.rasalexman.sresult.models.IDropDownItem
 import com.rasalexman.sresultpresentation.extensions.mutableMap
 import com.rasalexman.sresultpresentation.extensions.onEventFlowAnyResult
 import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
@@ -20,7 +19,7 @@ import kotlin.random.Random
 class MainViewModel : BaseViewModel() {
 
     data class Item(
-        override val id: String,
+        override val itemId: String,
         override val title: String
     ) : IDropDownItem
 
