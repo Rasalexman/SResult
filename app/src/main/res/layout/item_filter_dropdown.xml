@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.text.TextUtils" />
+
+        <variable
+            name="titleHint"
+            type="java.lang.String" />
+
+        <variable
+            name="textHint"
+            type="java.lang.String" />
+
+        <variable
+            name="dropdownItems"
+            type="androidx.lifecycle.LiveData&lt;java.util.List&lt;com.rasalexman.sresultpresentation.extensions.IDropDownItem>>" />
+
+        <variable
+            name="selectedItem"
+            type="androidx.lifecycle.MutableLiveData&lt;com.rasalexman.sresultpresentation.extensions.IDropDownItem>" />
+
+        <variable
+            name="error"
+            type="androidx.lifecycle.MutableLiveData&lt;java.lang.String>" />
+
+    </data>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/DropdownTextInputTheme"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/size_16dp"
+        android:layout_marginTop="@dimen/size_16dp"
+        android:hint="@{titleHint}"
+        android:maxLines="1"
+        app:autoSizeTextType="uniform"
+        app:errorEnabled="@{!TextUtils.isEmpty(error)}"
+        app:hintEnabled="@{!TextUtils.isEmpty(titleHint)}">
+
+        <AutoCompleteTextView
+            android:id="@+id/input"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/size_56dp"
+            android:backgroundTint="@color/background"
+            android:ellipsize="end"
+            android:hint="@{textHint}"
+            android:inputType="none"
+            android:paddingTop="@{TextUtils.isEmpty(titleHint) ? @dimen/size_12dp : @dimen/size_24dp}"
+            app:selectedItem="@={selectedItem}"
+            app:items="@{dropdownItems}"
+            tools:text="@string/app_name" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+</layout>

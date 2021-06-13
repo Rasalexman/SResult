@@ -1,7 +1,9 @@
 package com.rasalexman.sresultexample
 
+import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.rasalexman.kodi.core.*
 import timber.log.Timber
 
 class MainActivity : AppCompatActivity() {
@@ -9,6 +11,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         initTimber()
+
+        kodi {
+            bind<Context>() with single { this@MainActivity.applicationContext }
+        }
     }
 
     private fun initTimber() {

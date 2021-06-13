@@ -1,11 +1,16 @@
 package com.rasalexman.sresultexample
 
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.map
 import com.rasalexman.sresult.common.extensions.loadingResult
 import com.rasalexman.sresult.common.extensions.logg
 import com.rasalexman.sresult.common.extensions.progressResult
+import com.rasalexman.sresult.common.extensions.toNavigateResult
 import com.rasalexman.sresult.common.typealiases.AnyResultMutableLiveData
 import com.rasalexman.sresult.data.dto.ISEvent
 import com.rasalexman.sresult.data.dto.SEvent
+import com.rasalexman.sresultpresentation.extensions.IDropDownItem
+import com.rasalexman.sresultpresentation.extensions.mutableMap
 import com.rasalexman.sresultpresentation.extensions.onEventFlowAnyResult
 import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
 import kotlinx.coroutines.delay
@@ -14,8 +19,21 @@ import kotlin.random.Random
 
 class MainViewModel : BaseViewModel() {
 
+    data class Item(
+        override val id: String,
+        override val title: String
+    ) : IDropDownItem
+
     companion object {
         private const val PROGRESS_DELAY = 1200L
+    }
+
+    val items = MutableLiveData<List<IDropDownItem>>(
+        listOf(Item("11", "Hello"), Item("112", "World"))
+    )
+
+    val selectedValue = items.mutableMap {
+        it.first()
     }
 
     override val resultLiveData = onEventFlowAnyResult<SEvent.Fetch> {
@@ -44,9 +62,13 @@ class MainViewModel : BaseViewModel() {
         emit(progressResult(rand))
     } as AnyResultMutableLiveData
 
-    fun onProfileClicked() {
+    fun onGenerateClicked() {
         val rand = Random.nextInt(10, 54)
         val event: ISEvent = if(rand % 2 == 0) SEvent.Fetch else SEvent.Refresh
         processViewEvent(event)
+    }
+
+    fun onProfileClicked() {
+        navigationLiveData.value = MainFragmentDirections.showProfileFragment().toNavigateResult()
     }
 }

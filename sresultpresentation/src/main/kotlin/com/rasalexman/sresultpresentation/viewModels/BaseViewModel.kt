@@ -28,6 +28,10 @@ open class BaseViewModel : ViewModel(), IKodi, IBaseViewModel {
 
     // selected page of view pager
     override val selectedPage: MutableLiveData<Int> = MutableLiveData()
+    // toolbar title live data
+    override val toolbarTitle: MutableLiveData<String>? = null
+    // toolbar subtitle live data
+    override val toolbarSubTitle: MutableLiveData<String>? = null
 
     /**
      * Handle Some error states with [SResult.AbstractFailure]

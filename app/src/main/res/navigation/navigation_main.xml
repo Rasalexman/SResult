@@ -8,4 +8,11 @@
         android:id="@+id/mainFragment"
         android:name="com.rasalexman.sresultexample.MainFragment"
         android:label="MainFragment" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.rasalexman.sresultexample.profile.ProfileFragment"
+        android:label="ProfileFragment" />
+
+    <action android:id="@+id/showProfileFragment"
+        app:destination="@+id/profileFragment"/>
 </navigation>

@@ -5,43 +5,51 @@ import android.widget.AutoCompleteTextView
 import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
+import com.rasalexman.sresult.common.extensions.orZero
+import java.util.*
+
+val selectedPosition = WeakHashMap<Int, IDropDownItem>()
+
+interface IDropDownItem {
+    val id: String
+    val title: String
+}
 
 @BindingAdapter(
-    value = ["items", "selectedItem", "selectedValue", "positionAttrChanged", "valueAttrChanged"],
+    value = ["items", "selectedItem", "positionAttrChanged"],
     requireAll = false
 )
 fun setItemsAdapter(
     view: AutoCompleteTextView,
-    items: List<String>?,
-    selectedItem: Int?,
-    selectedValue: String?,
-    changeListener: InverseBindingListener?,
-    valueListener: InverseBindingListener?
+    items: List<IDropDownItem>?,
+    selectedItem: IDropDownItem?,
+    positionAttrChanged: InverseBindingListener?
 ) {
+    selectedPosition.clear()
+
     val adapter = ArrayAdapter(
         view.context,
         android.R.layout.simple_dropdown_item_1line,
-        items.orEmpty()
+        items.orEmpty().map { it.title }
     )
     view.setAdapter(adapter)
-    selectedValue?.let {
-        view.setText(selectedValue)
-    }
+
     selectedItem?.let {
-        view.listSelection = it
+        view.setText(it.title, false)
+        view.performCompletion()
     }
-    view.setOnItemClickListener { _, _, _, _ ->
-        changeListener?.onChange()
-        valueListener?.onChange()
+
+    view.setOnItemClickListener { _, _, p1, _ ->
+        items?.getOrNull(p1)?.let {
+            selectedPosition[view.hashCode()] = it
+            positionAttrChanged?.onChange()
+        }
     }
 }
 
 @InverseBindingAdapter(attribute = "selectedItem", event = "positionAttrChanged")
-fun getSelectedPosition(view: AutoCompleteTextView): Int {
-    return view.listSelection
-}
-
-@InverseBindingAdapter(attribute = "selectedValue", event = "valueAttrChanged")
-fun getSelectedValue(view: AutoCompleteTextView): String {
-    return view.text.toString()
+fun getSelectedPosition(view: AutoCompleteTextView): IDropDownItem {
+    val selectedItem = selectedPosition[view.hashCode()]!!
+    println("-------> selectedItem = $selectedItem")
+    return selectedItem
 }

@@ -16,5 +16,8 @@ interface IBaseViewModel {
     val resultLiveData: LiveData<*>?
     val supportLiveData: MutableLiveData<SResult<Any>>
 
+    val toolbarTitle: MutableLiveData<String>?
+    val toolbarSubTitle: MutableLiveData<String>?
+
     val liveDataToObserve: MutableList<LiveData<*>>
 }

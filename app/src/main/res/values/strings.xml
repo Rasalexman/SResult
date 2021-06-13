@@ -3,5 +3,7 @@
 
     <string name="title_main">HELLO SResult</string>
     <string name="title_progress">Loading progress: %s</string>
+    <string name="button_generate">Generate Data</string>
     <string name="button_profile">Show Profile</string>
+    <string name="title_profile">User Profile</string>
 </resources>

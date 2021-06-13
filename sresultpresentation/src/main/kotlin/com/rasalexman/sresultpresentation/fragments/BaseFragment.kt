@@ -15,12 +15,9 @@ import androidx.annotation.MenuRes
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
-import androidx.navigation.Navigation
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.rasalexman.sresult.common.extensions.applyIf
 import com.rasalexman.sresult.common.extensions.loggE
@@ -144,40 +141,52 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
         showToolbar()
         initLayout()
 
-        addResultLiveDataObservers()
-        addSupportLiveDataObservers()
-        addAnyLiveDataObservers()
-        addNavigateLiveDataObserver()
+        viewModel?.let { currentBaseVm ->
+            addResultLiveDataObservers(currentBaseVm)
+            addSupportLiveDataObservers(currentBaseVm)
+            addAnyLiveDataObservers(currentBaseVm)
+            addNavigateLiveDataObserver(currentBaseVm)
+            addToolbarLiveDataObserver(currentBaseVm)
 
-        viewModel?.liveDataToObserve?.forEach {
-            onAnyChange(it)
+            currentBaseVm.liveDataToObserve.forEach {
+                onAnyChange(it)
+            }
         }
     }
 
-    protected open fun addNavigateLiveDataObserver() {
-        viewModel?.navigationLiveData?.apply(::observeNavigationLiveData)
+    protected open fun addToolbarLiveDataObserver(currentViewMode: IBaseViewModel) {
+        currentViewMode.toolbarTitle?.observe(viewLifecycleOwner) {
+            toolbarView?.setupToolbarTitle(it, toolbarTitleResId, centerToolbarTitle)
+        }
+        currentViewMode.toolbarSubTitle?.observe(viewLifecycleOwner) {
+            toolbarView?.setupToolbarSubtitle(it, centerToolbarTitle)
+        }
+    }
+
+    protected open fun addNavigateLiveDataObserver(currentViewMode: IBaseViewModel) {
+        currentViewMode.navigationLiveData.apply(::observeNavigationLiveData)
     }
 
     /**
      * Add Standard Live data Observers to handler [SResult] event
      */
-    protected open fun addAnyLiveDataObservers() {
-        viewModel?.anyLiveData?.apply(::observeAnyLiveData)
+    protected open fun addAnyLiveDataObservers(currentViewMode: IBaseViewModel) {
+        currentViewMode.anyLiveData?.apply(::observeAnyLiveData)
     }
 
     /**
      * Add Standard Live data Observers to handler [SResult] event
      */
     @Suppress("UNCHECKED_CAST")
-    protected open fun addResultLiveDataObservers() {
-        (viewModel?.resultLiveData as? AnyResultLiveData)?.apply(::observeResultLiveData)
+    protected open fun addResultLiveDataObservers(currentViewMode: IBaseViewModel) {
+        (currentViewMode.resultLiveData as? AnyResultLiveData)?.apply(::observeResultLiveData)
     }
 
     /**
      * Add Observer for Error Live Data handles (ex. from CoroutinesManager)
      */
-    protected open fun addSupportLiveDataObservers() {
-        viewModel?.supportLiveData?.apply(::observeResultLiveData)
+    protected open fun addSupportLiveDataObservers(currentViewMode: IBaseViewModel) {
+        currentViewMode.supportLiveData.apply(::observeResultLiveData)
     }
 
     /**
@@ -190,8 +199,7 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
                 inflateToolBarMenu(toolbar, it)
             }
 
-            val titleMarginEnd = dimen(if (needBackButton) R.dimen.size_48dp else R.dimen.size_16dp)
-            initToolbarTitle(toolbar, titleMarginEnd)
+            initToolbarTitle(toolbar)
 
             if (needBackButton) {
                 toolbar.setNavigationIcon(toolbarBackButtonResId)
@@ -451,7 +459,10 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
      * When navigation is broke
      */
     override fun showNavigationError(e: Exception?, navResId: Int?) {
-        loggE(e, "There is no navigation direction from ${this::class.java.simpleName} with contentViewLayout id = $navResId")
+        loggE(
+            e,
+            "There is no navigation direction from ${this::class.java.simpleName} with contentViewLayout id = $navResId"
+        )
         showToast(R.string.error_internal, Toast.LENGTH_LONG)
     }
 
@@ -470,7 +481,10 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             context?.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED
         } else {
-            ContextCompat.checkSelfPermission(this.requireContext(), permission) == PackageManager.PERMISSION_GRANTED
+            ContextCompat.checkSelfPermission(
+                this.requireContext(),
+                permission
+            ) == PackageManager.PERMISSION_GRANTED
         }
     }
 

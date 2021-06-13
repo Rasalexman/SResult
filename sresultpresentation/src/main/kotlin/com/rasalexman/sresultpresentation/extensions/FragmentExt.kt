@@ -1,11 +1,9 @@
 package com.rasalexman.sresultpresentation.extensions
 
-import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.view.Gravity
 import android.view.WindowManager
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.*
 import androidx.appcompat.widget.Toolbar
@@ -52,7 +50,10 @@ fun <T : SResult<*>> BaseFragment<*>.onResultChange(data: LiveData<T>?, stateHan
     })
 }
 
-fun <T : SResult<*>> androidx.lifecycle.LifecycleOwner.onResultChange(data: LiveData<T>?, stateHandle: InHandler<T>) {
+fun <T : SResult<*>> androidx.lifecycle.LifecycleOwner.onResultChange(
+    data: LiveData<T>?,
+    stateHandle: InHandler<T>
+) {
     data?.observe(this, {
         stateHandle(it)
     })
@@ -64,7 +65,10 @@ fun <T : Any> BaseFragment<*>.onAnyChange(data: LiveData<T>?, stateHandle: InHan
     })
 }
 
-fun <T : Any> androidx.lifecycle.LifecycleOwner.onAnyChange(data: LiveData<T>?, stateHandle: InHandler<T>? = null) {
+fun <T : Any> androidx.lifecycle.LifecycleOwner.onAnyChange(
+    data: LiveData<T>?,
+    stateHandle: InHandler<T>? = null
+) {
     data?.observe(this, {
         stateHandle?.invoke(it)
     })
@@ -81,56 +85,68 @@ fun Fragment.setSoftInputMode(mode: Int = -1) {
     }
 }
 
-fun IBaseFragment<*>.initToolbarTitle(toolbarView: Toolbar, titleMarginEnd: Int = 0, titleMarginStart: Int = 0) {
-    toolbarView.findViewById<TextView>(R.id.toolbarTitleTextView)?.let { toolbarTitleTextView ->
-        toolbarTitleResId?.let {
-            toolbarTitleTextView.setText(it)
-        }.or { toolbarTitleTextView.setText(toolbarTitle) }
+fun IBaseFragment<*>.initToolbarTitle(
+    toolbarView: Toolbar
+) {
+    toolbarView.setupToolbarTitle(
+        toolbarTitle,
+        toolbarTitleResId,
+        centerToolbarTitle
+    )
 
-        if (centerToolbarTitle) {
-            toolbarTitleTextView.gravity = Gravity.CENTER
-            if (titleMarginEnd > 0) {
-                (toolbarTitleTextView.layoutParams as? LinearLayout.LayoutParams)?.apply {
-                    marginEnd = titleMarginEnd
-                }
-            }
-            if (titleMarginStart > 0) {
-                (toolbarTitleTextView.layoutParams as? LinearLayout.LayoutParams)?.apply {
-                    marginStart = titleMarginStart
-                }
-            }
-        }
-    }.or {
-        toolbarTitleResId?.let {
-            toolbarView.setTitle(it)
-        }.or { toolbarView.title = toolbarTitle }
-    }
+    toolbarView.setupToolbarSubtitle(
+        toolbarSubTitle,
+        centerToolbarSubTitle
+    )
+}
 
-    if (toolbarSubTitle.isNotEmpty()) {
-        toolbarView.findViewById<TextView>(R.id.toolbarSubTitleTextView)?.apply {
+fun Toolbar.setupToolbarSubtitle(
+    toolbarSubTitle: String?,
+    centerToolbarSubTitle: Boolean
+) {
+    this.subtitle = null
+    this.findViewById<TextView>(R.id.toolbarSubTitleTextView)?.apply {
+        if (!toolbarSubTitle.isNullOrEmpty()) {
             show()
             text = toolbarSubTitle
             if (centerToolbarSubTitle) {
                 gravity = Gravity.CENTER
             }
-
-            if (titleMarginEnd > 0) {
-                (layoutParams as? LinearLayout.LayoutParams)?.apply {
-                    marginEnd = titleMarginEnd
-                }
-            }
-            if (titleMarginStart > 0) {
-                (layoutParams as? LinearLayout.LayoutParams)?.apply {
-                    marginStart = titleMarginStart
-                }
-            }
+        } else {
+            hide()
         }
+    }.or {
+        this.subtitle = toolbarSubTitle
     }
 }
 
+fun Toolbar.setupToolbarTitle(
+    toolbarTitle: String?,
+    toolbarTitleResId: Int?,
+    centerToolbarTitle: Boolean
+) {
+    this.findViewById<TextView>(R.id.toolbarTitleTextView)?.let { toolbarTitleTextView ->
+        toolbarTitle?.let(toolbarTitleTextView::setText).or {
+            toolbarTitleResId?.let(toolbarTitleTextView::setText)
+        }
 
-fun IBaseFragment<*>.navigatePopTo(context: Context?, navigator: NavController?, navResId: Int?, isInclusive: Boolean) {
-    if(navigator != null) {
+        if (centerToolbarTitle) {
+            toolbarTitleTextView.gravity = Gravity.CENTER
+        }
+    }.or {
+        toolbarTitleResId?.let {
+            this.setTitle(it)
+        }.or { this.title = toolbarTitle }
+    }
+}
+
+fun IBaseFragment<*>.navigatePopTo(
+    context: Context?,
+    navigator: NavController?,
+    navResId: Int?,
+    isInclusive: Boolean
+) {
+    if (navigator != null) {
         try {
             navigator.apply {
                 navResId?.let {
@@ -138,7 +154,10 @@ fun IBaseFragment<*>.navigatePopTo(context: Context?, navigator: NavController?,
                 } ?: popBackStack()
             }
         } catch (e: Exception) {
-            loggE(e, "There is no navigation direction from ${this::class.java.simpleName} with id = $navResId")
+            loggE(
+                e,
+                "There is no navigation direction from ${this::class.java.simpleName} with id = $navResId"
+            )
             try {
                 (context as? FragmentActivity)?.let {
                     Navigation.findNavController(
@@ -158,11 +177,14 @@ fun IBaseFragment<*>.navigatePopTo(context: Context?, navigator: NavController?,
 }
 
 fun IBaseFragment<*>.navigateBy(context: Context?, navigator: NavController?, navResId: Int?) {
-    if(navResId != null && navigator != null) {
+    if (navResId != null && navigator != null) {
         try {
             navigator.navigate(navResId)
         } catch (e: Exception) {
-            loggE(e, "There is no navigation direction from ${this::class.java.simpleName} with id = $navResId")
+            loggE(
+                e,
+                "There is no navigation direction from ${this::class.java.simpleName} with id = $navResId"
+            )
             try {
                 (context as? FragmentActivity)?.let {
                     Navigation.findNavController(
@@ -177,12 +199,19 @@ fun IBaseFragment<*>.navigateBy(context: Context?, navigator: NavController?, na
     }
 }
 
-fun IBaseFragment<*>.navigateTo(context: Context?, navigator: NavController?, direction: NavDirections?) {
-    if(direction != null && navigator != null) {
+fun IBaseFragment<*>.navigateTo(
+    context: Context?,
+    navigator: NavController?,
+    direction: NavDirections?
+) {
+    if (direction != null && navigator != null) {
         try {
             navigator.navigate(direction)
         } catch (e: Exception) {
-            loggE(e, "There is no navigation direction from ${this::class.java.simpleName} with id = ${direction.actionId}")
+            loggE(
+                e,
+                "There is no navigation direction from ${this::class.java.simpleName} with id = ${direction.actionId}"
+            )
             try {
                 (context as? FragmentActivity)?.let {
                     Navigation.findNavController(

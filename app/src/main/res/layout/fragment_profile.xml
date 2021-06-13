@@ -19,6 +19,7 @@
             android:layout_height="@dimen/size_56dp"
             android:background="@color/purple_500"
             app:titleTextColor="@color/white"
+            app:subtitleTextColor="@color/white"
             />
 
         <TextView
