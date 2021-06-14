@@ -47,7 +47,7 @@ interface IBaseFragment<out VM : IBaseViewModel> : IComplexHandler, Toolbar.OnMe
      * Content Layout
      */
     val contentViewLayout: View? get() {
-        return weakContentRef?.get() ?: contentView?.findViewById<Toolbar>(contentLayoutResId)?.also {
+        return weakContentRef?.get() ?: contentView?.findViewById<View>(contentLayoutResId)?.also {
             weakContentRef = WeakReference(it)
         }
     }
