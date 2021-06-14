@@ -11,8 +11,21 @@
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.rasalexman.sresultexample.profile.ProfileFragment"
-        android:label="ProfileFragment" />
+        android:label="ProfileFragment">
+
+        <argument
+            android:name="itemId"
+            app:argType="string"
+            app:nullable="false"
+            android:defaultValue="HelloWorld"/>
+    </fragment>
 
     <action android:id="@+id/showProfileFragment"
-        app:destination="@+id/profileFragment"/>
+        app:destination="@+id/profileFragment">
+        <argument
+            android:name="itemId"
+            app:argType="string"
+            app:nullable="false"
+            android:defaultValue="HelloWorld"/>
+    </action>
 </navigation>

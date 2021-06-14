@@ -1,15 +1,12 @@
 package com.rasalexman.sresultpresentation.viewModels
 
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelStore
-import com.rasalexman.sresultpresentation.fragments.BaseFragment
 import kotlin.reflect.KClass
 
-class CustomViewModelLazy<F : BaseFragment<*>, VM : BaseViewModel>(
+class CustomViewModelLazy<VM : BaseViewModel>(
     private val viewModelClass: KClass<VM>,
-    private val fragmentProducer: () -> F,
-    private val storeProducer: (() -> ViewModelStore)? = null,
-    private val factoryProducer: (() -> ViewModelProvider.Factory)? = null
+    private val fragmentProducer: () -> Fragment
 ) : Lazy<VM> {
 
     private var cached: VM? = null
@@ -18,10 +15,9 @@ class CustomViewModelLazy<F : BaseFragment<*>, VM : BaseViewModel>(
         get() {
             val viewModel = cached
             return if (viewModel == null) {
-                val parentFragment: F = fragmentProducer()
-                val factory = factoryProducer?.invoke() ?: parentFragment.defaultViewModelProviderFactory
-                val store = storeProducer?.invoke() ?: parentFragment.viewModelStore
-                ViewModelProvider(store, factory).get(viewModelClass.java).also {
+                val parentFragment: Fragment = fragmentProducer()
+                val factory = parentFragment.defaultViewModelProviderFactory
+                ViewModelProvider(parentFragment, factory).get(viewModelClass.java).also {
                     cached = it
                 }
             } else {

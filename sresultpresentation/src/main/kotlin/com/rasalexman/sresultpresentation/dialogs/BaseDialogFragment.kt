@@ -17,12 +17,17 @@ import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultpresentation.extensions.*
 import com.rasalexman.sresultpresentation.fragments.IBaseFragment
 import com.rasalexman.sresultpresentation.viewModels.IBaseViewModel
+import java.lang.ref.WeakReference
 
 abstract class BaseDialogFragment<VM : IBaseViewModel> : AppCompatDialogFragment(),
     IBaseFragment<VM> {
 
     override val contentView: View?
         get() = this.view
+
+    override var weakContentRef: WeakReference<View>? = null
+    override var weakLoadingRef: WeakReference<View>? = null
+    override var weakToolbarRef: WeakReference<Toolbar>? = null
 
     /**
      * Base view model

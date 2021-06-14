@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
         <variable
@@ -11,7 +12,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbarLayout"
@@ -23,8 +25,28 @@
             />
 
         <TextView
+            android:text="@{vm.toolbarTitle}"
+            android:layout_marginHorizontal="@dimen/size_36dp"
+            android:layout_marginTop="@dimen/size_24dp"
+            android:textSize="@dimen/text_size_20sp"
+            android:gravity="center_horizontal"
+            android:textColor="@color/black"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="@string/app_name"/>
+
+        <com.rasalexman.sresultexample.profile.ProfileLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/generateButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_generate"
+            android:layout_marginTop="@dimen/size_56dp"
+            app:onViewClick="@{() -> vm.onGenerateClicked()}"
+            />
 
     </LinearLayout>
 </layout>

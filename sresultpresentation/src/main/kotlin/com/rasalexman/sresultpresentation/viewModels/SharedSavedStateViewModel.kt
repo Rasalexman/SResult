@@ -2,13 +2,22 @@ package com.rasalexman.sresultpresentation.viewModels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
-import com.rasalexman.kodi.core.immutableInstance
+import com.rasalexman.kodi.core.*
+import com.rasalexman.sresult.common.extensions.unsafeLazy
 import com.rasalexman.sresultpresentation.extensions.launchUITryCatch
 
 abstract class SharedSavedStateViewModel(savedState: SavedStateHandle? = null) : BaseViewModel() {
 
-    protected open val sharedSavedStateHandler: SavedStateHandle by immutableInstance()
-    protected open val savedStateHandler: SavedStateHandle by lazy { savedState ?: sharedSavedStateHandler }
+    private val sharedTag: String by unsafeLazy {
+        "${this@SharedSavedStateViewModel.hashCode()}"
+    }
+
+    private val sharedSavedStateHandler: SavedStateHandle by immutableInstance()
+    protected open val savedStateHandler: SavedStateHandle = savedState?.let(::bindSharedState).or {
+        if(hasInstance<SavedStateHandle>()) sharedSavedStateHandler else {
+            bindSharedState(SavedStateHandle())
+        }
+    }
 
     /**
      * Need to clear all data saved in [SavedStateHandle]
@@ -47,7 +56,22 @@ abstract class SharedSavedStateViewModel(savedState: SavedStateHandle? = null) :
         if(isNeedToClear) {
             clearAllSavedStates()
         }
+        unbindSharedState()
         super.onCleared()
+    }
+
+    private fun bindSharedState(savedState: SavedStateHandle): SavedStateHandle {
+        unbindSharedState()
+        bind<SavedStateHandle>() with single { savedState }
+        bindTag(sharedTag) with single { sharedTag }
+        return savedState
+    }
+
+    private fun unbindSharedState() {
+        if(hasInstance<SavedStateHandle>(sharedTag)) {
+            unbindTag(sharedTag)
+            unbind<SavedStateHandle>()
+        }
     }
 
     protected open fun clearAllSavedStates() = launchUITryCatch {

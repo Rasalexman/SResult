@@ -30,6 +30,7 @@ import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultpresentation.R
 import com.rasalexman.sresultpresentation.extensions.*
 import com.rasalexman.sresultpresentation.viewModels.IBaseViewModel
+import java.lang.ref.WeakReference
 
 
 abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>,
@@ -74,6 +75,10 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
      * Need to center toolbar subtitle
      */
     override val centerToolbarSubTitle: Boolean = false
+
+    override var weakContentRef: WeakReference<View>? = null
+    override var weakLoadingRef: WeakReference<View>? = null
+    override var weakToolbarRef: WeakReference<Toolbar>? = null
 
     /**
      * Toolbar menu resId
@@ -375,6 +380,9 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
      * When view destroy
      */
     override fun onDestroyView() {
+        weakContentRef?.clear()
+        weakLoadingRef?.clear()
+        weakToolbarRef?.clear()
         onBackPressedCallback.isEnabled = false
         context.closeAlert()
         view.clearView()

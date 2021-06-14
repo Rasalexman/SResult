@@ -12,15 +12,17 @@ import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.databinding.ViewDataBinding
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.findFragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
 import com.rasalexman.easyrecyclerbinding.createBinding
 import com.rasalexman.sresult.common.extensions.applyIf
 import com.rasalexman.sresult.common.extensions.loggE
+import com.rasalexman.sresult.common.extensions.or
 import com.rasalexman.sresult.common.typealiases.AnyResult
 import com.rasalexman.sresult.common.typealiases.AnyResultLiveData
 import com.rasalexman.sresult.data.dto.SResult
@@ -29,13 +31,38 @@ import com.rasalexman.sresultpresentation.R
 import com.rasalexman.sresultpresentation.extensions.*
 import com.rasalexman.sresultpresentation.fragments.IBaseFragment
 import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
+import com.rasalexman.sresultpresentation.viewModels.CustomViewModelLazy
+import java.lang.ref.WeakReference
 import kotlin.properties.Delegates
 
-abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel> : FrameLayout,
+abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel, F : Fragment> :
+    FrameLayout,
     LifecycleOwner, IBaseFragment<VM>, IBaseBindingFragment<VB, VM> {
 
-    open val contentLayoutResId: Int = R.id.contentLayout
-    open val loadingLayoutResId: Int = R.id.loadingLayout
+    inline fun <reified VM : BaseViewModel> viewModels(
+        noinline fragmentProducer: () -> F = { this.findFragment() }
+    ): Lazy<VM> {
+        return CustomViewModelLazy(VM::class, fragmentProducer)
+    }
+
+    protected open var parentFragmentLifecycle: WeakReference<Lifecycle>? = null
+
+    private val parentLifecycle: Lifecycle
+        get() {
+            return parentFragmentLifecycle?.get().or {
+                try {
+                    this.findFragment<F>().viewLifecycleOwner.lifecycle.also {
+                        parentFragmentLifecycle = WeakReference(it)
+                    }
+                } catch (e: Exception) {
+                    context.getOwner<LifecycleOwner>().lifecycle
+                }
+            }
+        }
+
+    override var weakContentRef: WeakReference<View>? = null
+    override var weakLoadingRef: WeakReference<View>? = null
+    override var weakToolbarRef: WeakReference<Toolbar>? = null
 
     /**
      * Need to attach to parent when inflate data binding view
@@ -47,20 +74,6 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel> : Fra
      */
     override val contentView: View?
         get() = this
-
-    /**
-     * Content Layout
-     */
-    override val contentViewLayout: View? get() {
-        return this.findViewById(contentLayoutResId)
-    }
-
-    /**
-     * Loading Layout
-     */
-    override val loadingViewLayout: View? get() {
-        return this.findViewById(loadingLayoutResId)
-    }
 
     override var binding: VB by Delegates.notNull<VB>()
 
@@ -77,12 +90,21 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel> : Fra
         createLayout(context, attrs)
     }
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    ) {
         createLayout(context, attrs, defStyleAttr)
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(
+    constructor(
+        context: Context,
+        attrs: AttributeSet?,
+        defStyleAttr: Int,
+        defStyleRes: Int
+    ) : super(
         context,
         attrs,
         defStyleAttr,
@@ -91,7 +113,12 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel> : Fra
         createLayout(context, attrs, defStyleAttr)
     }
 
-    private fun createLayout(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0, defStyleRes: Int = 0) {
+    private fun createLayout(
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = 0,
+        defStyleRes: Int = 0
+    ) {
         val inflater = LayoutInflater.from(context)
         val view = inflater.createBinding<VB>(layoutId, this, attachToParent).run {
             binding = this
@@ -112,6 +139,7 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel> : Fra
     }
 
     override fun onDetachedFromWindow() {
+        parentFragmentLifecycle?.clear()
         binding.unbind()
         val lifecycleOwner = this
         viewModel?.apply {
@@ -215,7 +243,10 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel> : Fra
      * When navigation is broke
      */
     override fun showNavigationError(e: Exception?, navResId: Int?) {
-        loggE(e, "There is no navigation direction from ${this::class.java.simpleName} with contentViewLayout id = $navResId")
+        loggE(
+            e,
+            "There is no navigation direction from ${this::class.java.simpleName} with contentViewLayout id = $navResId"
+        )
         showToast(R.string.error_internal, Toast.LENGTH_LONG)
     }
 
@@ -243,14 +274,7 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel> : Fra
      * get view [Lifecycle] from its [Context]
      */
     override fun getLifecycle(): Lifecycle {
-        return context.getOwner<LifecycleOwner>().lifecycle
-    }
-
-    /**
-     *  get [ViewModelStoreOwner]
-     */
-    protected fun getViewModelStoreOwner(): ViewModelStoreOwner {
-        return context.getOwner()
+        return parentLifecycle
     }
 
     ///------- UNUSED SECTION ----///

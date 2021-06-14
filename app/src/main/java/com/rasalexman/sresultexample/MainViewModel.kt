@@ -80,6 +80,8 @@ class MainViewModel : BaseViewModel() {
     }
 
     fun onProfileClicked() {
-        navigationLiveData.value = MainFragmentDirections.showProfileFragment().toNavigateResult()
+        navigationLiveData.value = MainFragmentDirections.showProfileFragment(
+            itemId = "HELLO WORLD"
+        ).toNavigateResult()
     }
 }
