@@ -33,9 +33,8 @@ fun setItemsAdapter(
     selectedPosition.clear()
 
     val lastItems = view.tag as? List<String>
-    val lastSize = lastItems.listSize()
     val itemsSize = items.listSize()
-    if(lastSize != itemsSize) {
+    if(items != null && lastItems != items) {
         println("-------> itemsSize = $itemsSize")
         val itemResId = itemLayoutId ?: android.R.layout.simple_dropdown_item_1line
         val scope = CoroutineScope(Dispatchers.Main)
