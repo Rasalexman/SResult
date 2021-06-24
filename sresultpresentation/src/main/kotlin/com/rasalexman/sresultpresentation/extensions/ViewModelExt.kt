@@ -16,7 +16,7 @@ fun BaseViewModel.launchUITryCatch(
     catchBlock: ((Throwable) -> Unit)? = null, tryBlock: suspend CoroutineScope.() -> Unit
 ) {
     try {
-        viewModelScope.launch(viewModelScope.coroutineContext + dispatcher, start, tryBlock)
+        viewModelScope.launch(viewModelScope.coroutineContext + dispatcher + superVisorJob, start, tryBlock)
     } catch (e: Throwable) {
         catchBlock?.invoke(e) ?: handleErrorState(e.toErrorResult())
     }
@@ -35,13 +35,13 @@ fun BaseViewModel.launchAsync(
     start: CoroutineStart = CoroutineStart.DEFAULT,
     block: suspend CoroutineScope.() -> Unit
 ) {
-    viewModelScope.launch(viewModelScope.coroutineContext + dispatcher, start, block)
+    viewModelScope.launch(viewModelScope.coroutineContext + dispatcher + superVisorJob, start, block)
 }
 
 inline fun <reified T> BaseViewModel.asyncLiveData(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
     noinline block: suspend LiveDataScope<T>.() -> Unit
-) = liveData(context = viewModelScope.coroutineContext + dispatcher, block = block)
+) = liveData(context = viewModelScope.coroutineContext + dispatcher + superVisorJob, block = block)
 
 /**
  *
@@ -74,7 +74,7 @@ inline fun <reified E : ISEvent> BaseViewModel.onEventResult(
  *
  */
 @Suppress("UNCHECKED_CAST")
-inline fun <reified E : ISEvent, reified T : Any> BaseViewModel.onEvent(
+inline fun <reified E : ISEvent, reified T : Any?> BaseViewModel.onEvent(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
     isDistincted: Boolean = false,
     autoObserved: Boolean = false,
@@ -103,7 +103,7 @@ inline fun <reified E : ISEvent, reified T : Any> BaseViewModel.onEvent(
 }
 
 @Suppress("UNCHECKED_CAST")
-inline fun <reified E : ISEvent, reified T : Any> BaseViewModel.onEventMutable(
+inline fun <reified E : ISEvent, reified T : Any?> BaseViewModel.onEventMutable(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
     isDistincted: Boolean = false,
     crossinline block: suspend LiveDataScope<T>.(E) -> Unit
