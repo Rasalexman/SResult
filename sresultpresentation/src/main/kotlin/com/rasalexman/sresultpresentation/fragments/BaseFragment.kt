@@ -47,12 +47,12 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
     /**
      * Toolbar title
      */
-    override val toolbarTitle: String = ""
+    override val toolbarTitle: String? = null
 
     /**
      * Toolbar subtitle
      */
-    override val toolbarSubTitle: String = ""
+    override val toolbarSubTitle: String? = null
 
 
     /**

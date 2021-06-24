@@ -8,6 +8,7 @@
         android:id="@+id/mainFragment"
         android:name="com.rasalexman.sresultexample.MainFragment"
         android:label="MainFragment" />
+
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.rasalexman.sresultexample.profile.ProfileFragment"
@@ -20,8 +21,28 @@
             android:defaultValue="HelloWorld"/>
     </fragment>
 
+    <fragment
+        android:id="@+id/usersFragment"
+        android:name="com.rasalexman.sresultexample.users.UsersFragment"
+        android:label="UsersFragment" />
+
     <action android:id="@+id/showProfileFragment"
         app:destination="@+id/profileFragment">
+
+        <argument
+            android:name="itemId"
+            app:argType="string"
+            app:nullable="false"
+            android:defaultValue="HelloWorld"/>
+
+        <argument
+            android:name="userItem"
+            app:argType="com.rasalexman.sresultexample.users.UserItem"
+            app:nullable="false"/>
+    </action>
+
+    <action android:id="@+id/showUsersFragment"
+        app:destination="@+id/usersFragment">
         <argument
             android:name="itemId"
             app:argType="string"

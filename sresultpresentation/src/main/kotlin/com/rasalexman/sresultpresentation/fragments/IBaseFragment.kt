@@ -11,8 +11,8 @@ interface IBaseFragment<out VM : IBaseViewModel> : IComplexHandler, Toolbar.OnMe
 
     val viewModel: VM?
     val layoutId: Int
-    val toolbarTitle: String
-    val toolbarSubTitle: String
+    val toolbarTitle: String?
+    val toolbarSubTitle: String?
     val toolbarTitleResId: Int?
     val centerToolbarTitle: Boolean
     val centerToolbarSubTitle: Boolean

@@ -79,8 +79,8 @@ class MainViewModel : BaseViewModel() {
         processViewEvent(event)
     }
 
-    fun onProfileClicked() {
-        navigationLiveData.value = MainFragmentDirections.showProfileFragment(
+    fun onUsersClicked() {
+        navigationLiveData.value = MainFragmentDirections.showUsersFragment(
             itemId = "HELLO WORLD"
         ).toNavigateResult()
     }
