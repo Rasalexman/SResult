@@ -19,7 +19,6 @@ import kotlinx.coroutines.SupervisorJob
 open class BaseViewModel : ViewModel(), IKodi, IBaseViewModel {
 
     protected val context: Context by immutableInstance()
-    val superVisorJob: Job by lazy { SupervisorJob() }
 
     override val eventLiveData by unsafeLazy { MutableLiveData<ISEvent>() }
     override val navigationLiveData by unsafeLazy { MutableLiveData<SResult.NavigateResult>() }

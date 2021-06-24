@@ -16,7 +16,7 @@ fun BaseViewModel.launchUITryCatch(
     catchBlock: ((Throwable) -> Unit)? = null, tryBlock: suspend CoroutineScope.() -> Unit
 ) {
     try {
-        viewModelScope.launch(viewModelScope.coroutineContext + dispatcher + superVisorJob, start, tryBlock)
+        viewModelScope.launch(viewModelScope.coroutineContext + dispatcher, start, tryBlock)
     } catch (e: Throwable) {
         catchBlock?.invoke(e) ?: handleErrorState(e.toErrorResult())
     }
@@ -35,13 +35,13 @@ fun BaseViewModel.launchAsync(
     start: CoroutineStart = CoroutineStart.DEFAULT,
     block: suspend CoroutineScope.() -> Unit
 ) {
-    viewModelScope.launch(viewModelScope.coroutineContext + dispatcher + superVisorJob, start, block)
+    viewModelScope.launch(viewModelScope.coroutineContext + dispatcher, start, block)
 }
 
 inline fun <reified T> BaseViewModel.asyncLiveData(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
     noinline block: suspend LiveDataScope<T>.() -> Unit
-) = liveData(context = viewModelScope.coroutineContext + dispatcher + superVisorJob, block = block)
+) = liveData(context = viewModelScope.coroutineContext + dispatcher, block = block)
 
 /**
  *
