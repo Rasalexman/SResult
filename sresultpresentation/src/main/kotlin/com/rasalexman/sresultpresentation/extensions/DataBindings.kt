@@ -33,9 +33,7 @@ fun setItemsAdapter(
     selectedPosition.clear()
 
     val lastItems = view.tag as? List<String>
-    val itemsSize = items.listSize()
     if(items != null && lastItems != items) {
-        println("-------> itemsSize = $itemsSize")
         val itemResId = itemLayoutId ?: android.R.layout.simple_dropdown_item_1line
         val scope = CoroutineScope(Dispatchers.Main)
         scope.launch {
@@ -50,11 +48,10 @@ fun setItemsAdapter(
         }
     }
 
-    selectedItem?.let {
-        val lastText = view.text.toString()
-        if(lastText != it.title) {
-            view.setText(it.title, false)
-        }
+    val itemText = selectedItem?.title.orEmpty()
+    val lastText = view.text.toString()
+    if(lastText != itemText) {
+        view.setText(itemText, false)
     }
 
     view.setOnItemClickListener { _, _, p1, _ ->

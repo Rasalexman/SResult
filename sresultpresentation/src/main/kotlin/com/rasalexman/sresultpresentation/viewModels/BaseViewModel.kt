@@ -13,10 +13,13 @@ import com.rasalexman.sresult.common.extensions.unsafeLazy
 import com.rasalexman.sresult.common.typealiases.AnyResultMutableLiveData
 import com.rasalexman.sresult.data.dto.ISEvent
 import com.rasalexman.sresult.data.dto.SResult
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 
 open class BaseViewModel : ViewModel(), IKodi, IBaseViewModel {
 
     protected val context: Context by immutableInstance()
+    val superVisorJob: Job by lazy { SupervisorJob() }
 
     override val eventLiveData by unsafeLazy { MutableLiveData<ISEvent>() }
     override val navigationLiveData by unsafeLazy { MutableLiveData<SResult.NavigateResult>() }

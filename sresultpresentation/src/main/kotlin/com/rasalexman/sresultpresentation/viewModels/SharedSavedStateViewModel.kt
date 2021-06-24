@@ -4,7 +4,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import com.rasalexman.kodi.core.*
 import com.rasalexman.sresult.common.extensions.unsafeLazy
-import com.rasalexman.sresultpresentation.extensions.launchUITryCatch
 
 abstract class SharedSavedStateViewModel(savedState: SavedStateHandle? = null) : BaseViewModel() {
 
@@ -74,9 +73,10 @@ abstract class SharedSavedStateViewModel(savedState: SavedStateHandle? = null) :
         }
     }
 
-    protected open fun clearAllSavedStates() = launchUITryCatch {
-        savedStateHandler.keys().forEach {
-            removeFromSavedState(it)
+    protected open fun clearAllSavedStates() {
+        val savedStateKeys = savedStateHandler.keys().toList()
+        savedStateKeys.forEach {
+            savedStateHandler.remove<Any>(it)
         }
     }
 }
