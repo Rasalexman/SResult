@@ -211,7 +211,7 @@ abstract class BaseDialogFragment<VM : IBaseViewModel> : AppCompatDialogFragment
 
     override fun showAlert(alert: SResult.AbstractFailure.Alert) {
         this.alert(
-            message = alert.message,
+            message = alert.getMessage(),
             dialogTitle = alert.dialogTitle,
             okTitle = alert.okTitle,
             cancelTitle = alert.cancelTitle,
