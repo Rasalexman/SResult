@@ -19,9 +19,7 @@ import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
-import com.rasalexman.sresult.common.extensions.applyIf
-import com.rasalexman.sresult.common.extensions.loggE
-import com.rasalexman.sresult.common.extensions.unsafeLazy
+import com.rasalexman.sresult.common.extensions.*
 import com.rasalexman.sresult.common.typealiases.AnyResultLiveData
 import com.rasalexman.sresult.common.typealiases.InHandler
 import com.rasalexman.sresult.data.dto.ISEvent
@@ -324,7 +322,7 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
      * Show toast error from error result data
      */
     override fun showFailure(error: SResult.AbstractFailure.Failure) {
-        this.toast(error.message, error.interval)
+        this.toast(error.getMessage(), error.interval)
     }
 
     /**

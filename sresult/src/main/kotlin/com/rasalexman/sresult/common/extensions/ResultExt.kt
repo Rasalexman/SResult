@@ -186,6 +186,12 @@ val <T : Any> SResult<T>.isSuccess: Boolean
 val <T : Any> SResult<T>.isError: Boolean
     get() = this is SResult.AbstractFailure
 
+fun SResult.AbstractFailure.getErrorMessage(): Any {
+    return (this.message as? String)?.takeIf { it.isNotEmpty() }.or {
+        (this.message as? Int).or { this.exception?.message.or { this.exception?.localizedMessage }.orEmpty() }
+    }
+}
+
 fun <T : Any> SResult<T>?.orError(
     message: Any? = null,
     code: Int = 0,
