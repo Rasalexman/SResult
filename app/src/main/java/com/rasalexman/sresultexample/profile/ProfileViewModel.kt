@@ -3,6 +3,7 @@ package com.rasalexman.sresultexample.profile
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
+import com.rasalexman.sresult.common.extensions.errorResult
 import com.rasalexman.sresult.common.extensions.logg
 import com.rasalexman.sresult.common.extensions.unsafeLazy
 import com.rasalexman.sresultexample.R
@@ -29,5 +30,6 @@ class ProfileViewModel(
 
     fun onGenerateClicked() {
         savedStateHandle.set("itemId", UUID.randomUUID().toString().take(5))
+        supportLiveData.value = errorResult("message")
     }
 }
