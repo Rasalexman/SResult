@@ -15,9 +15,12 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.tabs.TabLayout
+import com.rasalexman.easyrecyclerbinding.changeCallbackMap
 import com.rasalexman.sresult.common.extensions.handle
 import com.rasalexman.sresult.common.extensions.loggE
 import com.rasalexman.sresult.common.extensions.or
@@ -26,13 +29,6 @@ import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultpresentation.base.*
 import com.rasalexman.sresultpresentation.tools.DebouncedOnClickListener
 import com.rasalexman.sresultpresentation.tools.ReflectionTextWatcher
-
-data class ScrollPosition(var index: Int = 0, var top: Int = 0) {
-    fun drop() {
-        index = 0
-        top = 0
-    }
-}
 
 fun View.setOnDebounceClickListener(debounceMillis: Long = 400L, listener: UnitHandler?) {
     setOnClickListener(object : DebouncedOnClickListener(debounceMillis) {
@@ -137,24 +133,51 @@ fun Toolbar.clear() {
 }
 
 fun AutoCompleteTextView.clear() {
-    onFocusChangeListener = null
-    setOnEditorActionListener(null)
-    setAdapter(null)
+    this.tag = null
+    this.onFocusChangeListener = null
+    this.onItemClickListener = null
+    this.setOnEditorActionListener(null)
+    this.setAdapter(null)
+}
+
+fun RecyclerView.clear() {
+    this.adapter = null
+    this.tag = null
+    this.layoutManager = null
+    this.itemAnimator = null
+    this.removeAllViews()
+    this.clearOnScrollListeners()
+    this.clearOnChildAttachStateChangeListeners()
+    val decorations = this.itemDecorationCount
+    if(decorations > 0) {
+        repeat(decorations) {
+            this.removeItemDecorationAt(it)
+        }
+    }
 }
 
 fun ViewGroup.clear() {
-    this.children
-        .asSequence()
-        .forEach { it.clearView() }
+    this.children.asSequence().forEach {
+        it.clearView()
+    }
 }
 
 fun ViewPager.clear() {
     this.adapter = null
+    this.tag = null
     this.clearOnPageChangeListeners()
 }
 
 fun ViewPager2.clear() {
     this.adapter = null
+    this.tag = null
+
+    val callbackKey = this.hashCode().toString()
+    changeCallbackMap[callbackKey]?.let {
+        it.onPageChangedCallback = null
+        this.unregisterOnPageChangeCallback(it)
+        changeCallbackMap.remove(callbackKey)
+    }
 }
 
 fun TabLayout.clear() {
@@ -172,6 +195,11 @@ fun SeekBar.clear() {
     this.setOnSeekBarChangeListener(null)
 }
 
+fun LinearProgressIndicator.clear() {
+    this.clearAnimation()
+    this.isIndeterminate = false
+}
+
 fun Spinner.clear() {
     this.adapter = null
     this.onItemSelectedListener = null
@@ -187,6 +215,7 @@ fun View?.clearView() {
         is ImageView -> this.clear()
         is Button -> this.clear()
         is RatingBar -> this.clear()
+        is LinearProgressIndicator -> this.clear()
         is AutoCompleteTextView -> this.clear()
         is EditText -> this.clear()
         is TextView -> this.clear()
@@ -195,10 +224,11 @@ fun View?.clearView() {
         is SeekBar -> this.clear()
         is Spinner -> this.clear()
         is TabLayout -> this.clear()
-        is AdapterView<*> -> Unit
-        is ViewGroup -> this.clear()
         is ViewPager -> this.clear()
         is ViewPager2 -> this.clear()
+        is RecyclerView -> this.clear()
+        is AdapterView<*> -> Unit
+        is ViewGroup -> this.clear()
     }
 }
 

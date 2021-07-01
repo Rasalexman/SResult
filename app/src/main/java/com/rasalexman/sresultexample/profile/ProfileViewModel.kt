@@ -5,7 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import com.rasalexman.sresult.common.extensions.errorResult
 import com.rasalexman.sresult.common.extensions.logg
+import com.rasalexman.sresult.common.extensions.toNavigateResult
 import com.rasalexman.sresult.common.extensions.unsafeLazy
+import com.rasalexman.sresultexample.MainFragmentDirections
 import com.rasalexman.sresultexample.R
 import com.rasalexman.sresultpresentation.extensions.mutableMap
 import com.rasalexman.sresultpresentation.extensions.mutableSwitchMap
@@ -20,7 +22,7 @@ class ProfileViewModel(
     private val item: LiveData<String> = savedStateHandle.getLiveData("itemId")
 
     override val toolbarTitle: MutableLiveData<String> = item.mutableSwitchMap {
-        logg { "------> ProfileViewModel item = ${item.hashCode()} | $it" }
+        logg { "------> item = ${item.hashCode()} | $it" }
         MutableLiveData(string(R.string.title_profile) + "_"+ it)
     }
 
@@ -30,6 +32,10 @@ class ProfileViewModel(
 
     fun onGenerateClicked() {
         savedStateHandle.set("itemId", UUID.randomUUID().toString().take(5))
-        supportLiveData.value = errorResult("message")
+        supportLiveData.value = errorResult("error test message")
+    }
+
+    fun onVPScreenClicked() {
+        navigationLiveData.value = MainFragmentDirections.showUsersPagerFragment().toNavigateResult()
     }
 }

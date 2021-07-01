@@ -1,8 +1,8 @@
 package config
 
 object Versions {
-    const val gradle = "4.2.1"
-    const val kotlin = "1.5.10"
+    const val gradle = "4.2.2"
+    const val kotlin = "1.5.20"
 
     const val appCoreX = "1.3.2"
     const val constraintLayout = "2.0.4"
@@ -13,7 +13,7 @@ object Versions {
 
     const val timber = "4.7.1"
     const val coroutinesManager: String = "1.3.2"
-    const val easyBinding: String = "0.0.8"
+    const val easyBinding: String = "0.0.9"
     const val kodi = "1.5.14"
 
     /* test */

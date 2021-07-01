@@ -26,6 +26,11 @@
         android:name="com.rasalexman.sresultexample.users.UsersFragment"
         android:label="UsersFragment" />
 
+    <fragment
+        android:id="@+id/usersPagerFragment"
+        android:name="com.rasalexman.sresultexample.viewpager.UsersPagerFragment"
+        android:label="UsersPagerFragment" />
+
     <action android:id="@+id/showProfileFragment"
         app:destination="@+id/profileFragment">
 
@@ -40,6 +45,9 @@
             app:argType="com.rasalexman.sresultexample.users.UserItem"
             app:nullable="false"/>
     </action>
+
+    <action android:id="@+id/showUsersPagerFragment"
+        app:destination="@+id/usersPagerFragment"/>
 
     <action android:id="@+id/showUsersFragment"
         app:destination="@+id/usersFragment">
