@@ -1,7 +1,6 @@
 package com.rasalexman.sresultexample.viewpager.pages
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.rasalexman.easyrecyclerbinding.recyclerConfig
 import com.rasalexman.sresult.common.extensions.unsafeLazy
 import com.rasalexman.sresultexample.BR

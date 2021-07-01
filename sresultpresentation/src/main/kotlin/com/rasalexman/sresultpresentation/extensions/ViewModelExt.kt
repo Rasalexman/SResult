@@ -1,6 +1,7 @@
 package com.rasalexman.sresultpresentation.extensions
 
 import androidx.lifecycle.*
+import com.rasalexman.sresult.common.extensions.errorResult
 import com.rasalexman.sresult.common.extensions.loggE
 import com.rasalexman.sresult.common.extensions.toErrorResult
 import com.rasalexman.sresult.common.typealiases.AnyResult
@@ -150,11 +151,13 @@ inline fun <reified E : ISEvent, reified T : Any> BaseViewModel.onEventFlow(
                 emit(startAction())
             }
         }
+    }.catch {
+        supportLiveData.postValue(errorResult(exception = it))
     }.run {
         if(asMutable) {
-            asLiveData() as MutableLiveData<T>
+            asLiveData(dispatcher) as MutableLiveData<T>
         } else {
-            asLiveData()
+            asLiveData(dispatcher)
         }
     }
 }

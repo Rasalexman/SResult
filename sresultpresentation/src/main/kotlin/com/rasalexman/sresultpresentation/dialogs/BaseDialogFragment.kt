@@ -222,8 +222,13 @@ abstract class BaseDialogFragment<VM : IBaseViewModel> : AppCompatDialogFragment
     }
 
     override fun onDestroyView() {
+        weakContentRef?.clear()
+        weakLoadingRef?.clear()
+        weakToolbarRef?.clear()
         toolbarView?.setOnMenuItemClickListener(null)
         this.view.clearView()
+        (view as? ViewGroup)?.removeAllViews()
+        viewModel?.liveDataToObserve?.forEach { it.removeObservers(this.viewLifecycleOwner) }
         super.onDestroyView()
     }
 }
