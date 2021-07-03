@@ -8,9 +8,13 @@ import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresult.data.exception.ISException
 import com.rasalexman.sresult.models.IConvertable
 import com.rasalexman.sresult.models.IConvertableSuspend
+import com.rasalexman.sresult.models.IConvertableWithParams
 import com.rasalexman.sresult.models.convert
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import timber.log.Timber
 
 // /------ ViewResult extensions
 inline fun <reified T : Any> Any.successResult(data: T): SResult<T> = SResult.Success<T>(data)
@@ -123,6 +127,13 @@ inline fun <reified O : Any> ResultList<O>?.getList(): List<O> {
     }
 }
 
+inline fun <reified O : Any> ResultList<O>.getMutableList(): MutableList<O> {
+    return when (this) {
+        is SResult.Success -> data.toMutableList()
+        else -> mutableListOf()
+    }
+}
+
 @Suppress("UNCHECKED_CAST")
 inline fun <reified O : Any, reified I : IConvertable> SResult<I>.convertTo(): SResult<O> {
     return when (this) {
@@ -186,6 +197,9 @@ val <T : Any> SResult<T>.isSuccess: Boolean
 val <T : Any> SResult<T>.isError: Boolean
     get() = this is SResult.AbstractFailure
 
+val <T : Any> SResult<T>.isEmpty: Boolean
+    get() = this is SResult.Empty
+
 fun <T : Any> SResult<T>?.orError(
     message: Any? = null,
     code: Int = 0,
@@ -198,3 +212,13 @@ fun <T : Any> T?.orErrorResult(
     exception: Throwable? = null
 ): SResult<T> =
     this?.run { SResult.Success(this) } ?: SResult.AbstractFailure.Error(message, code, exception)
+
+@Suppress("UNCHECKED_CAST")
+inline fun <reified O : Any> Flow<List<O>>.toFlowSuccess(): FlowResultList<O> {
+    return this.map { it.toSuccessResult() }.buffer(1)
+}
+
+inline fun <reified T : Any> ResultList<T>.size() = this.data?.size.orZero()
+
+inline fun <reified T : Any> Flow<T>.mapToFlowResult(): FlowResult<T> =
+    this.map { it.toSuccessResult() }

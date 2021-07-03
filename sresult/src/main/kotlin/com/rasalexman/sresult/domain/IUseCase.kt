@@ -1,5 +1,7 @@
 package com.rasalexman.sresult.domain
 
+import kotlinx.coroutines.flow.Flow
+
 interface IUseCase {
     interface SingleIn<in Input> : IUseCase {
         suspend operator fun invoke(data: Input)
@@ -19,5 +21,13 @@ interface IUseCase {
 
     interface Out<out Output> : IUseCase {
         suspend operator fun invoke(): Output
+    }
+
+    interface FlowOut<T> {
+        operator fun invoke(): Flow<T>
+    }
+
+    interface FlowInOut<T, V> {
+        operator fun invoke(param: T): Flow<V>
     }
 }
