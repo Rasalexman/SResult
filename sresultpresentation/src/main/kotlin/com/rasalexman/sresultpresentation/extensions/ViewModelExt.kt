@@ -1,6 +1,7 @@
 package com.rasalexman.sresultpresentation.extensions
 
 import androidx.lifecycle.*
+import com.rasalexman.sresult.common.extensions.errorResult
 import com.rasalexman.sresult.common.extensions.loggE
 import com.rasalexman.sresult.common.extensions.toErrorResult
 import com.rasalexman.sresult.common.typealiases.AnyResult
@@ -16,7 +17,7 @@ fun BaseViewModel.launchUITryCatch(
     catchBlock: ((Throwable) -> Unit)? = null, tryBlock: suspend CoroutineScope.() -> Unit
 ) {
     try {
-        viewModelScope.launch(viewModelScope.coroutineContext + dispatcher, start, tryBlock)
+        viewModelScope.launch(viewModelScope.coroutineContext + dispatcher + superVisorJob, start, tryBlock)
     } catch (e: Throwable) {
         catchBlock?.invoke(e) ?: handleErrorState(e.toErrorResult())
     }
@@ -35,22 +36,25 @@ fun BaseViewModel.launchAsync(
     start: CoroutineStart = CoroutineStart.DEFAULT,
     block: suspend CoroutineScope.() -> Unit
 ) {
-    viewModelScope.launch(viewModelScope.coroutineContext + dispatcher, start, block)
+    viewModelScope.launch(viewModelScope.coroutineContext + dispatcher + superVisorJob, start, block)
 }
 
 inline fun <reified T> BaseViewModel.asyncLiveData(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
     noinline block: suspend LiveDataScope<T>.() -> Unit
-) = liveData(context = viewModelScope.coroutineContext + dispatcher, block = block)
+) = liveData(context = viewModelScope.coroutineContext + dispatcher + superVisorJob, block = block)
 
 /**
  *
  */
 inline fun <reified E : ISEvent> BaseViewModel.onEventResult(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    isDistincted: Boolean = false,
+    autoObserved: Boolean = false,
     crossinline block: suspend LiveDataScope<SResult<*>>.(E) -> Unit
 ): LiveData<SResult<*>> {
-    return eventLiveData.switchMap { event ->
+    val eld = if(isDistincted) eventLiveData.distinctUntilChanged() else eventLiveData
+    val eventLV: LiveData<SResult<*>> = eld.switchMap { event ->
         asyncLiveData(dispatcher = dispatcher) {
             (event as? E)?.let {
                 try {
@@ -61,13 +65,17 @@ inline fun <reified E : ISEvent> BaseViewModel.onEventResult(
             }
         }
     }
+    if (autoObserved) {
+        liveDataToObserve.add(eventLV)
+    }
+    return eventLV
 }
 
 /**
  *
  */
 @Suppress("UNCHECKED_CAST")
-inline fun <reified E : ISEvent, reified T : Any> BaseViewModel.onEvent(
+inline fun <reified E : ISEvent, reified T : Any?> BaseViewModel.onEvent(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
     isDistincted: Boolean = false,
     autoObserved: Boolean = false,
@@ -96,7 +104,7 @@ inline fun <reified E : ISEvent, reified T : Any> BaseViewModel.onEvent(
 }
 
 @Suppress("UNCHECKED_CAST")
-inline fun <reified E : ISEvent, reified T : Any> BaseViewModel.onEventMutable(
+inline fun <reified E : ISEvent, reified T : Any?> BaseViewModel.onEventMutable(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
     isDistincted: Boolean = false,
     crossinline block: suspend LiveDataScope<T>.(E) -> Unit
@@ -143,11 +151,13 @@ inline fun <reified E : ISEvent, reified T : Any> BaseViewModel.onEventFlow(
                 emit(startAction())
             }
         }
+    }.catch {
+        supportLiveData.postValue(errorResult(exception = it))
     }.run {
         if(asMutable) {
-            asLiveData() as MutableLiveData<T>
+            asLiveData(dispatcher) as MutableLiveData<T>
         } else {
-            asLiveData()
+            asLiveData(dispatcher)
         }
     }
 }

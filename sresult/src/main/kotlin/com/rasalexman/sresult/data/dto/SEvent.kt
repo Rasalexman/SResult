@@ -25,5 +25,5 @@ sealed class SEvent : ISEvent {
     /**
      * Fetch data with input params
      */
-    data class FetchWith<T : Any>(val params: T) : SEvent()
+    data class FetchWith<T : Any?>(val params: T) : SEvent()
 }

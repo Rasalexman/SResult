@@ -48,5 +48,14 @@
             app:onViewClick="@{() -> vm.onGenerateClicked()}"
             />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/vpButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_view_pager"
+            android:layout_marginTop="@dimen/size_56dp"
+            app:onViewClick="@{() -> vm.onVPScreenClicked()}"
+            />
+
     </LinearLayout>
 </layout>

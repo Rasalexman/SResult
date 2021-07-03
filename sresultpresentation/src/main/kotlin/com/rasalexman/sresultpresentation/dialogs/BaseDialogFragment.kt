@@ -12,6 +12,8 @@ import androidx.lifecycle.LiveData
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import com.rasalexman.sresult.common.extensions.applyIf
+import com.rasalexman.sresult.common.extensions.getErrorMessage
+import com.rasalexman.sresult.common.extensions.getMessage
 import com.rasalexman.sresult.common.typealiases.AnyResultLiveData
 import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultpresentation.extensions.*
@@ -204,12 +206,12 @@ abstract class BaseDialogFragment<VM : IBaseViewModel> : AppCompatDialogFragment
     protected open fun initLayout() = Unit
 
     override fun showFailure(error: SResult.AbstractFailure.Failure) {
-        this.toast(error.message, error.interval)
+        this.toast(error.getMessage(), error.interval)
     }
 
     override fun showAlert(alert: SResult.AbstractFailure.Alert) {
         this.alert(
-            message = alert.message,
+            message = alert.getMessage(),
             dialogTitle = alert.dialogTitle,
             okTitle = alert.okTitle,
             cancelTitle = alert.cancelTitle,
@@ -220,8 +222,13 @@ abstract class BaseDialogFragment<VM : IBaseViewModel> : AppCompatDialogFragment
     }
 
     override fun onDestroyView() {
+        weakContentRef?.clear()
+        weakLoadingRef?.clear()
+        weakToolbarRef?.clear()
         toolbarView?.setOnMenuItemClickListener(null)
         this.view.clearView()
+        (view as? ViewGroup)?.removeAllViews()
+        viewModel?.liveDataToObserve?.forEach { it.removeObservers(this.viewLifecycleOwner) }
         super.onDestroyView()
     }
 }

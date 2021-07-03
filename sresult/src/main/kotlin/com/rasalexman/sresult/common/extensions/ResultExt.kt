@@ -161,10 +161,16 @@ suspend inline fun <reified O : Any, reified I : IConvertableSuspend> SResult<I>
 }
 
 fun SResult.AbstractFailure.getMessage(): Any? {
-    return (this.message?.takeIf { (it as? String)?.isNotEmpty() == true || ((it as? Int) != null && it > 0) }
-        ?: (this.exception as? ISException)?.getErrorMessageResId()?.takeIf { it > 0 })
-        ?: this.exception?.message
-        ?: this.exception?.cause?.message
+    return this.message?.takeIf { (it as? String)?.isNotEmpty() == true || ((it as? Int) != null && it > 0) }
+        .or {
+            (this.exception as? ISException)?.getErrorMessageResId()?.takeIf { it > 0 }
+        }.or {
+            this.exception?.message
+        }.or {
+            this.exception?.cause?.message
+        }.or {
+            this.exception?.localizedMessage
+        }
 }
 
 ///--- Inline Applying functions
@@ -197,8 +203,15 @@ val <T : Any> SResult<T>.isSuccess: Boolean
 val <T : Any> SResult<T>.isError: Boolean
     get() = this is SResult.AbstractFailure
 
+
 val <T : Any> SResult<T>.isEmpty: Boolean
     get() = this is SResult.Empty
+
+fun SResult.AbstractFailure.getErrorMessage(): Any {
+    return (this.message as? String)?.takeIf { it.isNotEmpty() }.or {
+        (this.message as? Int).or { this.exception?.message.or { this.exception?.localizedMessage }.orEmpty() }
+    }
+}
 
 fun <T : Any> SResult<T>?.orError(
     message: Any? = null,

@@ -1,10 +1,7 @@
 package com.rasalexman.sresultexample
 
 import androidx.lifecycle.MutableLiveData
-import com.rasalexman.sresult.common.extensions.loadingResult
-import com.rasalexman.sresult.common.extensions.logg
-import com.rasalexman.sresult.common.extensions.progressResult
-import com.rasalexman.sresult.common.extensions.toNavigateResult
+import com.rasalexman.sresult.common.extensions.*
 import com.rasalexman.sresult.common.typealiases.AnyResultMutableLiveData
 import com.rasalexman.sresult.data.dto.ISEvent
 import com.rasalexman.sresult.data.dto.SEvent
@@ -12,6 +9,7 @@ import com.rasalexman.sresult.models.IDropDownItem
 import com.rasalexman.sresultpresentation.extensions.mutableMap
 import com.rasalexman.sresultpresentation.extensions.onEventFlowAnyResult
 import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import java.util.*
 import kotlin.random.Random
@@ -27,27 +25,35 @@ class MainViewModel : BaseViewModel() {
         private const val PROGRESS_DELAY = 1200L
     }
 
-    val items = MutableLiveData<List<IDropDownItem>>(
-        listOf(Item("11", "Hello"), Item("112", "World"))
-    )
-
-    val items2 = MutableLiveData<List<IDropDownItem>>(
-        listOf(
-            Item("121", "Full text"),
-            Item("1212", "Abracadabra"),
-            Item("122", "Simple Text")
+    val items by unsafeLazy {
+        MutableLiveData<List<IDropDownItem>>(
+            listOf(Item("11", "Hello"), Item("112", "World"))
         )
-    )
-
-    val selectedValue = items.mutableMap {
-        it.first()
     }
 
-    val selectedValue2 = items2.mutableMap {
-        it.first()
+    val items2 by unsafeLazy {
+        MutableLiveData<List<IDropDownItem>>(
+            listOf(
+                Item("121", "Full text"),
+                Item("1212", "Abracadabra"),
+                Item("122", "Simple Text")
+            )
+        )
     }
 
-    override val resultLiveData = onEventFlowAnyResult<SEvent.Fetch> {
+    val selectedValue by unsafeLazy {
+        items.mutableMap {
+            it.first()
+        }
+    }
+
+    val selectedValue2 by unsafeLazy {
+        items2.mutableMap {
+            it.first()
+        }
+    }
+
+    override val resultLiveData = onEventFlowAnyResult<SEvent.Fetch>(Dispatchers.Default) {
         logg { "-------> resultLiveData event is $it" }
 
         emit(loadingResult())
@@ -67,7 +73,10 @@ class MainViewModel : BaseViewModel() {
         emit(UserAuthState.Success(user))
     }
 
-    override val supportLiveData = onEventFlowAnyResult<SEvent.Refresh> {
+    override val supportLiveData = onEventFlowAnyResult<SEvent.Refresh>(
+        dispatcher = Dispatchers.Default,
+        asMutable = true
+    ) {
         logg { "-------> supportLiveData event is $it" }
         val rand = Random.nextInt(10, 54)
         emit(progressResult(rand))
@@ -79,8 +88,8 @@ class MainViewModel : BaseViewModel() {
         processViewEvent(event)
     }
 
-    fun onProfileClicked() {
-        navigationLiveData.value = MainFragmentDirections.showProfileFragment(
+    fun onUsersClicked() {
+        navigationLiveData.value = MainFragmentDirections.showUsersFragment(
             itemId = "HELLO WORLD"
         ).toNavigateResult()
     }

@@ -1,5 +1,3 @@
-
-
 package com.rasalexman.sresultpresentation.extensions
 
 import android.widget.ArrayAdapter
@@ -7,16 +5,11 @@ import android.widget.AutoCompleteTextView
 import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
-import com.rasalexman.sresult.common.extensions.doOnDefault
-import com.rasalexman.sresult.common.extensions.listSize
+import com.rasalexman.sresult.common.extensions.or
 import com.rasalexman.sresult.models.IDropDownItem
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.*
 
-val selectedPosition = WeakHashMap<Int, IDropDownItem>()
+val selectedPosition = WeakHashMap<String, IDropDownItem>()
 
 @Suppress("UNCHECKED_CAST")
 @BindingAdapter(
@@ -33,33 +26,27 @@ fun setItemsAdapter(
     selectedPosition.clear()
 
     val lastItems = view.tag as? List<String>
-    val itemsSize = items.listSize()
-    if(items != null && lastItems != items) {
-        println("-------> itemsSize = $itemsSize")
-        val itemResId = itemLayoutId ?: android.R.layout.simple_dropdown_item_1line
-        val scope = CoroutineScope(Dispatchers.Main)
-        scope.launch {
-            val itemsTitle = doOnDefault { items.orEmpty().map { it.title } }
-            view.tag = itemsTitle
-            val adapter = ArrayAdapter(
-                view.context,
-                itemResId,
-                itemsTitle
-            )
-            view.setAdapter(adapter)
-        }
+    if (items != null && lastItems != items) {
+        val itemResId = itemLayoutId.or { DEFAULT_DROP_DOWN_LAYOUT_ID }
+        val itemsTitle = items.map { it.title }
+        view.tag = itemsTitle
+        val adapter = ArrayAdapter(
+            view.context,
+            itemResId,
+            itemsTitle
+        )
+        view.setAdapter(adapter)
     }
 
-    selectedItem?.let {
-        val lastText = view.text.toString()
-        if(lastText != it.title) {
-            view.setText(it.title, false)
-        }
+    val itemText = selectedItem?.title.orEmpty()
+    val lastText = view.text.toString()
+    if (lastText != itemText) {
+        view.setText(itemText, false)
     }
 
     view.setOnItemClickListener { _, _, p1, _ ->
         items?.getOrNull(p1)?.let {
-            selectedPosition[view.hashCode()] = it
+            selectedPosition[view.hashCode().toString()] = it
             positionAttrChanged?.onChange()
         }
     }
@@ -67,7 +54,11 @@ fun setItemsAdapter(
 
 @InverseBindingAdapter(attribute = "selectedItem", event = "positionAttrChanged")
 fun getSelectedPosition(view: AutoCompleteTextView): IDropDownItem {
-    val selectedItem = selectedPosition[view.hashCode()]!!
-    println("-------> selectedItem = $selectedItem")
-    return selectedItem
+    return selectedPosition[view.hashCode().toString()].or { EMPTY_DROP_DOWN }
+}
+
+private const val DEFAULT_DROP_DOWN_LAYOUT_ID = android.R.layout.simple_dropdown_item_1line
+private val EMPTY_DROP_DOWN = object : IDropDownItem {
+    override val itemId: String = ""
+    override val title: String = ""
 }

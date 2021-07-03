@@ -133,3 +133,7 @@ fun <T : Any> LiveData<ResultList<T>>?.addListValue(result: List<T>): ResultList
     (this as? MutableLiveData<ResultList<T>>)?.postValue(newResultList)
     return newResultList
 }
+
+fun LiveData<*>?.clear() {
+    (this as? MutableLiveData<*>)?.value = null
+}

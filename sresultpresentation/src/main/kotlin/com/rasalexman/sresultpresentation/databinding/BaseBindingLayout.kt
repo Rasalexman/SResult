@@ -119,9 +119,11 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel, F : F
         defStyleAttr: Int = 0,
         defStyleRes: Int = 0
     ) {
+        val layoutLifecycleOwner = this
         val inflater = LayoutInflater.from(context)
         val view = inflater.createBinding<VB>(layoutId, this, attachToParent).run {
             binding = this
+            lifecycleOwner = layoutLifecycleOwner
             root
         }
         applyAdditionalParameters(context, attrs, defStyleAttr, defStyleRes)
@@ -131,7 +133,6 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel, F : F
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         binding.let {
-            it.lifecycleOwner = this
             it.setVariable(BR.vm, viewModel)
             initBinding(it)
         }
@@ -139,6 +140,9 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel, F : F
     }
 
     override fun onDetachedFromWindow() {
+        weakContentRef?.clear()
+        weakLoadingRef?.clear()
+        weakToolbarRef?.clear()
         parentFragmentLifecycle?.clear()
         binding.unbind()
         val lifecycleOwner = this
@@ -146,7 +150,10 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel, F : F
             resultLiveData?.removeObservers(lifecycleOwner)
             supportLiveData.removeObservers(lifecycleOwner)
             navigationLiveData.removeObservers(lifecycleOwner)
+            anyLiveData?.removeObservers(lifecycleOwner)
         }
+        clearView()
+        viewModel?.liveDataToObserve?.forEach { it.removeObservers(lifecycleOwner) }
         super.onDetachedFromWindow()
     }
 

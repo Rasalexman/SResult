@@ -22,8 +22,7 @@ class ProfileLayout : BaseBindingLayout<ItemFilterDropdownBinding, ProfileLayout
     override val viewModel: ProfileLayoutViewModel by viewModels()
 
     override fun initBinding(binding: ItemFilterDropdownBinding) {
-        viewModel.itemId.observe(this) {
-            binding.input.setText(it, false)
-        }
+        binding.dropdownItems = viewModel.generatedItems
+        binding.selectedItem = viewModel.selectedItem
     }
 }

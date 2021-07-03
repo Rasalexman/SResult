@@ -13,10 +13,14 @@ import com.rasalexman.sresult.common.extensions.unsafeLazy
 import com.rasalexman.sresult.common.typealiases.AnyResultMutableLiveData
 import com.rasalexman.sresult.data.dto.ISEvent
 import com.rasalexman.sresult.data.dto.SResult
+import com.rasalexman.sresultpresentation.extensions.clear
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 
 open class BaseViewModel : ViewModel(), IKodi, IBaseViewModel {
 
     protected val context: Context by immutableInstance()
+    val superVisorJob: Job by lazy { SupervisorJob() }
 
     override val eventLiveData by unsafeLazy { MutableLiveData<ISEvent>() }
     override val navigationLiveData by unsafeLazy { MutableLiveData<SResult.NavigateResult>() }
@@ -64,6 +68,15 @@ open class BaseViewModel : ViewModel(), IKodi, IBaseViewModel {
      */
     fun onBackClicked() {
         navigationLiveData.value = navigateBackResult()
+    }
+
+    override fun onCleared() {
+        resultLiveData.clear()
+        anyLiveData.clear()
+        supportLiveData.clear()
+        navigationLiveData.clear()
+        eventLiveData.clear()
+        super.onCleared()
     }
 
     protected fun BaseViewModel.string(@StringRes resId: Int): String {
