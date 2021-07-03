@@ -123,6 +123,14 @@ inline fun <reified O : Any> ResultList<O>?.getList(): List<O> {
     }
 }
 
+inline fun <reified O : Any> ResultList<O>.getMutableList(): MutableList<O> {
+    return when (this) {
+        is SResult.Success -> data.toMutableList()
+        else -> mutableListOf()
+    }
+}
+
+
 @Suppress("UNCHECKED_CAST")
 inline fun <reified O : Any, reified I : IConvertable> SResult<I>.convertTo(): SResult<O> {
     return when (this) {

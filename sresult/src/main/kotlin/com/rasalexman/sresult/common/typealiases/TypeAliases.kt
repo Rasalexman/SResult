@@ -45,3 +45,5 @@ typealias ResultList<T> = SResult<List<T>>
 typealias ResultMutableList<T> = SResult<MutableList<T>>
 typealias ResultInHandler<T> = (SResult<T>) -> Unit
 typealias ResultInOutHandler<T, R> = (SResult<T>) -> SResult<R>
+
+typealias ResultCloseDialog = SResult.NavigateResult.CloseBottomSheet

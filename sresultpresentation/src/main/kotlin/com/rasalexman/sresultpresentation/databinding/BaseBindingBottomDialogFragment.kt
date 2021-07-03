@@ -7,9 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import androidx.databinding.ViewDataBinding
+import androidx.navigation.Navigation
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.rasalexman.easyrecyclerbinding.createBindingWithViewModel
+import com.rasalexman.sresult.common.extensions.applyIfType
+import com.rasalexman.sresult.common.typealiases.ResultCloseDialog
+import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultpresentation.BR
+import com.rasalexman.sresultpresentation.R
 import com.rasalexman.sresultpresentation.dialogs.BaseDialogFragment
 import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
 import kotlin.properties.Delegates
@@ -46,6 +51,18 @@ abstract class BaseBindingBottomDialogFragment<B : ViewDataBinding, VM : BaseVie
     }
 
     override fun initBinding(binding: B) = Unit
+
+    override fun onResultHandler(result: SResult<*>) {
+        super.onResultHandler(result)
+        result.applyIfType<ResultCloseDialog> { closeDialog() }
+    }
+
+    private fun closeDialog() {
+        Navigation.findNavController(
+            requireActivity(),
+            R.id.mainHostFragment
+        ).popBackStack()
+    }
 
     override fun onDestroyView() {
         binding.unbind()

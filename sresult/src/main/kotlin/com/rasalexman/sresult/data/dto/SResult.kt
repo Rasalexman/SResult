@@ -105,6 +105,8 @@ sealed class SResult<out T : Any> {
 
         class NavigateNext : BaseNavigationResult()
         class NavigateBack : BaseNavigationResult()
+        class Stay: BaseNavigationResult()
+        class CloseBottomSheet: BaseNavigationResult()
     }
 
     //---- Error States
