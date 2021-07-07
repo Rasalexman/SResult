@@ -320,12 +320,15 @@ fun ISResultHandler.onBaseResultHandler(result: SResult<*>) {
                 hideLoading()
 
                 when(result) {
+                    is SResult.NavigateResult.NavigatePop -> navigatePop(result.args)
                     is SResult.NavigateResult.NavigatePopTo -> navigatePopTo(
                         navResId = result.navigateResourceId,
-                        isInclusive = result.isInclusive
+                        isInclusive = result.isInclusive,
+                        backArgs = result.args
                     )
                     is SResult.NavigateResult.NavigateBack -> onBackPressed()
                     is SResult.NavigateResult.NavigateNext -> onNextPressed()
+
                     else -> {
                         result.navDirection?.let { direction ->
                             navigateTo(direction)

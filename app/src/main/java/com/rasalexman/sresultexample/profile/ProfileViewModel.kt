@@ -38,4 +38,8 @@ class ProfileViewModel(
     fun onVPScreenClicked() {
         navigationLiveData.value = MainFragmentDirections.showUsersPagerFragment().toNavigateResult()
     }
+
+    fun onShowBottomScreenClicked() {
+        navigationLiveData.value = MainFragmentDirections.showUsersBottomFragment().toNavigateResult()
+    }
 }

@@ -57,5 +57,14 @@
             app:onViewClick="@{() -> vm.onVPScreenClicked()}"
             />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/bottomButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_bottom"
+            android:layout_marginTop="@dimen/size_56dp"
+            app:onViewClick="@{() -> vm.onShowBottomScreenClicked()}"
+            />
+
     </LinearLayout>
 </layout>

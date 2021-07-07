@@ -140,7 +140,7 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        observeBackStackArguments()
         showToolbar()
         initLayout()
 
@@ -156,6 +156,16 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
             }
         }
     }
+
+    protected open fun observeBackStackArguments() {
+        val navController = findNavController()
+        navController.currentBackStackEntry?.apply {
+            savedStateHandle.getLiveData<Bundle>(KEY_BACK_ARGS)
+                .observe(viewLifecycleOwner, ::onBackArgumentsHandler)
+        }
+    }
+    // Handler for back navigation result data
+    protected open fun onBackArgumentsHandler(backArgs: Bundle) = Unit
 
     protected open fun addToolbarLiveDataObserver(currentViewMode: IBaseViewModel) {
         currentViewMode.toolbarTitle?.observe(viewLifecycleOwner) {
@@ -457,8 +467,15 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
     /**
      * Navigate back by pop with navResId
      */
-    override fun navigatePopTo(navResId: Int?, isInclusive: Boolean) {
-        this.navigatePopTo(context, findNavController(), navResId, isInclusive)
+    override fun navigatePopTo(navResId: Int?, isInclusive: Boolean, backArgs: Bundle?) {
+        this.navigatePopTo(context, findNavController(), navResId, isInclusive, backArgs)
+    }
+
+    /**
+     * Navigate to pop on context navigator
+     */
+    override fun navigatePop(backArgs: Bundle?) {
+        this.navigatePop(context, backArgs)
     }
 
     /**

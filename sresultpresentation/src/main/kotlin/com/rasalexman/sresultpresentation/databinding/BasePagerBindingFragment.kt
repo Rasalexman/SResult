@@ -24,7 +24,7 @@ abstract class BasePagerBindingFragment<B : ViewDataBinding, VM : BaseViewPagerV
     }
 
     private var tabLayoutMediator: TabLayoutMediator? = null
-    abstract val pagesVMList: List<BasePageViewModel>
+    abstract val pagesVMList: List<BaseViewModel>
 
     override fun initBinding(binding: B) {
         super.initBinding(binding)

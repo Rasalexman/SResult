@@ -1,5 +1,6 @@
 package com.rasalexman.sresultexample.profile
 
+import android.os.Bundle
 import androidx.fragment.app.viewModels
 import com.rasalexman.sresultexample.R
 import com.rasalexman.sresultexample.databinding.FragmentProfileBinding
@@ -13,4 +14,8 @@ class ProfileFragment : BaseBindingFragment<FragmentProfileBinding, ProfileViewM
 
     override val needBackButton: Boolean
         get() = true
+
+    override fun onBackArgumentsHandler(backArgs: Bundle) {
+        println("------> backArgs = $backArgs")
+    }
 }

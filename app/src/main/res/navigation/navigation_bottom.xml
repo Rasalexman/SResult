@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/navigation_bottom"
+    app:startDestination="@id/startBottomFragment">
+
+
+    <fragment
+        android:id="@+id/startBottomFragment"
+        android:name="com.rasalexman.sresultexample.bottom.pages.StartBottomFragment"
+        android:label="StartBottomFragment" >
+        <action
+            android:id="@+id/showNextBottomFragment"
+            app:destination="@id/nextBottomFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nextBottomFragment"
+        android:name="com.rasalexman.sresultexample.bottom.pages.NextBottomFragment"
+        android:label="NextBottomFragment" />
+</navigation>

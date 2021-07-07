@@ -2,6 +2,7 @@ package com.rasalexman.sresultpresentation.extensions
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.os.Bundle
 import android.view.Gravity
 import android.view.WindowManager
 import android.widget.TextView
@@ -10,7 +11,9 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.postDelayed
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.LiveData
+import androidx.navigation.NavArgument
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.Navigation
@@ -23,6 +26,8 @@ import com.rasalexman.sresultpresentation.fragments.BaseFragment
 import com.rasalexman.sresultpresentation.fragments.IBaseFragment
 
 private var lastSoftInput = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN
+
+const val KEY_BACK_ARGS = "key_back_arguments"
 
 fun Fragment.hideKeyboard() = activity?.hideKeyboard()
 fun Fragment.showKeyboard() {
@@ -144,11 +149,15 @@ fun IBaseFragment<*>.navigatePopTo(
     context: Context?,
     navigator: NavController?,
     navResId: Int?,
-    isInclusive: Boolean
+    isInclusive: Boolean,
+    backArgs: Bundle?
 ) {
     if (navigator != null) {
         try {
             navigator.apply {
+                backArgs?.let {
+                    previousBackStackEntry?.savedStateHandle?.set(KEY_BACK_ARGS, backArgs)
+                }
                 navResId?.let {
                     popBackStack(it, isInclusive)
                 } ?: popBackStack()
@@ -164,6 +173,9 @@ fun IBaseFragment<*>.navigatePopTo(
                         it,
                         mainHostFragmentId
                     ).apply {
+                        backArgs?.let {
+                            previousBackStackEntry?.savedStateHandle?.set(KEY_BACK_ARGS, backArgs)
+                        }
                         navResId?.let { currentNavID ->
                             popBackStack(currentNavID, isInclusive)
                         } ?: popBackStack()
@@ -173,6 +185,24 @@ fun IBaseFragment<*>.navigatePopTo(
                 showNavigationError(e, navResId)
             }
         }
+    }
+}
+
+fun IBaseFragment<*>.navigatePop(context: Context?, args: Bundle? = null) {
+    try {
+        (context as? FragmentActivity)?.let {
+            Navigation.findNavController(
+                it,
+                mainHostFragmentId
+            ).apply {
+                args?.let { backArgs ->
+                    previousBackStackEntry?.savedStateHandle?.set(KEY_BACK_ARGS, backArgs)
+                }
+                popBackStack()
+            }
+        } ?: showNavigationError(NullPointerException("context is not FragmentActivity"), null)
+    } catch (e: Exception) {
+        showNavigationError(e, null)
     }
 }
 

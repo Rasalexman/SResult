@@ -175,8 +175,15 @@ abstract class BaseDialogFragment<VM : IBaseViewModel> : AppCompatDialogFragment
     /**
      * Navigate back by pop with navResId
      */
-    override fun navigatePopTo(navResId: Int?, isInclusive: Boolean) {
-        this.navigatePopTo(context, findNavController(), navResId, isInclusive)
+    override fun navigatePopTo(navResId: Int?, isInclusive: Boolean, backArgs: Bundle?) {
+        this.navigatePopTo(context, findNavController(), navResId, isInclusive, backArgs)
+    }
+
+    /**
+     * Navigate to pop on context navigator
+     */
+    override fun navigatePop(backArgs: Bundle?) {
+        this.navigatePop(context, backArgs)
     }
 
     override fun showToast(message: Any?, interval: Int) {

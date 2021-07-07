@@ -4,6 +4,7 @@ import android.annotation.TargetApi
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.os.Bundle
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -242,8 +243,15 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel, F : F
     /**
      * Navigate back by pop with navResId
      */
-    override fun navigatePopTo(navResId: Int?, isInclusive: Boolean) {
-        this.navigatePopTo(context, findNavController(), navResId, isInclusive)
+    override fun navigatePopTo(navResId: Int?, isInclusive: Boolean, backArgs: Bundle?) {
+        this.navigatePopTo(context, findNavController(), navResId, isInclusive, backArgs)
+    }
+
+    /**
+     * Navigate to pop on context navigator
+     */
+    override fun navigatePop(backArgs: Bundle?) {
+        this.navigatePop(context, backArgs)
     }
 
     /**

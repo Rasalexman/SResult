@@ -31,6 +31,14 @@
         android:name="com.rasalexman.sresultexample.viewpager.UsersPagerFragment"
         android:label="UsersPagerFragment" />
 
+    <dialog android:id="@+id/userBottomDialogFragment"
+        android:name="com.rasalexman.sresultexample.bottom.UserBottomDialogFragment"
+        android:label="UserBottomDialogFragment"
+        />
+
+    <action android:id="@+id/showUsersBottomFragment"
+        app:destination="@+id/userBottomDialogFragment"/>
+
     <action android:id="@+id/showProfileFragment"
         app:destination="@+id/profileFragment">
 

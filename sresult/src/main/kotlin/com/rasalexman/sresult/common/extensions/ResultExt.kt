@@ -2,6 +2,7 @@
 
 package com.rasalexman.sresult.common.extensions
 
+import android.os.Bundle
 import androidx.navigation.NavDirections
 import com.rasalexman.sresult.common.typealiases.*
 import com.rasalexman.sresult.data.dto.SResult
@@ -50,8 +51,15 @@ fun Any.navigateBy(
 
 fun Any.navigatePopTo(
     navigateResourceId: Int? = null,
-    isInclusive: Boolean = false
-) = SResult.NavigateResult.NavigatePopTo(navigateResourceId, isInclusive)
+    isInclusive: Boolean = false,
+    backArgs: Bundle? = null
+) = SResult.NavigateResult.NavigatePopTo(navigateResourceId, isInclusive).apply {
+    this.args = backArgs
+}
+
+fun Any.navigatePop(backArgs: Bundle? = null) = SResult.NavigateResult.NavigatePop().apply {
+    this.args = backArgs
+}
 
 fun Any.navigateBackResult() =
     SResult.NavigateResult.NavigateBack()
