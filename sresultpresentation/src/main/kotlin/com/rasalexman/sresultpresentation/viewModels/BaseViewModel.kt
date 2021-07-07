@@ -66,7 +66,7 @@ open class BaseViewModel : ViewModel(), IKodi, IBaseViewModel {
      * When need to go back from layout
      * Don't forget to set canGoBack in Fragment to true
      */
-    fun onBackClicked() {
+    open fun onBackClicked() {
         navigationLiveData.value = navigateBackResult()
     }
 

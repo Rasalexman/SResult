@@ -23,6 +23,11 @@ sealed class SEvent : ISEvent {
     object TryAgain : SEvent()
 
     /**
+     * Just empty event
+     */
+    object Empty : SEvent()
+
+    /**
      * Fetch data with input params
      */
     data class FetchWith<T : Any?>(val params: T) : SEvent()
