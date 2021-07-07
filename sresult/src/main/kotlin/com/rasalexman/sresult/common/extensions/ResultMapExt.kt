@@ -4,6 +4,7 @@ import com.rasalexman.sresult.common.typealiases.FlowResultList
 import com.rasalexman.sresult.common.typealiases.ResultList
 import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresult.models.IConvertable
+import com.rasalexman.sresult.models.IConvertableWithParams
 import com.rasalexman.sresult.models.convert
 import kotlinx.coroutines.flow.map
 
@@ -14,6 +15,16 @@ inline fun <reified O : Any> ResultList<IConvertable>.mapListTo(): ResultList<O>
     return when (this) {
         is SResult.Success -> {
             data.mapNotNull { it.convert<O>() }.mapToResult()
+        }
+        else -> this as ResultList<O>
+    }
+}
+
+@Suppress("UNCHECKED_CAST")
+inline fun <reified O : Any, T> ResultList<IConvertableWithParams<O, T>>.mapListToWithParams(params: T): ResultList<O> {
+    return when (this) {
+        is SResult.Success -> {
+            data.mapNotNull { it.convertTo(params) }.mapToResult()
         }
         else -> this as ResultList<O>
     }
