@@ -1,5 +1,6 @@
 package com.rasalexman.sresultpresentation.extensions
 
+import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import androidx.databinding.BindingAdapter
@@ -13,7 +14,7 @@ val selectedPosition = WeakHashMap<String, IDropDownItem>()
 
 @Suppress("UNCHECKED_CAST")
 @BindingAdapter(
-    value = ["items", "selectedItem", "itemLayoutId", "positionAttrChanged"],
+    value = ["items", "selectedItem", "itemLayoutId", "hideKeyboardOnFocus", "positionAttrChanged"],
     requireAll = false
 )
 fun setItemsAdapter(
@@ -21,6 +22,7 @@ fun setItemsAdapter(
     items: List<IDropDownItem>?,
     selectedItem: IDropDownItem?,
     itemLayoutId: Int?,
+    hideKeyboardOnFocus: Boolean? = true,
     positionAttrChanged: InverseBindingListener?
 ) {
     selectedPosition.clear()
@@ -36,6 +38,12 @@ fun setItemsAdapter(
             itemsTitle
         )
         view.setAdapter(adapter)
+    }
+
+    view.onFocusChangeListener = View.OnFocusChangeListener { v, b ->
+        if(b && hideKeyboardOnFocus == true) {
+            v.hideKeyboard()
+        }
     }
 
     val itemText = selectedItem?.title.orEmpty()

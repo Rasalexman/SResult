@@ -186,6 +186,7 @@ fun TabLayout.clear() {
 }
 
 fun EditText.clear() {
+    setOnClickListener(null)
     setOnEditorActionListener(null)
     onFocusChangeListener = null
     ReflectionTextWatcher.removeAll(this)
