@@ -15,6 +15,7 @@ object Versions {
     const val coroutinesManager: String = "1.3.2"
     const val easyBinding: String = "0.1.3"
     const val kodi = "1.5.14"
+    const val leakcanary: String = "2.7"
 
     /* test */
     const val junit = "4.13"

@@ -14,7 +14,9 @@ import kotlin.properties.Delegates
 abstract class BaseBindingFragment<B : ViewDataBinding, VM : BaseViewModel> : BaseFragment<VM>(),
     IBaseBindingFragment<B, VM> {
 
-    override var binding: B by Delegates.notNull<B>()
+    private var _currentBinding: B? = null
+    override val binding: B
+            get() = _currentBinding ?: throw NullPointerException("Binding is not initialized")
     
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,7 +31,7 @@ abstract class BaseBindingFragment<B : ViewDataBinding, VM : BaseViewModel> : Ba
                 container,
                 false
             ).also {
-                binding = it
+                _currentBinding = it
                 initBinding(it)
             }.root
         }
@@ -39,7 +41,8 @@ abstract class BaseBindingFragment<B : ViewDataBinding, VM : BaseViewModel> : Ba
     override fun initBinding(binding: B) = Unit
 
     override fun onDestroyView() {
-        binding.unbind()
+        _currentBinding?.unbind()
+        _currentBinding = null
         super.onDestroyView()
     }
 }

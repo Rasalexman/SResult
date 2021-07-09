@@ -38,7 +38,7 @@ class UsersFragment : BaseBindingFragment<FragmentUsersBinding, UsersViewModel>(
                 viewModel.onItemClicked(item)
             }
 
-            /*diffUtilCallback = object : DiffCallback<UserItem>() {
+            diffUtilCallback = object : DiffCallback<UserItem>() {
                 override fun areItemsTheSame(
                     oldItem: UserItem?,
                     newItem: UserItem?
@@ -49,7 +49,7 @@ class UsersFragment : BaseBindingFragment<FragmentUsersBinding, UsersViewModel>(
                         oldItem == null && newItem == null
                     }
                 }
-            }*/
+            }
         }
     }
 

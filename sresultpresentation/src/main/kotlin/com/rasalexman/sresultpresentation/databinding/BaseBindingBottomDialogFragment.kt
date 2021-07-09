@@ -18,7 +18,9 @@ abstract class BaseBindingBottomDialogFragment<B : ViewDataBinding, VM : BaseVie
     BaseDialogFragment<VM>(),
     IBaseBindingFragment<B, VM> {
 
-    override var binding: B by Delegates.notNull<B>()
+    private var _currentBinding: B? = null
+    override val binding: B
+        get() = _currentBinding ?: throw NullPointerException("Binding is not initialized")
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,7 +35,7 @@ abstract class BaseBindingBottomDialogFragment<B : ViewDataBinding, VM : BaseVie
                 container,
                 false
             ).also {
-                binding = it
+                _currentBinding = it
                 initBinding(it)
             }.root
         }
@@ -48,7 +50,8 @@ abstract class BaseBindingBottomDialogFragment<B : ViewDataBinding, VM : BaseVie
     override fun initBinding(binding: B) = Unit
 
     override fun onDestroyView() {
-        binding.unbind()
+        _currentBinding?.unbind()
+        _currentBinding = null
         super.onDestroyView()
     }
 }

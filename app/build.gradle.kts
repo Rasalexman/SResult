@@ -73,10 +73,10 @@ dependencies {
     implementation(Libs.Core.coreKtx)
     implementation(Libs.Core.material)
     implementation(Libs.Core.constraintlayout)
+    implementation(Libs.Core.navigationFragmentKtx)
     implementation(project(":sresultpresentation"))
 
-    implementation(Libs.Core.navigationFragmentKtx)
-
+    debugImplementation(Libs.Common.leakCanary)
     testImplementation(Libs.Tests.junit)
     androidTestImplementation(Libs.Tests.runner)
     androidTestImplementation(Libs.Tests.espresso)

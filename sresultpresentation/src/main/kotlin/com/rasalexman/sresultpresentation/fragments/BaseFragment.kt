@@ -391,10 +391,12 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
         weakContentRef?.clear()
         weakLoadingRef?.clear()
         weakToolbarRef?.clear()
+        weakContentRef = null
+        weakLoadingRef = null
+        weakToolbarRef = null
         onBackPressedCallback.isEnabled = false
         context.closeAlert()
         view.clearView()
-        (view as? ViewGroup)?.removeAllViews()
         viewModel?.liveDataToObserve?.forEach { it.removeObservers(this.viewLifecycleOwner) }
         super.onDestroyView()
     }

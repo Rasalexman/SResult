@@ -157,7 +157,7 @@ fun RecyclerView.clear() {
 }
 
 fun ViewGroup.clear() {
-    this.children.asSequence().forEach {
+    this.children.forEach {
         it.clearView()
     }
 }

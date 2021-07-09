@@ -53,7 +53,7 @@ class MainViewModel : BaseViewModel() {
         }
     }
 
-    override val resultLiveData = onEventFlowAnyResult<SEvent.Fetch>(Dispatchers.Default) {
+    override val resultLiveData = onEventFlowAnyResult<SEvent.Fetch>(Dispatchers.Default, isDistincted = true) {
         logg { "-------> resultLiveData event is $it" }
 
         emit(loadingResult())
@@ -75,7 +75,8 @@ class MainViewModel : BaseViewModel() {
 
     override val supportLiveData = onEventFlowAnyResult<SEvent.Refresh>(
         dispatcher = Dispatchers.Default,
-        asMutable = true
+        asMutable = true,
+        isDistincted = true
     ) {
         logg { "-------> supportLiveData event is $it" }
         val rand = Random.nextInt(10, 54)

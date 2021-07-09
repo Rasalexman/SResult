@@ -76,7 +76,9 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel, F : F
     override val contentView: View?
         get() = this
 
-    override var binding: VB by Delegates.notNull<VB>()
+    private var _currentBinding: VB? = null
+    override val binding: VB
+        get() = _currentBinding ?: throw NullPointerException("Binding is not initialized")
 
     /**
      * Fragment ViewModel instance
@@ -123,7 +125,7 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel, F : F
         val layoutLifecycleOwner = this
         val inflater = LayoutInflater.from(context)
         val view = inflater.createBinding<VB>(layoutId, this, attachToParent).run {
-            binding = this
+            _currentBinding = this
             lifecycleOwner = layoutLifecycleOwner
             root
         }
@@ -144,8 +146,13 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel, F : F
         weakContentRef?.clear()
         weakLoadingRef?.clear()
         weakToolbarRef?.clear()
+        weakContentRef = null
+        weakLoadingRef = null
+        weakToolbarRef = null
         parentFragmentLifecycle?.clear()
-        binding.unbind()
+        parentFragmentLifecycle = null
+        _currentBinding?.unbind()
+        _currentBinding = null
         val lifecycleOwner = this
         viewModel?.apply {
             resultLiveData?.removeObservers(lifecycleOwner)

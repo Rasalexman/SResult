@@ -5,6 +5,6 @@ import com.rasalexman.sresultpresentation.fragments.IBaseFragment
 import com.rasalexman.sresultpresentation.viewModels.IBaseViewModel
 
 interface IBaseBindingFragment<B : ViewDataBinding, VM : IBaseViewModel> : IBaseFragment<VM> {
-    var binding: B
+    val binding: B
     fun initBinding(binding: B)
 }

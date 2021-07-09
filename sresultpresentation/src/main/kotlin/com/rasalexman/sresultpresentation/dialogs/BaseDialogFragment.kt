@@ -232,6 +232,9 @@ abstract class BaseDialogFragment<VM : IBaseViewModel> : AppCompatDialogFragment
         weakContentRef?.clear()
         weakLoadingRef?.clear()
         weakToolbarRef?.clear()
+        weakContentRef = null
+        weakLoadingRef = null
+        weakToolbarRef = null
         toolbarView?.setOnMenuItemClickListener(null)
         this.view.clearView()
         (view as? ViewGroup)?.removeAllViews()

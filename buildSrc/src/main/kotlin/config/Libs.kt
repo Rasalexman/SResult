@@ -34,6 +34,9 @@ object Libs {
 
         //---- LOGGING TIMER =)
         const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
+
+        //--- LEAK DETECTOR
+        const val leakCanary = "com.squareup.leakcanary:leakcanary-android:${Versions.leakcanary}"
     }
 
     object Tests {
