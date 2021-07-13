@@ -14,11 +14,9 @@ import com.rasalexman.sresult.models.convert
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
-import timber.log.Timber
 
 // /------ ViewResult extensions
-inline fun <reified T : Any> Any.successResult(data: T): SResult<T> = SResult.Success<T>(data)
+inline fun <reified T : Any> Any.successResult(data: T): SResult<T> = SResult.Success(data)
 
 fun Any?.loadingResult(isNeedHandle: Boolean = true) = SResult.Loading(isNeedHandle)
 fun Any?.emptyResult(isNeedHandle: Boolean = true) = if(isNeedHandle) {
@@ -147,6 +145,16 @@ inline fun <reified O : Any, reified I : IConvertable> SResult<I>.convertTo(): S
     return when (this) {
         is SResult.Success -> {
             this.data.convert<O>()?.toSuccessResult() ?: emptyResult()
+        }
+        else -> this as SResult<O>
+    }
+}
+
+@Suppress("UNCHECKED_CAST")
+inline fun <reified O : Any, reified I : IConvertableWithParams<O, I>> SResult<I>.convertTo(param: I): SResult<O> {
+    return when (this) {
+        is SResult.Success -> {
+            this.data.convert(param)?.toSuccessResult() ?: emptyResult()
         }
         else -> this as SResult<O>
     }

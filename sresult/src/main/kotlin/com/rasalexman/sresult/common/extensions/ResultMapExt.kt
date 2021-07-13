@@ -50,6 +50,9 @@ inline fun <reified T : Any> T?.mapToResult(): SResult<T> {
     return this.toSuccessResult()
 }
 
+inline fun <reified T : Any, O> List<IConvertableWithParams<T, O>>.mapListToWithParams(param: O): List<T> {
+    return this.mapNotNull { it.convertTo(param) }
+}
 
 @Suppress("UNCHECKED_CAST")
 inline fun <reified I : Any> SResult<*>.mapIfSuccessTyped(block: I.() -> SResult<*>): SResult<*> {
