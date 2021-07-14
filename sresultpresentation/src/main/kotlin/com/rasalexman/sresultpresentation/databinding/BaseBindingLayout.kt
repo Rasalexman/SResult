@@ -295,8 +295,6 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel, F : F
     override val toolbarTitleResId: Int? = null
     override val toolbarMenuId: Int? = null
     override val toolbarSubTitle: String = ""
-    override val centerToolbarTitle: Boolean = false
-    override val centerToolbarSubTitle: Boolean = false
 
     override fun onMenuItemClick(item: MenuItem?): Boolean = true
     override fun onBackPressed(): Boolean = false
