@@ -11,12 +11,12 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.postDelayed
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.fragment.app.setFragmentResult
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
-import androidx.navigation.NavArgument
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.Navigation
+import com.rasalexman.sresult.common.extensions.applyIf
 import com.rasalexman.sresult.common.extensions.loggE
 import com.rasalexman.sresult.common.extensions.or
 import com.rasalexman.sresult.common.typealiases.InHandler
@@ -49,9 +49,26 @@ fun Fragment.string(@StringRes resource: Int): String = requireContext().string(
 fun Fragment.stringArr(@ArrayRes resource: Int): Array<String> = resources.getStringArray(resource)
 fun Fragment.drawable(@DrawableRes resource: Int): Drawable? = requireActivity().drawable(resource)
 
-fun <T : SResult<*>> BaseFragment<*>.onResultChange(data: LiveData<T>?, stateHandle: InHandler<T>) {
-    data?.observe(viewLifecycleOwner, {
-        stateHandle(it)
+fun IBaseFragment<*>.clear(lifecycleOwner: LifecycleOwner) {
+    viewModel?.apply {
+        resultLiveData?.removeObservers(lifecycleOwner)
+        supportLiveData.removeObservers(lifecycleOwner)
+        navigationLiveData.removeObservers(lifecycleOwner)
+        anyLiveData?.removeObservers(lifecycleOwner)
+        liveDataToObserve.forEach { it.removeObservers(lifecycleOwner) }
+    }
+
+    weakContentRef?.clear()
+    weakLoadingRef?.clear()
+    weakToolbarRef?.clear()
+    weakContentRef = null
+    weakLoadingRef = null
+    weakToolbarRef = null
+}
+
+fun <T : SResult<*>> Fragment.onResultChange(data: LiveData<T>?, stateHandle: InHandler<T>) {
+    data?.observe(viewLifecycleOwner, { result ->
+        result.applyIf(!result.isHandled, stateHandle)
     })
 }
 
@@ -59,8 +76,8 @@ fun <T : SResult<*>> androidx.lifecycle.LifecycleOwner.onResultChange(
     data: LiveData<T>?,
     stateHandle: InHandler<T>
 ) {
-    data?.observe(this, {
-        stateHandle(it)
+    data?.observe(this, { result ->
+        result.applyIf(!result.isHandled, stateHandle)
     })
 }
 

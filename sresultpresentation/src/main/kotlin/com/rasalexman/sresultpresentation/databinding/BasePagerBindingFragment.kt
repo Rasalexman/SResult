@@ -6,10 +6,8 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.rasalexman.sresult.common.extensions.unsafeLazy
-import com.rasalexman.sresult.common.typealiases.AnyResultLiveData
 import com.rasalexman.sresultpresentation.extensions.onAnyChange
 import com.rasalexman.sresultpresentation.extensions.stringArr
-import com.rasalexman.sresultpresentation.viewModels.BasePageViewModel
 import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
 import com.rasalexman.sresultpresentation.viewModels.BaseViewPagerViewModel
 
@@ -37,11 +35,10 @@ abstract class BasePagerBindingFragment<B : ViewDataBinding, VM : BaseViewPagerV
     @Suppress("UNCHECKED_CAST")
     protected fun addViewModelsToObserve(vmList: List<BaseViewModel>) {
         vmList.forEach { pageVM ->
-            (pageVM.resultLiveData as? AnyResultLiveData)?.apply(::observeResultLiveData)
-            (pageVM.supportLiveData as? AnyResultLiveData)?.apply(::observeResultLiveData)
-            pageVM.navigationLiveData.apply(::observeNavigationLiveData)
-            pageVM.anyLiveData?.apply(::observeAnyLiveData)
-
+            addResultLiveDataObservers(pageVM)
+            addSupportLiveDataObservers(pageVM)
+            addNavigateLiveDataObserver(pageVM)
+            addAnyLiveDataObservers(pageVM)
             pageVM.liveDataToObserve.forEach {
                 onAnyChange(it)
             }

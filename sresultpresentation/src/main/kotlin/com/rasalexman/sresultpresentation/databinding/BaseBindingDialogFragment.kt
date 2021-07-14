@@ -1,23 +1,22 @@
 package com.rasalexman.sresultpresentation.databinding
 
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
 import com.rasalexman.easyrecyclerbinding.createBindingWithViewModel
-import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultpresentation.BR
 import com.rasalexman.sresultpresentation.dialogs.BaseDialogFragment
 import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
-import kotlin.properties.Delegates
 
 abstract class BaseBindingDialogFragment<B : ViewDataBinding, VM : BaseViewModel> :
     BaseDialogFragment<VM>(),
     IBaseBindingFragment<B, VM> {
 
-    override var binding: B by Delegates.notNull<B>()
+    protected var currentBinding: B? = null
+    override val binding: B
+        get() = currentBinding ?: throw NullPointerException("Binding is not initialized")
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,7 +31,7 @@ abstract class BaseBindingDialogFragment<B : ViewDataBinding, VM : BaseViewModel
                 container,
                 false
             ).also {
-                binding = it
+                currentBinding = it
                 initBinding(it)
             }.root
         }
@@ -41,7 +40,8 @@ abstract class BaseBindingDialogFragment<B : ViewDataBinding, VM : BaseViewModel
     override fun initBinding(binding: B) = Unit
 
     override fun onDestroyView() {
-        binding.unbind()
+        currentBinding?.unbind()
+        currentBinding = null
         super.onDestroyView()
     }
 }

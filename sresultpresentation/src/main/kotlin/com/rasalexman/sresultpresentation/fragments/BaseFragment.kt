@@ -19,8 +19,10 @@ import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
-import com.rasalexman.sresult.common.extensions.*
-import com.rasalexman.sresult.common.typealiases.AnyResultLiveData
+import com.rasalexman.sresult.common.extensions.getMessage
+import com.rasalexman.sresult.common.extensions.loggE
+import com.rasalexman.sresult.common.extensions.unsafeLazy
+import com.rasalexman.sresultpresentation.extensions.AnyResultLiveData
 import com.rasalexman.sresult.common.typealiases.InHandler
 import com.rasalexman.sresult.data.dto.ISEvent
 import com.rasalexman.sresult.data.dto.SEvent
@@ -58,22 +60,6 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
      */
     override val toolbarTitleResId: Int? = null
 
-    /**
-     * Back button resourceId
-     */
-    protected open val toolbarBackButtonResId: Int
-        get() = R.drawable.ic_arrow_back_white_24dp
-
-    /**
-     * Need to center toolbar title
-     */
-    override val centerToolbarTitle: Boolean = false
-
-    /**
-     * Need to center toolbar subtitle
-     */
-    override val centerToolbarSubTitle: Boolean = false
-
     override var weakContentRef: WeakReference<View>? = null
     override var weakLoadingRef: WeakReference<View>? = null
     override var weakToolbarRef: WeakReference<Toolbar>? = null
@@ -85,19 +71,9 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
     override val toolbarMenuId: Int? = null
 
     /**
-     * Can this fragment navigate back or can be pressed back button
-     */
-    open val canPressBack: Boolean = true
-
-    /**
      * Fragment ViewModel instance
      */
     override val viewModel: VM? = null
-
-    /**
-     * Does this fragment need toolbar back button
-     */
-    protected open val needBackButton: Boolean = false
 
     /**
      * Fragment default input mode
@@ -192,14 +168,16 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
      */
     @Suppress("UNCHECKED_CAST")
     protected open fun addResultLiveDataObservers(currentViewMode: IBaseViewModel) {
-        (currentViewMode.resultLiveData as? AnyResultLiveData)?.apply(::observeResultLiveData)
+        (currentViewMode.resultLiveData as? AnyResultLiveData)?.let {
+            onResultChange(it, ::onResultHandler)
+        }
     }
 
     /**
      * Add Observer for Error Live Data handles (ex. from CoroutinesManager)
      */
     protected open fun addSupportLiveDataObservers(currentViewMode: IBaseViewModel) {
-        currentViewMode.supportLiveData.apply(::observeResultLiveData)
+        onResultChange(currentViewMode.supportLiveData, ::onResultHandler)
     }
 
     /**
@@ -385,23 +363,6 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
     }
 
     /**
-     * When view destroy
-     */
-    override fun onDestroyView() {
-        weakContentRef?.clear()
-        weakLoadingRef?.clear()
-        weakToolbarRef?.clear()
-        weakContentRef = null
-        weakLoadingRef = null
-        weakToolbarRef = null
-        onBackPressedCallback.isEnabled = false
-        context.closeAlert()
-        view.clearView()
-        viewModel?.liveDataToObserve?.forEach { it.removeObservers(this.viewLifecycleOwner) }
-        super.onDestroyView()
-    }
-
-    /**
      * Base [SResult] handle function
      */
     override fun onResultHandler(result: SResult<*>) {
@@ -409,7 +370,7 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
     }
 
     /**
-     *
+     * Any data types handler for [IBaseViewModel.anyLiveData]
      */
     protected open fun onAnyDataHandler(data: Any?) = Unit
 
@@ -421,28 +382,17 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
     }
 
     /**
-     *
+     * Observe Any type of [LiveData] with callback
      */
     protected open fun observeAnyLiveData(data: LiveData<*>) {
         onAnyChange(data, ::onAnyDataHandler)
     }
 
     /**
-     * Observe only [SResult] live data
-     */
-    protected open fun observeResultLiveData(data: LiveData<SResult<*>>) {
-        onResultChange(data) { result ->
-            result.applyIf(!result.isHandled, ::onResultHandler)
-        }
-    }
-
-    /**
      * Observe only [SResult.NavigateResult] live data
      */
     protected open fun observeNavigationLiveData(data: LiveData<SResult.NavigateResult>) {
-        onResultChange(data) { result ->
-            result.applyIf(!result.isHandled, ::onResultHandler)
-        }
+        onResultChange(data, ::onResultHandler)
     }
 
     /**
@@ -455,8 +405,10 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
     /**
      * Navigate by direction [NavDirections]
      */
-    override fun navigateTo(direction: NavDirections) {
-        this.navigateTo(context, findNavController(), direction)
+    override fun navigateTo(direction: Any) {
+        (direction as? NavDirections)?.let {
+            this.navigateTo(context, findNavController(), direction)
+        }
     }
 
     /**
@@ -496,6 +448,17 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
      */
     override fun showEmptyLayout() {
         hideLoading()
+    }
+
+    /**
+     * When view destroy
+     */
+    override fun onDestroyView() {
+        onBackPressedCallback.isEnabled = false
+        this.clear(this.viewLifecycleOwner)
+        context.closeAlert()
+        view.clearView()
+        super.onDestroyView()
     }
 
     /**

@@ -2,7 +2,7 @@ package com.rasalexman.sresultexample
 
 import androidx.lifecycle.MutableLiveData
 import com.rasalexman.sresult.common.extensions.*
-import com.rasalexman.sresult.common.typealiases.AnyResultMutableLiveData
+import com.rasalexman.sresultpresentation.extensions.AnyResultMutableLiveData
 import com.rasalexman.sresult.data.dto.ISEvent
 import com.rasalexman.sresult.data.dto.SEvent
 import com.rasalexman.sresult.models.IDropDownItem

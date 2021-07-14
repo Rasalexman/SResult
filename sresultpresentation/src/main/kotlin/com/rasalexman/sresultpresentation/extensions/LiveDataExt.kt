@@ -11,6 +11,12 @@ import com.rasalexman.sresult.common.typealiases.ResultList
 import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresult.models.IConvertableTo
 
+typealias AnyResultLiveData = LiveData<AnyResult>
+typealias AnyResultMutableLiveData = MutableLiveData<AnyResult>
+typealias ResultLiveData<T> = LiveData<SResult<T>>
+typealias ResultListLiveData<T> = LiveData<SResult<List<T>>>
+typealias ResultMutableLiveData<T> = MutableLiveData<SResult<T>>
+
 @Suppress("UNCHECKED_CAST")
 inline fun <X, Y> LiveData<X>.mutableMap(
     crossinline transform: (X) -> Y

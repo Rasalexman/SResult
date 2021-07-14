@@ -21,11 +21,9 @@ import androidx.lifecycle.LiveData
 import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
 import com.rasalexman.easyrecyclerbinding.createBinding
-import com.rasalexman.sresult.common.extensions.applyIf
 import com.rasalexman.sresult.common.extensions.loggE
 import com.rasalexman.sresult.common.extensions.or
-import com.rasalexman.sresult.common.typealiases.AnyResult
-import com.rasalexman.sresult.common.typealiases.AnyResultLiveData
+import com.rasalexman.sresultpresentation.extensions.AnyResultLiveData
 import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultpresentation.BR
 import com.rasalexman.sresultpresentation.R
@@ -33,8 +31,8 @@ import com.rasalexman.sresultpresentation.extensions.*
 import com.rasalexman.sresultpresentation.fragments.IBaseFragment
 import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
 import com.rasalexman.sresultpresentation.viewModels.CustomViewModelLazy
+import com.rasalexman.sresultpresentation.viewModels.IBaseViewModel
 import java.lang.ref.WeakReference
-import kotlin.properties.Delegates
 
 abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel, F : Fragment> :
     FrameLayout,
@@ -46,17 +44,17 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel, F : F
         return CustomViewModelLazy(VM::class, fragmentProducer)
     }
 
-    protected open var parentFragmentLifecycle: WeakReference<Lifecycle>? = null
+    protected open var parentWeakLifecycle: WeakReference<Lifecycle>? = null
 
     private val parentLifecycle: Lifecycle
         get() {
-            return parentFragmentLifecycle?.get().or {
+            return parentWeakLifecycle?.get().or {
                 try {
-                    this.findFragment<F>().viewLifecycleOwner.lifecycle.also {
-                        parentFragmentLifecycle = WeakReference(it)
-                    }
+                    this.findFragment<F>().viewLifecycleOwner.lifecycle
                 } catch (e: Exception) {
                     context.getOwner<LifecycleOwner>().lifecycle
+                }.also {
+                    parentWeakLifecycle = WeakReference(it)
                 }
             }
         }
@@ -76,9 +74,9 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel, F : F
     override val contentView: View?
         get() = this
 
-    private var _currentBinding: VB? = null
+    protected var currentBinding: VB? = null
     override val binding: VB
-        get() = _currentBinding ?: throw NullPointerException("Binding is not initialized")
+        get() = currentBinding ?: throw NullPointerException("Binding is not initialized")
 
     /**
      * Fragment ViewModel instance
@@ -125,7 +123,7 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel, F : F
         val layoutLifecycleOwner = this
         val inflater = LayoutInflater.from(context)
         val view = inflater.createBinding<VB>(layoutId, this, attachToParent).run {
-            _currentBinding = this
+            currentBinding = this
             lifecycleOwner = layoutLifecycleOwner
             root
         }
@@ -135,7 +133,7 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel, F : F
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        binding.let {
+        currentBinding?.let {
             it.setVariable(BR.vm, viewModel)
             initBinding(it)
         }
@@ -143,25 +141,12 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel, F : F
     }
 
     override fun onDetachedFromWindow() {
-        weakContentRef?.clear()
-        weakLoadingRef?.clear()
-        weakToolbarRef?.clear()
-        weakContentRef = null
-        weakLoadingRef = null
-        weakToolbarRef = null
-        parentFragmentLifecycle?.clear()
-        parentFragmentLifecycle = null
-        _currentBinding?.unbind()
-        _currentBinding = null
-        val lifecycleOwner = this
-        viewModel?.apply {
-            resultLiveData?.removeObservers(lifecycleOwner)
-            supportLiveData.removeObservers(lifecycleOwner)
-            navigationLiveData.removeObservers(lifecycleOwner)
-            anyLiveData?.removeObservers(lifecycleOwner)
-        }
+        this.clear(this)
+        parentWeakLifecycle?.clear()
+        parentWeakLifecycle = null
+        currentBinding?.unbind()
+        currentBinding = null
         clearView()
-        viewModel?.liveDataToObserve?.forEach { it.removeObservers(lifecycleOwner) }
         super.onDetachedFromWindow()
     }
 
@@ -183,6 +168,12 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel, F : F
             addSupportLiveDataObservers(currentViewModel)
             addResultLiveDataObservers(currentViewModel)
             addNavigateLiveDataObserver(currentViewModel)
+            currentViewModel.anyLiveData?.let {
+                onAnyChange(it, ::onAnyDataHandler)
+            }
+            currentViewModel.liveDataToObserve.forEach {
+                onAnyChange(it)
+            }
         }
     }
 
@@ -191,14 +182,18 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel, F : F
      */
     @Suppress("UNCHECKED_CAST")
     protected open fun addResultLiveDataObservers(currentVM: BaseViewModel) {
-        (currentVM.resultLiveData as? AnyResultLiveData)?.apply(::observeResultLiveData)
+        (currentVM.resultLiveData as? AnyResultLiveData)?.let {
+            onResultChange(it, ::onResultHandler)
+        }
     }
 
     /**
      * Add Standard Live data Observers to handler [SResult] event
      */
     protected open fun addSupportLiveDataObservers(currentVM: BaseViewModel) {
-        (currentVM.supportLiveData as? AnyResultLiveData)?.apply(::observeResultLiveData)
+        (currentVM.supportLiveData as? AnyResultLiveData)?.let {
+            onResultChange(it, ::onResultHandler)
+        }
     }
 
     /**
@@ -209,21 +204,10 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel, F : F
     }
 
     /**
-     * Observe only [SResult] live data
-     */
-    protected open fun observeResultLiveData(data: LiveData<AnyResult>) {
-        onResultChange(data) { result ->
-            result.applyIf(!result.isHandled, ::onResultHandler)
-        }
-    }
-
-    /**
      * Observe only [SResult.NavigateResult] live data
      */
     protected open fun observeNavigationLiveData(data: LiveData<SResult.NavigateResult>) {
-        onResultChange(data) { result ->
-            result.applyIf(!result.isHandled, ::onResultHandler)
-        }
+        onResultChange(data, ::onResultHandler)
     }
 
     /**
@@ -234,10 +218,17 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel, F : F
     }
 
     /**
+     * Any data types handler for [IBaseViewModel.anyLiveData]
+     */
+    protected open fun onAnyDataHandler(data: Any?) = Unit
+
+    /**
      * Navigate by direction [NavDirections]
      */
-    override fun navigateTo(direction: NavDirections) {
-        this.navigateTo(context, findNavController(), direction)
+    override fun navigateTo(direction: Any) {
+        (direction as? NavDirections)?.let {
+            this.navigateTo(context, findNavController(), it)
+        }
     }
 
     /**

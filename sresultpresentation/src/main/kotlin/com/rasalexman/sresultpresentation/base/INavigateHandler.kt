@@ -1,10 +1,9 @@
 package com.rasalexman.sresultpresentation.base
 
 import android.os.Bundle
-import androidx.navigation.NavDirections
 
 interface INavigateHandler : IProgressHandler, IControlHandler {
-    fun navigateTo(direction: NavDirections)
+    fun navigateTo(direction: Any)
     fun navigateBy(navResId: Int)
     fun navigatePopTo(
         navResId: Int? = null,

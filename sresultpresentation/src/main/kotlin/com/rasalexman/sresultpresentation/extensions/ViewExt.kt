@@ -126,7 +126,6 @@ fun CheckBox.clear() {
 }
 
 fun Toolbar.clear() {
-    this.removeAllViews()
     this.title = null
     this.setNavigationOnClickListener(null)
     this.setOnMenuItemClickListener(null)
@@ -145,7 +144,6 @@ fun RecyclerView.clear() {
     this.tag = null
     this.layoutManager = null
     this.itemAnimator = null
-    this.removeAllViews()
     this.clearOnScrollListeners()
     this.clearOnChildAttachStateChangeListeners()
     val decorations = this.itemDecorationCount

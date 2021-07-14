@@ -12,15 +12,14 @@ import com.rasalexman.easyrecyclerbinding.createBindingWithViewModel
 import com.rasalexman.sresultpresentation.BR
 import com.rasalexman.sresultpresentation.dialogs.BaseDialogFragment
 import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
-import kotlin.properties.Delegates
 
 abstract class BaseBindingBottomDialogFragment<B : ViewDataBinding, VM : BaseViewModel> :
     BaseDialogFragment<VM>(),
     IBaseBindingFragment<B, VM> {
 
-    private var _currentBinding: B? = null
+    protected var currentBinding: B? = null
     override val binding: B
-        get() = _currentBinding ?: throw NullPointerException("Binding is not initialized")
+        get() = currentBinding ?: throw NullPointerException("Binding is not initialized")
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,7 +34,7 @@ abstract class BaseBindingBottomDialogFragment<B : ViewDataBinding, VM : BaseVie
                 container,
                 false
             ).also {
-                _currentBinding = it
+                currentBinding = it
                 initBinding(it)
             }.root
         }
@@ -50,8 +49,8 @@ abstract class BaseBindingBottomDialogFragment<B : ViewDataBinding, VM : BaseVie
     override fun initBinding(binding: B) = Unit
 
     override fun onDestroyView() {
-        _currentBinding?.unbind()
-        _currentBinding = null
+        currentBinding?.unbind()
+        currentBinding = null
         super.onDestroyView()
     }
 }

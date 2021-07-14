@@ -1,7 +1,5 @@
 package com.rasalexman.sresult.common.typealiases
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.rasalexman.sresult.data.dto.SResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -35,11 +33,6 @@ typealias MutableStateFlowList<T> = MutableStateFlow<List<T>>
 typealias MutableStateFlowResultList<T> = MutableStateFlow<SResult<List<T>>>
 
 typealias AnyResult = SResult<Any>
-typealias AnyResultLiveData = LiveData<AnyResult>
-typealias AnyResultMutableLiveData = MutableLiveData<AnyResult>
-typealias ResultLiveData<T> = LiveData<SResult<T>>
-typealias ResultListLiveData<T> = LiveData<SResult<List<T>>>
-typealias ResultMutableLiveData<T> = MutableLiveData<SResult<T>>
 
 typealias ResultList<T> = SResult<List<T>>
 typealias ResultMutableList<T> = SResult<MutableList<T>>

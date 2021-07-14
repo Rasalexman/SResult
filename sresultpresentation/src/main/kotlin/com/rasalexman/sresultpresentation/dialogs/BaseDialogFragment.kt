@@ -11,10 +11,8 @@ import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.LiveData
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
-import com.rasalexman.sresult.common.extensions.applyIf
-import com.rasalexman.sresult.common.extensions.getErrorMessage
 import com.rasalexman.sresult.common.extensions.getMessage
-import com.rasalexman.sresult.common.typealiases.AnyResultLiveData
+import com.rasalexman.sresultpresentation.extensions.AnyResultLiveData
 import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultpresentation.extensions.*
 import com.rasalexman.sresultpresentation.fragments.IBaseFragment
@@ -52,16 +50,6 @@ abstract class BaseDialogFragment<VM : IBaseViewModel> : AppCompatDialogFragment
     override val toolbarTitleResId: Int? = null
 
     /**
-     * Need to center toolbar title
-     */
-    override val centerToolbarTitle: Boolean = false
-
-    /**
-     * Need to center toolbar title
-     */
-    override val centerToolbarSubTitle: Boolean = false
-
-    /**
      * Toolbar menu resId
      */
     @MenuRes
@@ -84,7 +72,7 @@ abstract class BaseDialogFragment<VM : IBaseViewModel> : AppCompatDialogFragment
         showToolbar()
         initLayout()
         addResultLiveDataObservers()
-        addErrorLiveDataObservers()
+        addSupportLiveDataObservers()
         addNavigateLiveDataObserver()
     }
 
@@ -97,6 +85,13 @@ abstract class BaseDialogFragment<VM : IBaseViewModel> : AppCompatDialogFragment
                 inflateToolBarMenu(toolbar, it)
             }
             initToolbarTitle(toolbar)
+
+            if (needBackButton) {
+                toolbar.setNavigationIcon(toolbarBackButtonResId)
+                toolbar.setNavigationOnClickListener {
+                    onToolbarBackPressed()
+                }
+            }
         }
     }
 
@@ -118,8 +113,8 @@ abstract class BaseDialogFragment<VM : IBaseViewModel> : AppCompatDialogFragment
      */
     @Suppress("UNCHECKED_CAST")
     protected open fun addResultLiveDataObservers() {
-        (viewModel?.resultLiveData as? AnyResultLiveData)?.observe(this.viewLifecycleOwner) { result ->
-            result.applyIf(!result.isHandled, ::onResultHandler)
+        (viewModel?.resultLiveData as? AnyResultLiveData)?.let {
+            onResultChange(it, ::onResultHandler)
         }
     }
 
@@ -127,9 +122,9 @@ abstract class BaseDialogFragment<VM : IBaseViewModel> : AppCompatDialogFragment
      * Add Standard Live data Observers to handler [SResult] event
      */
     @Suppress("UNCHECKED_CAST")
-    protected open fun addErrorLiveDataObservers() {
-        (viewModel?.supportLiveData as? AnyResultLiveData)?.observe(this.viewLifecycleOwner) { result ->
-            result.applyIf(!result.isHandled, ::onResultHandler)
+    protected open fun addSupportLiveDataObservers() {
+        (viewModel?.supportLiveData as? AnyResultLiveData)?.let {
+            onResultChange(it, ::onResultHandler)
         }
     }
 
@@ -137,9 +132,7 @@ abstract class BaseDialogFragment<VM : IBaseViewModel> : AppCompatDialogFragment
      * Observe only [SResult.NavigateResult] live data
      */
     protected open fun observeNavigationLiveData(data: LiveData<SResult.NavigateResult>) {
-        onResultChange(data) { result ->
-            result.applyIf(!result.isHandled, ::onResultHandler)
-        }
+        onResultChange(data, ::onResultHandler)
     }
 
     override fun onResultHandler(result: SResult<*>) {
@@ -151,7 +144,13 @@ abstract class BaseDialogFragment<VM : IBaseViewModel> : AppCompatDialogFragment
         return false
     }
 
-    override fun onToolbarBackPressed() = Unit
+    /**
+     * On Toolbar back button Pressed
+     */
+    override fun onToolbarBackPressed() {
+        this.findNavController().popBackStack()
+    }
+
     override fun showEmptyLayout() = Unit
     override fun onNextPressed() = Unit
     override fun showProgress(progress: Int, message: Any?) = Unit
@@ -161,8 +160,10 @@ abstract class BaseDialogFragment<VM : IBaseViewModel> : AppCompatDialogFragment
     /**
      * Navigate by direction [NavDirections]
      */
-    override fun navigateTo(direction: NavDirections) {
-        this.navigateTo(context, findNavController(), direction)
+    override fun navigateTo(direction: Any) {
+        (direction as? NavDirections)?.let {
+            this.navigateTo(context, findNavController(), direction)
+        }
     }
 
     /**
@@ -229,16 +230,8 @@ abstract class BaseDialogFragment<VM : IBaseViewModel> : AppCompatDialogFragment
     }
 
     override fun onDestroyView() {
-        weakContentRef?.clear()
-        weakLoadingRef?.clear()
-        weakToolbarRef?.clear()
-        weakContentRef = null
-        weakLoadingRef = null
-        weakToolbarRef = null
-        toolbarView?.setOnMenuItemClickListener(null)
+        this.clear(this.viewLifecycleOwner)
         this.view.clearView()
-        (view as? ViewGroup)?.removeAllViews()
-        viewModel?.liveDataToObserve?.forEach { it.removeObservers(this.viewLifecycleOwner) }
         super.onDestroyView()
     }
 }

@@ -10,7 +10,7 @@ import com.rasalexman.kodi.core.immutableInstance
 import com.rasalexman.sresult.common.extensions.errorResult
 import com.rasalexman.sresult.common.extensions.navigateBackResult
 import com.rasalexman.sresult.common.extensions.unsafeLazy
-import com.rasalexman.sresult.common.typealiases.AnyResultMutableLiveData
+import com.rasalexman.sresultpresentation.extensions.AnyResultMutableLiveData
 import com.rasalexman.sresult.data.dto.ISEvent
 import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultpresentation.extensions.clear

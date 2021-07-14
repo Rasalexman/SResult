@@ -3,7 +3,6 @@
 package com.rasalexman.sresult.common.extensions
 
 import android.os.Bundle
-import androidx.navigation.NavDirections
 import com.rasalexman.sresult.common.typealiases.*
 import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresult.data.exception.ISException
@@ -16,7 +15,7 @@ import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.map
 
 // /------ ViewResult extensions
-inline fun <reified T : Any> Any.successResult(data: T): SResult<T> = SResult.Success(data)
+inline fun <reified T : Any> Any.successResult(data: T): SResult<T> = SResult.Success<T>(data)
 
 fun Any?.loadingResult(isNeedHandle: Boolean = true) = SResult.Loading(isNeedHandle)
 fun Any?.emptyResult(isNeedHandle: Boolean = true) = if(isNeedHandle) {
@@ -40,7 +39,7 @@ fun Int.toProgress(message: Any? = null, isNeedHandle: Boolean = true) =
     SResult.Progress(progress = this, message = message, isNeedHandle = isNeedHandle)
 
 fun Any.navigateToResult(
-    to: NavDirections
+    to: Any
 ) = SResult.NavigateResult.NavigateTo(to)
 
 fun Any.navigateBy(
@@ -117,7 +116,7 @@ inline fun <reified T : Throwable> T.toAlertResult(
     okTitle = okTitle
 )
 
-inline fun <reified T : NavDirections> T.toNavigateResult() = navigateToResult(this)
+inline fun <reified T : Any> T.toNavigateResult() = navigateToResult(this)
 
 // /-------- HANDLE FUNCTION
 fun SResult<*>.handle() {

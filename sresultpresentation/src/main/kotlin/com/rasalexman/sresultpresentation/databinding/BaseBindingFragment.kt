@@ -9,14 +9,13 @@ import com.rasalexman.easyrecyclerbinding.createBindingWithViewModel
 import com.rasalexman.sresultpresentation.BR
 import com.rasalexman.sresultpresentation.fragments.BaseFragment
 import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
-import kotlin.properties.Delegates
 
 abstract class BaseBindingFragment<B : ViewDataBinding, VM : BaseViewModel> : BaseFragment<VM>(),
     IBaseBindingFragment<B, VM> {
 
-    private var _currentBinding: B? = null
+    protected var currentBinding: B? = null
     override val binding: B
-            get() = _currentBinding ?: throw NullPointerException("Binding is not initialized")
+            get() = currentBinding ?: throw NullPointerException("Binding is not initialized")
     
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,7 +30,7 @@ abstract class BaseBindingFragment<B : ViewDataBinding, VM : BaseViewModel> : Ba
                 container,
                 false
             ).also {
-                _currentBinding = it
+                currentBinding = it
                 initBinding(it)
             }.root
         }
@@ -41,8 +40,8 @@ abstract class BaseBindingFragment<B : ViewDataBinding, VM : BaseViewModel> : Ba
     override fun initBinding(binding: B) = Unit
 
     override fun onDestroyView() {
-        _currentBinding?.unbind()
-        _currentBinding = null
+        currentBinding?.unbind()
+        currentBinding = null
         super.onDestroyView()
     }
 }

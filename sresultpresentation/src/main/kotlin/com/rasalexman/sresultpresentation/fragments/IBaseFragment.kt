@@ -11,12 +11,34 @@ interface IBaseFragment<out VM : IBaseViewModel> : IComplexHandler, Toolbar.OnMe
 
     val viewModel: VM?
     val layoutId: Int
+    ///--- TOOLBAR RESOURCES
     val toolbarTitle: String?
     val toolbarSubTitle: String?
     val toolbarTitleResId: Int?
-    val centerToolbarTitle: Boolean
-    val centerToolbarSubTitle: Boolean
     val toolbarMenuId: Int?
+    val toolbarBackButtonResId: Int
+        get() = R.drawable.ic_arrow_back_white_24dp
+
+    /**
+     * Need to center toolbar title
+     */
+    val centerToolbarTitle: Boolean
+        get() = false
+    /**
+     * Need to center toolbar subtitle
+     */
+    val centerToolbarSubTitle: Boolean
+        get() = false
+    /**
+     * Does this fragment need toolbar back button
+     */
+    val needBackButton: Boolean
+        get() = false
+    /**
+     * Can this fragment navigate back or can be pressed back button
+     */
+    val canPressBack: Boolean
+        get() = true
 
     val contentLayoutResId: Int get() = R.id.contentLayout
     val loadingLayoutResId: Int get() = R.id.loadingLayout
