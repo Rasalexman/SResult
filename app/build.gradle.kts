@@ -70,10 +70,6 @@ dependencies {
     implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
     implementation(kotlin("stdlib-jdk8", config.Versions.kotlin))
 
-    implementation(Libs.Core.coreKtx)
-    implementation(Libs.Core.material)
-    implementation(Libs.Core.constraintlayout)
-    implementation(Libs.Core.navigationFragmentKtx)
     implementation(project(":sresultpresentation"))
 
     debugImplementation(Libs.Common.leakCanary)

@@ -18,7 +18,7 @@ object Libs {
         // kotlin live data extensions
         const val livedataKtx = "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.lifecycle}"
         // alternately - if using Java8, use the following instead of lifecycle-compiler
-        const val common = "androidx.lifecycle:lifecycle-common-java8:${Versions.lifecycle}"
+        // const val common = "androidx.lifecycle:lifecycle-common-java8:${Versions.lifecycle}"
     }
 
     object Common {
