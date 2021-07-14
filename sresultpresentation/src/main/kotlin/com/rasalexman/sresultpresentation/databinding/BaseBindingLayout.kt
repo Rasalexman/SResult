@@ -120,11 +120,9 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel, F : F
         defStyleAttr: Int = 0,
         defStyleRes: Int = 0
     ) {
-        val layoutLifecycleOwner = this
         val inflater = LayoutInflater.from(context)
         val view = inflater.createBinding<VB>(layoutId, this, attachToParent).run {
             currentBinding = this
-            lifecycleOwner = layoutLifecycleOwner
             root
         }
         applyAdditionalParameters(context, attrs, defStyleAttr, defStyleRes)
@@ -135,18 +133,20 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel, F : F
         super.onAttachedToWindow()
         currentBinding?.let {
             it.setVariable(BR.vm, viewModel)
+            it.lifecycleOwner = this
             initBinding(it)
         }
         addViewModelBasicObservers()
     }
 
     override fun onDetachedFromWindow() {
-        this.clear(this)
-        parentWeakLifecycle?.clear()
-        parentWeakLifecycle = null
+        val lifecycleOwner = this
+        this.clear(lifecycleOwner)
         currentBinding?.unbind()
         currentBinding = null
         clearView()
+        parentWeakLifecycle?.clear()
+        parentWeakLifecycle = null
         super.onDetachedFromWindow()
     }
 
