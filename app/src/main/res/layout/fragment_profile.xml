@@ -44,7 +44,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/button_generate"
-            android:layout_marginTop="@dimen/size_56dp"
+            android:layout_marginTop="@dimen/size_24dp"
             app:onViewClick="@{() -> vm.onGenerateClicked()}"
             />
 
@@ -53,7 +53,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/button_view_pager"
-            android:layout_marginTop="@dimen/size_56dp"
+            android:layout_marginTop="@dimen/size_24dp"
             app:onViewClick="@{() -> vm.onVPScreenClicked()}"
             />
 
@@ -62,8 +62,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/button_bottom"
-            android:layout_marginTop="@dimen/size_56dp"
+            android:layout_marginTop="@dimen/size_24dp"
             app:onViewClick="@{() -> vm.onShowBottomScreenClicked()}"
+            />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/emptyButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_empty"
+            android:layout_marginTop="@dimen/size_24dp"
+            app:onViewClick="@{() -> vm.onShowEmptyClicked()}"
             />
 
     </LinearLayout>

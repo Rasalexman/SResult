@@ -58,7 +58,9 @@ suspend inline fun <reified I : Any, reified O : Any> SResult<I>.flatMapIfErrorS
 }
 
 @Suppress("UNCHECKED_CAST")
-suspend inline fun <reified I : Any, reified O : Any> FlowResult<I>.flatMapIfFlowErrorSuspend(crossinline block: suspend (SResult.AbstractFailure) -> SResult<O>): FlowResult<O> {
+suspend inline fun <reified I : Any, reified O : Any> FlowResult<I>.flatMapIfFlowErrorSuspend(
+    crossinline block: suspend (SResult.AbstractFailure) -> SResult<O>
+): FlowResult<O> {
     return this.map {
         if (it is SResult.AbstractFailure) block(it)
         else it as SResult<O>
@@ -72,7 +74,9 @@ suspend inline fun <reified I : Any, reified O : Any> SResult<I>.flatMapIfEmptyS
 }
 
 @Suppress("UNCHECKED_CAST")
-suspend inline fun <reified I : Any, reified O : Any> FlowResult<I>.flatMapIfFlowEmptySuspend(crossinline block: suspend () -> SResult<O>): FlowResult<O> {
+suspend inline fun <reified I : Any, reified O : Any> FlowResult<I>.flatMapIfFlowEmptySuspend(
+    crossinline block: suspend () -> SResult<O>
+): FlowResult<O> {
     return this.map {
         if (it is SResult.Empty) block()
         else it as SResult<O>
@@ -86,14 +90,16 @@ inline fun <reified I : SResult<*>, reified O : SResult<*>> SResult<*>.flatMapIf
 }
 
 @Suppress("UNCHECKED_CAST")
-suspend inline fun <reified I : SResult<*>, reified O : SResult<*>> SResult<*>.flatMapIfTypeSuspend(block:suspend (I) -> O): O {
+suspend inline fun <reified I : SResult<*>, reified O : SResult<*>> SResult<*>.flatMapIfTypeSuspend(
+    crossinline block: suspend (I) -> O
+): O {
     return if (this::class == I::class) block(this as I)
     else this as O
 }
 
 @Suppress("UNCHECKED_CAST")
 suspend inline fun <reified I : SResult<*>, reified O : SResult<*>> Flow<SResult<*>>.flatMapIfFlowTypeSuspend(
-    crossinline block:suspend (I) -> O
+    crossinline block: suspend (I) -> O
 ): Flow<O> {
     return this.map {
         if (it::class == I::class) block(it as I)

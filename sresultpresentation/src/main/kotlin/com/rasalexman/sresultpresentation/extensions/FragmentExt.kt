@@ -2,13 +2,15 @@ package com.rasalexman.sresultpresentation.extensions
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
-import android.view.Gravity
-import android.view.WindowManager
+import android.util.DisplayMetrics
+import android.view.*
 import android.widget.TextView
 import androidx.annotation.*
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.postDelayed
+import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
@@ -16,14 +18,19 @@ import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.Navigation
+import com.rasalexman.easyrecyclerbinding.createBinding
+import com.rasalexman.easyrecyclerbinding.createBindingWithViewModel
 import com.rasalexman.sresult.common.extensions.applyIf
 import com.rasalexman.sresult.common.extensions.loggE
 import com.rasalexman.sresult.common.extensions.or
 import com.rasalexman.sresult.common.typealiases.InHandler
 import com.rasalexman.sresult.data.dto.SResult
+import com.rasalexman.sresultpresentation.BR
 import com.rasalexman.sresultpresentation.R
+import com.rasalexman.sresultpresentation.databinding.IBaseBindingFragment
 import com.rasalexman.sresultpresentation.fragments.BaseFragment
 import com.rasalexman.sresultpresentation.fragments.IBaseFragment
+import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
 
 private var lastSoftInput = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN
 
@@ -85,6 +92,32 @@ fun <T : Any> BaseFragment<*>.onAnyChange(data: LiveData<T>?, stateHandle: InHan
     data?.observe(viewLifecycleOwner, {
         stateHandle?.invoke(it)
     })
+}
+
+fun <B : ViewDataBinding, VM : BaseViewModel> IBaseBindingFragment<B, VM>.setupBinding(
+    inflater: LayoutInflater,
+    container: ViewGroup?
+): View {
+    return viewModel?.let { vm ->
+        (this as Fragment).createBindingWithViewModel<B, VM>(
+            layoutId = layoutId,
+            viewModel = vm,
+            viewModelBRId = BR.vm,
+            container = container,
+            attachToParent = false
+        )
+    }.or {
+        inflater.createBinding<B>(
+            layoutId = layoutId,
+            container = container,
+            attachToParent = false,
+            findLifeCycle = true
+        )
+    }.also {
+        it.executePendingBindings()
+        currentBinding = it
+        initBinding(it)
+    }.root
 }
 
 fun <T : Any> androidx.lifecycle.LifecycleOwner.onAnyChange(
@@ -272,3 +305,29 @@ fun IBaseFragment<*>.navigateTo(
         }
     }
 }
+
+inline val Fragment.windowHeight: Int
+    get() {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val metrics = requireActivity().windowManager.currentWindowMetrics
+            val insets = metrics.windowInsets.getInsets(WindowInsets.Type.systemBars())
+            metrics.bounds.height() - insets.bottom - insets.top
+        } else {
+            val displayMetrics = DisplayMetrics()
+            requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
+            displayMetrics.heightPixels
+        }
+    }
+
+inline val Fragment.windowWidth: Int
+    get() {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val metrics = requireActivity().windowManager.currentWindowMetrics
+            val insets = metrics.windowInsets.getInsets(WindowInsets.Type.systemBars())
+            metrics.bounds.width() - insets.left - insets.right
+        } else {
+            val displayMetrics = DisplayMetrics()
+            requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
+            displayMetrics.widthPixels
+        }
+    }

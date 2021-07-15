@@ -9,6 +9,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
@@ -21,9 +22,9 @@ import androidx.lifecycle.LiveData
 import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
 import com.rasalexman.easyrecyclerbinding.createBinding
+import com.rasalexman.easyrecyclerbinding.getOwner
 import com.rasalexman.sresult.common.extensions.loggE
 import com.rasalexman.sresult.common.extensions.or
-import com.rasalexman.sresultpresentation.extensions.AnyResultLiveData
 import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultpresentation.BR
 import com.rasalexman.sresultpresentation.R
@@ -74,7 +75,7 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel, F : F
     override val contentView: View?
         get() = this
 
-    protected var currentBinding: VB? = null
+    override var currentBinding: VB? = null
     override val binding: VB
         get() = currentBinding ?: throw NullPointerException("Binding is not initialized")
 
@@ -121,19 +122,24 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel, F : F
         defStyleRes: Int = 0
     ) {
         val inflater = LayoutInflater.from(context)
-        val view = inflater.createBinding<VB>(layoutId, this, attachToParent).run {
+        val view = setupBindingView(inflater, this)
+        applyAdditionalParameters(context, attrs, defStyleAttr, defStyleRes)
+        initLayout(view)
+    }
+
+    override fun setupBindingView(inflater: LayoutInflater, container: ViewGroup?): View {
+        return inflater.createBinding<VB>(layoutId, container, attachToParent).run {
             currentBinding = this
             root
         }
-        applyAdditionalParameters(context, attrs, defStyleAttr, defStyleRes)
-        initLayout(view)
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         currentBinding?.let {
-            it.setVariable(BR.vm, viewModel)
             it.lifecycleOwner = this
+            it.setVariable(BR.vm, viewModel)
+            it.executePendingBindings()
             initBinding(it)
         }
         addViewModelBasicObservers()

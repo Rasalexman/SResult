@@ -193,7 +193,9 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
             initToolbarTitle(toolbar)
 
             if (needBackButton) {
-                toolbar.setNavigationIcon(toolbarBackButtonResId)
+                toolbarBackButtonResId?.let {
+                    toolbar.setNavigationIcon(it)
+                }
                 toolbar.setNavigationOnClickListener {
                     onToolbarBackPressed()
                 }

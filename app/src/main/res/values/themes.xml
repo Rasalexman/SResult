@@ -12,6 +12,7 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="bottomSheetDialogTheme">@style/ModalBottomSheetDialog</item>
     </style>
 
     <style name="DropdownTextInputTheme" parent="Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu">
@@ -21,4 +22,13 @@
         <item name="boxStrokeWidthFocused">0dp</item>
         <item name="expandedHintEnabled">false</item>
     </style>
+
+    <style name="ModalBottomSheet" parent="Widget.MaterialComponents.BottomSheet.Modal">
+        <!-- Apply attributes here -->
+    </style>
+
+    <style name="ModalBottomSheetDialog" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/ModalBottomSheet</item>
+    </style>
+
 </resources>

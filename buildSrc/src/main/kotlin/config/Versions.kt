@@ -13,7 +13,7 @@ object Versions {
 
     const val timber = "4.7.1"
     const val coroutinesManager: String = "1.3.2"
-    const val easyBinding: String = "0.1.3"
+    const val easyBinding: String = "0.1.4"
     const val kodi = "1.5.14"
     const val leakcanary: String = "2.7"
 

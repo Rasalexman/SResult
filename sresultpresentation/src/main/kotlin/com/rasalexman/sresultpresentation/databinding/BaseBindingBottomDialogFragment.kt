@@ -7,37 +7,36 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import androidx.databinding.ViewDataBinding
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.rasalexman.easyrecyclerbinding.createBindingWithViewModel
-import com.rasalexman.sresultpresentation.BR
 import com.rasalexman.sresultpresentation.dialogs.BaseDialogFragment
+import com.rasalexman.sresultpresentation.extensions.setupBinding
 import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
 
 abstract class BaseBindingBottomDialogFragment<B : ViewDataBinding, VM : BaseViewModel> :
     BaseDialogFragment<VM>(),
     IBaseBindingFragment<B, VM> {
 
-    protected var currentBinding: B? = null
+    override var currentBinding: B? = null
     override val binding: B
         get() = currentBinding ?: throw NullPointerException("Binding is not initialized")
+
+    protected val bottomBehavior: BottomSheetBehavior<*>
+        get() = (dialog as BottomSheetDialog).behavior
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return viewModel?.let { vm ->
-            createBindingWithViewModel<B, VM>(
-                layoutId,
-                vm,
-                BR.vm,
-                container,
-                false
-            ).also {
-                currentBinding = it
-                initBinding(it)
-            }.root
-        }
+        return setupBindingView(inflater, container)
+    }
+
+    override fun setupBindingView(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): View {
+        return setupBinding<B, VM>(inflater, container)
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

@@ -31,17 +31,6 @@ fun Context.toast(message: Any?, duration: Int = Toast.LENGTH_SHORT) {
     }
 }
 
-/**
- * Inline function to retrieve [Context] owners
- */
-inline fun <reified T> Context.getOwner(): T {
-    var context: Context = this
-    while (context !is T) {
-        context = (context as ContextWrapper).baseContext
-    }
-    return context
-}
-
 fun Context?.closeAlert(dismiss: Boolean = true) {
     if (dismiss) alertDialog?.dismiss()
     alertDialog = null

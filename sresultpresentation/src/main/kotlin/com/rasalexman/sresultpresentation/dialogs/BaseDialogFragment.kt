@@ -87,7 +87,9 @@ abstract class BaseDialogFragment<VM : IBaseViewModel> : AppCompatDialogFragment
             initToolbarTitle(toolbar)
 
             if (needBackButton) {
-                toolbar.setNavigationIcon(toolbarBackButtonResId)
+                toolbarBackButtonResId?.let {
+                    toolbar.setNavigationIcon(it)
+                }
                 toolbar.setNavigationOnClickListener {
                     onToolbarBackPressed()
                 }
@@ -100,7 +102,7 @@ abstract class BaseDialogFragment<VM : IBaseViewModel> : AppCompatDialogFragment
         toolbar.setOnMenuItemClickListener(this)
     }
 
-    override fun onMenuItemClick(item: MenuItem?): Boolean {
+    override fun onMenuItemClick(item: MenuItem): Boolean {
         return true
     }
 

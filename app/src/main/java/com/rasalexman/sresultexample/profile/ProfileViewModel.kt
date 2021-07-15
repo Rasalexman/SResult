@@ -42,4 +42,8 @@ class ProfileViewModel(
     fun onShowBottomScreenClicked() {
         navigationLiveData.value = MainFragmentDirections.showUsersBottomFragment().toNavigateResult()
     }
+
+    fun onShowEmptyClicked() {
+        navigationLiveData.value = MainFragmentDirections.showEmptyFragment().toNavigateResult()
+    }
 }

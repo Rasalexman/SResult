@@ -31,13 +31,26 @@
         android:name="com.rasalexman.sresultexample.viewpager.UsersPagerFragment"
         android:label="UsersPagerFragment" />
 
+    <fragment
+        android:id="@+id/emptyFragment"
+        android:name="com.rasalexman.sresultexample.emptyvm.EmptyVmFragment"
+        android:label="EmptyVmFragment" />
+
     <dialog android:id="@+id/userBottomDialogFragment"
         android:name="com.rasalexman.sresultexample.bottom.UserBottomDialogFragment"
         android:label="UserBottomDialogFragment"
         />
 
+    <dialog android:id="@+id/bottomRecyclerDialogFragment"
+        android:name="com.rasalexman.sresultexample.bottomrecycler.BottomRecyclerFragment"
+        android:label="BottomRecyclerFragment"
+        />
+
     <action android:id="@+id/showUsersBottomFragment"
         app:destination="@+id/userBottomDialogFragment"/>
+
+    <action android:id="@+id/showBottomRecyclerFragment"
+        app:destination="@+id/bottomRecyclerDialogFragment"/>
 
     <action android:id="@+id/showProfileFragment"
         app:destination="@+id/profileFragment">
@@ -56,6 +69,9 @@
 
     <action android:id="@+id/showUsersPagerFragment"
         app:destination="@+id/usersPagerFragment"/>
+
+    <action android:id="@+id/showEmptyFragment"
+        app:destination="@+id/emptyFragment"/>
 
     <action android:id="@+id/showUsersFragment"
         app:destination="@+id/usersFragment">

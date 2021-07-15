@@ -16,7 +16,7 @@ interface IBaseFragment<out VM : IBaseViewModel> : IComplexHandler, Toolbar.OnMe
     val toolbarSubTitle: String?
     val toolbarTitleResId: Int?
     val toolbarMenuId: Int?
-    val toolbarBackButtonResId: Int
+    val toolbarBackButtonResId: Int?
         get() = R.drawable.ic_arrow_back_white_24dp
 
     /**

@@ -34,7 +34,7 @@ class UsersFragment : BaseBindingFragment<FragmentUsersBinding, UsersViewModel>(
         binding.rvConfig = createRecyclerConfig<UserItem, ItemUserBinding> {
             itemId = BR.item
             layoutId = R.layout.item_user
-            onItemClick = { item, pos ->
+            onItemClick = { item, _ ->
                 viewModel.onItemClicked(item)
             }
 

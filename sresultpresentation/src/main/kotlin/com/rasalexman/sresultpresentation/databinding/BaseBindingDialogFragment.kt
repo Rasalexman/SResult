@@ -5,16 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
-import com.rasalexman.easyrecyclerbinding.createBindingWithViewModel
-import com.rasalexman.sresultpresentation.BR
 import com.rasalexman.sresultpresentation.dialogs.BaseDialogFragment
+import com.rasalexman.sresultpresentation.extensions.setupBinding
 import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
 
 abstract class BaseBindingDialogFragment<B : ViewDataBinding, VM : BaseViewModel> :
     BaseDialogFragment<VM>(),
     IBaseBindingFragment<B, VM> {
 
-    protected var currentBinding: B? = null
+    override var currentBinding: B? = null
     override val binding: B
         get() = currentBinding ?: throw NullPointerException("Binding is not initialized")
 
@@ -23,18 +22,14 @@ abstract class BaseBindingDialogFragment<B : ViewDataBinding, VM : BaseViewModel
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return viewModel?.let { vm ->
-            createBindingWithViewModel<B, VM>(
-                layoutId,
-                vm,
-                BR.vm,
-                container,
-                false
-            ).also {
-                currentBinding = it
-                initBinding(it)
-            }.root
-        }
+        return setupBindingView(inflater, container)
+    }
+
+    override fun setupBindingView(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): View {
+        return setupBinding<B, VM>(inflater, container)
     }
 
     override fun initBinding(binding: B) = Unit
