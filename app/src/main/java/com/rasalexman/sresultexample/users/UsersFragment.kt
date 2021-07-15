@@ -1,6 +1,7 @@
 package com.rasalexman.sresultexample.users
 
 import android.view.MenuItem
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import com.rasalexman.easyrecyclerbinding.DiffCallback
 import com.rasalexman.easyrecyclerbinding.createRecyclerConfig
@@ -10,9 +11,7 @@ import com.rasalexman.sresultexample.databinding.FragmentUsersBinding
 import com.rasalexman.sresultexample.databinding.ItemUserBinding
 import com.rasalexman.sresultpresentation.databinding.BaseBindingFragment
 import com.rasalexman.sresultpresentation.extensions.color
-import com.rasalexman.sresultpresentation.extensions.fetch
 import com.rasalexman.sresultpresentation.extensions.refresh
-import com.rasalexman.sresultpresentation.extensions.string
 
 class UsersFragment : BaseBindingFragment<FragmentUsersBinding, UsersViewModel>() {
     override val layoutId: Int
@@ -20,9 +19,6 @@ class UsersFragment : BaseBindingFragment<FragmentUsersBinding, UsersViewModel>(
 
     override val needBackButton: Boolean
         get() = true
-
-    override val toolbarTitle: String
-        get() = string(R.string.title_users)
 
     override val toolbarMenuId: Int
         get() = R.menu.menu_refresh
@@ -55,12 +51,57 @@ class UsersFragment : BaseBindingFragment<FragmentUsersBinding, UsersViewModel>(
                 }
             }
         }
+        setupSearchView(binding.searchView)
+    }
+
+    private fun setupSearchView(searchView: SearchView) {
+
+        searchView.setIconifiedByDefault(false)
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                updateSearchRequest(query)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                updateSearchRequest(newText)
+                return true
+            }
+        })
+
+        searchView.setOnCloseListener {
+            onCloseClickHandler()
+            return@setOnCloseListener true
+        }
+    }
+
+    private fun onCloseClickHandler() {
+        viewModel.cancelSearch()
+        updateSearchViewText()
+    }
+
+    private fun updateSearchRequest(query: String?) {
+        query?.let {
+            viewModel.onSearch(it)
+        }
+    }
+
+    private fun updateSearchViewText(query: String = "") {
+        currentBinding?.searchView?.setQuery(query, false)
     }
 
     override fun onMenuItemClick(item: MenuItem): Boolean {
-        if(item.itemId == R.id.actionRefresh) {
+        if (item.itemId == R.id.actionRefresh) {
             refresh()
         }
         return super.onMenuItemClick(item)
+    }
+
+    override fun onDestroyView() {
+        binding.searchView.apply {
+            setOnCloseListener(null)
+            setOnQueryTextListener(null)
+        }
+        super.onDestroyView()
     }
 }

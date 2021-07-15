@@ -11,6 +11,7 @@ import android.view.ViewTreeObserver
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.annotation.ColorInt
+import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.children
@@ -127,6 +128,7 @@ fun CheckBox.clear() {
 
 fun Toolbar.clear() {
     this.title = null
+    this.subtitle = null
     this.setNavigationOnClickListener(null)
     this.setOnMenuItemClickListener(null)
 }
@@ -137,6 +139,7 @@ fun AutoCompleteTextView.clear() {
     this.onItemClickListener = null
     this.setOnEditorActionListener(null)
     this.setAdapter(null)
+    ReflectionTextWatcher.removeAll(this)
 }
 
 fun RecyclerView.clear() {
@@ -209,12 +212,21 @@ fun RatingBar.clear() {
     this.onRatingBarChangeListener = null
 }
 
+fun SearchView.clear() {
+    setOnQueryTextListener(null)
+    setOnCloseListener(null)
+    setOnQueryTextFocusChangeListener(null)
+    setOnSuggestionListener(null)
+    setOnSearchClickListener(null)
+}
+
 fun View?.clearView() {
     when (this) {
         is ImageView -> this.clear()
         is Button -> this.clear()
         is RatingBar -> this.clear()
         is LinearProgressIndicator -> this.clear()
+        is SearchView -> this.clear()
         is AutoCompleteTextView -> this.clear()
         is EditText -> this.clear()
         is TextView -> this.clear()

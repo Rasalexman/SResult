@@ -428,6 +428,7 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
         this.clear(this.viewLifecycleOwner)
         context.closeAlert()
         view.clearView()
+        (view as? ViewGroup)?.removeAllViews()
         super.onDestroyView()
     }
 

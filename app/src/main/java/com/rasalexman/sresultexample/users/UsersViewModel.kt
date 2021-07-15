@@ -9,4 +9,12 @@ class UsersViewModel : BaseItemsViewModel() {
     fun onItemClicked(item: UserItem) {
         navigationLiveData.value = MainFragmentDirections.showProfileFragment(itemId = item.id, userItem = item).toNavigateResult()
     }
+
+    fun onSearch(it: String) {
+
+    }
+
+    fun cancelSearch() {
+
+    }
 }

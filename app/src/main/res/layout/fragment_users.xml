@@ -24,7 +24,13 @@
             android:layout_height="@dimen/size_56dp"
             android:background="@color/purple_500"
             app:titleTextColor="@color/white"
-            app:subtitleTextColor="@color/white" />
+            app:subtitleTextColor="@color/white" >
+
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/searchView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </androidx.appcompat.widget.Toolbar>
 
         <androidx.recyclerview.widget.RecyclerView
             android:paddingTop="@dimen/size_8dp"

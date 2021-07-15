@@ -62,6 +62,8 @@ fun IBaseFragment<*>.clear(lifecycleOwner: LifecycleOwner) {
         supportLiveData.removeObservers(lifecycleOwner)
         navigationLiveData.removeObservers(lifecycleOwner)
         anyLiveData?.removeObservers(lifecycleOwner)
+        toolbarTitle?.removeObservers(lifecycleOwner)
+        toolbarSubTitle?.removeObservers(lifecycleOwner)
         liveDataToObserve.forEach { it.removeObservers(lifecycleOwner) }
     }
 
