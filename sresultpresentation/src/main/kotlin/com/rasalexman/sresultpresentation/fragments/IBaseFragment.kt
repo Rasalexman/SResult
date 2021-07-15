@@ -13,11 +13,17 @@ interface IBaseFragment<out VM : IBaseViewModel> : IComplexHandler, Toolbar.OnMe
     val layoutId: Int
     ///--- TOOLBAR RESOURCES
     val toolbarTitle: String?
+        get() = null
     val toolbarSubTitle: String?
+        get() = null
     val toolbarTitleResId: Int?
+        get() = null
     val toolbarMenuId: Int?
+        get() = null
     val toolbarBackButtonResId: Int?
         get() = R.drawable.ic_arrow_back_white_24dp
+    val toolbarNavigationIconColor: Int?
+        get() = null
 
     /**
      * Need to center toolbar title

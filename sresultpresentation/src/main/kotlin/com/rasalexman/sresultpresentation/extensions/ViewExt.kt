@@ -346,3 +346,8 @@ fun ISResultHandler.onBaseResultHandler(result: SResult<*>) {
         else -> Unit
     }
 }
+
+fun Toolbar.setNavigationIconColor(@ColorInt color: Int) = navigationIcon?.mutate()?.let {
+    it.setTint(color)
+    this.navigationIcon = it
+}

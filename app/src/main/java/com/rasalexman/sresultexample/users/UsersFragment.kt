@@ -9,6 +9,7 @@ import com.rasalexman.sresultexample.R
 import com.rasalexman.sresultexample.databinding.FragmentUsersBinding
 import com.rasalexman.sresultexample.databinding.ItemUserBinding
 import com.rasalexman.sresultpresentation.databinding.BaseBindingFragment
+import com.rasalexman.sresultpresentation.extensions.color
 import com.rasalexman.sresultpresentation.extensions.fetch
 import com.rasalexman.sresultpresentation.extensions.refresh
 import com.rasalexman.sresultpresentation.extensions.string
@@ -25,6 +26,9 @@ class UsersFragment : BaseBindingFragment<FragmentUsersBinding, UsersViewModel>(
 
     override val toolbarMenuId: Int
         get() = R.menu.menu_refresh
+
+    override val toolbarNavigationIconColor: Int
+        get() = color(R.color.black)
 
     override val viewModel: UsersViewModel by viewModels()
 

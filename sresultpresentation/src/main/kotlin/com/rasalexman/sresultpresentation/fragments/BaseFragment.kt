@@ -44,31 +44,9 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
      */
     open val needTryAgainButton: Boolean = false
 
-    /**
-     * Toolbar title
-     */
-    override val toolbarTitle: String? = null
-
-    /**
-     * Toolbar subtitle
-     */
-    override val toolbarSubTitle: String? = null
-
-
-    /**
-     * Toolbar title resourceId
-     */
-    override val toolbarTitleResId: Int? = null
-
     override var weakContentRef: WeakReference<View>? = null
     override var weakLoadingRef: WeakReference<View>? = null
     override var weakToolbarRef: WeakReference<Toolbar>? = null
-
-    /**
-     * Toolbar menu resId
-     */
-    @MenuRes
-    override val toolbarMenuId: Int? = null
 
     /**
      * Fragment ViewModel instance
@@ -185,21 +163,11 @@ abstract class BaseFragment<VM : IBaseViewModel> : Fragment(), IBaseFragment<VM>
      */
     protected open fun showToolbar() {
         toolbarView?.let { toolbar ->
-
             toolbarMenuId?.let {
                 inflateToolBarMenu(toolbar, it)
             }
-
             initToolbarTitle(toolbar)
-
-            if (needBackButton) {
-                toolbarBackButtonResId?.let {
-                    toolbar.setNavigationIcon(it)
-                }
-                toolbar.setNavigationOnClickListener {
-                    onToolbarBackPressed()
-                }
-            }
+            initToolbarNavigationIcon(toolbar)
         }
         setupOnBackPressCallback()
     }

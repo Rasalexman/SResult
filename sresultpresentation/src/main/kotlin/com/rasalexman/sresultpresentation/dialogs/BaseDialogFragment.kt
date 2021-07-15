@@ -35,27 +35,6 @@ abstract class BaseDialogFragment<VM : IBaseViewModel> : AppCompatDialogFragment
     override val viewModel: VM? = null
 
     /**
-     * Toolbar title
-     */
-    override val toolbarTitle: String = ""
-
-    /**
-     * Toolbar subtitle
-     */
-    override val toolbarSubTitle: String = ""
-
-    /**
-     * Toolbar title resourceId
-     */
-    override val toolbarTitleResId: Int? = null
-
-    /**
-     * Toolbar menu resId
-     */
-    @MenuRes
-    override val toolbarMenuId: Int? = null
-
-    /**
      *
      */
     override fun onCreateView(
@@ -85,15 +64,7 @@ abstract class BaseDialogFragment<VM : IBaseViewModel> : AppCompatDialogFragment
                 inflateToolBarMenu(toolbar, it)
             }
             initToolbarTitle(toolbar)
-
-            if (needBackButton) {
-                toolbarBackButtonResId?.let {
-                    toolbar.setNavigationIcon(it)
-                }
-                toolbar.setNavigationOnClickListener {
-                    onToolbarBackPressed()
-                }
-            }
+            initToolbarNavigationIcon(toolbar)
         }
     }
 

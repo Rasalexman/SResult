@@ -155,6 +155,22 @@ fun IBaseFragment<*>.initToolbarTitle(
     )
 }
 
+fun IBaseFragment<*>.initToolbarNavigationIcon(
+    toolbarView: Toolbar
+) {
+    if (needBackButton) {
+        toolbarBackButtonResId?.let {
+            toolbarView.setNavigationIcon(it)
+        }
+        toolbarNavigationIconColor?.let {
+            toolbarView.setNavigationIconColor(it)
+        }
+        toolbarView.setNavigationOnClickListener {
+            onToolbarBackPressed()
+        }
+    }
+}
+
 fun Toolbar.setupToolbarSubtitle(
     toolbarSubTitle: String?,
     centerToolbarSubTitle: Boolean
