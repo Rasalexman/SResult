@@ -121,10 +121,14 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel, F : F
         defStyleAttr: Int = 0,
         defStyleRes: Int = 0
     ) {
-        val inflater = LayoutInflater.from(context)
-        val view = setupBindingView(inflater, this)
-        applyAdditionalParameters(context, attrs, defStyleAttr, defStyleRes)
-        initLayout(view)
+        if (!isInEditMode) {
+            val inflater = LayoutInflater.from(context)
+            val view = setupBindingView(inflater, this)
+            applyAdditionalParameters(context, attrs, defStyleAttr, defStyleRes)
+            initLayout(view)
+        } else {
+            inflate(context, layoutId, this)
+        }
     }
 
     override fun setupBindingView(inflater: LayoutInflater, container: ViewGroup?): View {
@@ -136,13 +140,15 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel, F : F
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        currentBinding?.let {
-            it.lifecycleOwner = this
-            it.setVariable(BR.vm, viewModel)
-            it.executePendingBindings()
-            initBinding(it)
+        if (!isInEditMode) {
+            currentBinding?.let {
+                it.lifecycleOwner = this
+                it.setVariable(BR.vm, viewModel)
+                it.executePendingBindings()
+                initBinding(it)
+            }
+            addViewModelBasicObservers()
         }
-        addViewModelBasicObservers()
     }
 
     override fun onDetachedFromWindow() {
