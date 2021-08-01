@@ -7,7 +7,7 @@ object Builds {
     const val BUILD_TOOLS = "30.0.2"
     const val APP_ID = "com.rasalexman.sresultexample"
 
-    val codeDirs = arrayListOf(
+    val codeDirs = mutableListOf(
         "src/main/kotlin"
     )
 
