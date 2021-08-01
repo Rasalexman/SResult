@@ -218,9 +218,14 @@ val <T : Any> SResult<T>.isSuccess: Boolean
 val <T : Any> SResult<T>.isError: Boolean
     get() = this is SResult.AbstractFailure
 
-
 val <T : Any> SResult<T>.isEmpty: Boolean
     get() = this is SResult.Empty
+
+val <T : Any> SResult<T>.isLoading: Boolean
+    get() = this is SResult.Loading
+
+val <T : Any> SResult<T>.isToast: Boolean
+    get() = this is SResult.Toast
 
 fun SResult.AbstractFailure.getErrorMessage(): Any {
     return (this.message as? String)?.takeIf { it.isNotEmpty() }.or {

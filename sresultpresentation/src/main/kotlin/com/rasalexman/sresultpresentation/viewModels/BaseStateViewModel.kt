@@ -1,33 +1,47 @@
 package com.rasalexman.sresultpresentation.viewModels
 
+import com.rasalexman.sresult.common.extensions.navigateBackResult
 import com.rasalexman.sresult.common.extensions.unsafeLazy
 import com.rasalexman.sresult.common.typealiases.AnyResult
 import com.rasalexman.sresult.data.dto.ISEvent
 import com.rasalexman.sresult.data.dto.SEvent
 import com.rasalexman.sresult.data.dto.SResult
-import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 
 open class BaseStateViewModel : BaseContextViewModel(), IStateViewModel {
 
-    protected open val supportReplay: Int = 1
-    protected open val supportExtraBufferCapacity: Int = 1
-    protected open val supportBufferOverflow: BufferOverflow = BufferOverflow.DROP_LATEST
+    protected open val eventConfig: ISharedFlowConfig = SharedFlowConfig()
+    protected open val supportConfig: ISharedFlowConfig = SharedFlowConfig()
+    protected open val navigationConfig: ISharedFlowConfig = SharedFlowConfig()
 
-    override val eventsFlow by unsafeLazy { MutableStateFlow<ISEvent>(SEvent.Empty) }
-    override val navigationFlow by unsafeLazy { MutableStateFlow<SResult.NavigateResult>(SResult.NavigateResult.EmptyNavigation) }
+    override val eventsFlow by unsafeLazy {
+        MutableSharedFlow<ISEvent>(
+            replay = eventConfig.replay,
+            extraBufferCapacity = eventConfig.extraBufferCapacity,
+            onBufferOverflow = eventConfig.onBufferOverflow
+        )
+    }
+    override val navigationFlow by unsafeLazy {
+        MutableSharedFlow<SResult.NavigateResult>(
+            replay = navigationConfig.replay,
+            extraBufferCapacity = navigationConfig.extraBufferCapacity,
+            onBufferOverflow = navigationConfig.onBufferOverflow
+        )
+    }
     override val supportFlow: MutableSharedFlow<AnyResult> by unsafeLazy {
         MutableSharedFlow(
-            replay = supportReplay,
-            extraBufferCapacity = supportExtraBufferCapacity,
-            onBufferOverflow = supportBufferOverflow
+            replay = supportConfig.replay,
+            extraBufferCapacity = supportConfig.extraBufferCapacity,
+            onBufferOverflow = supportConfig.onBufferOverflow
         )
     }
 
     // for any data flow
-    override val anyDataFlow: MutableSharedFlow<*>? = null
-    override val resultFlow: MutableSharedFlow<*>? = null
+    override val anyDataFlow: Flow<*>? = null
+    override val resultFlow: Flow<*>? = null
 
 
     // for pages
@@ -36,6 +50,27 @@ open class BaseStateViewModel : BaseContextViewModel(), IStateViewModel {
     override val toolbarTitle: MutableStateFlow<String>? = null
 
     override fun processEventAsync(viewEvent: ISEvent) {
-        eventsFlow.value = viewEvent
+        processViewEvent(viewEvent)
+    }
+
+    override fun processViewEvent(viewEvent: ISEvent) {
+        eventsFlow.tryEmit(viewEvent)
+    }
+
+    override fun handleErrorState(errorResult: SResult.AbstractFailure) {
+        supportFlow.tryEmit(createFailure(errorResult))
+    }
+
+    /**
+     * When need to go back from layout
+     * Don't forget to set canGoBack in Fragment to true
+     */
+    override fun onBackClicked() {
+        navigationFlow.tryEmit(navigateBackResult())
+    }
+
+    override fun clear() {
+        superVisorJob.cancelChildren()
+        eventsFlow.tryEmit(SEvent.Empty)
     }
 }

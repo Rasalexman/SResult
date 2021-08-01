@@ -13,26 +13,27 @@ import androidx.core.view.postDelayed
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.*
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.Navigation
 import com.rasalexman.easyrecyclerbinding.createBinding
 import com.rasalexman.easyrecyclerbinding.createBindingWithViewModel
-import com.rasalexman.sresult.common.extensions.applyForType
-import com.rasalexman.sresult.common.extensions.applyIf
-import com.rasalexman.sresult.common.extensions.loggE
-import com.rasalexman.sresult.common.extensions.or
+import com.rasalexman.sresult.common.extensions.*
 import com.rasalexman.sresult.common.typealiases.InHandler
+import com.rasalexman.sresult.data.dto.SEvent
 import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultpresentation.BR
 import com.rasalexman.sresultpresentation.R
 import com.rasalexman.sresultpresentation.databinding.IBaseBindingFragment
 import com.rasalexman.sresultpresentation.fragments.BaseFragment
 import com.rasalexman.sresultpresentation.fragments.IBaseFragment
-import com.rasalexman.sresultpresentation.viewModels.*
+import com.rasalexman.sresultpresentation.viewModels.BaseContextViewModel
+import com.rasalexman.sresultpresentation.viewModels.IBaseViewModel
+import com.rasalexman.sresultpresentation.viewModels.IResultViewModel
+import com.rasalexman.sresultpresentation.viewModels.IStateViewModel
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -61,7 +62,7 @@ fun Fragment.stringArr(@ArrayRes resource: Int): Array<String> = resources.getSt
 fun Fragment.drawable(@DrawableRes resource: Int): Drawable? = requireActivity().drawable(resource)
 
 fun IBaseFragment<*>.clear(lifecycleOwner: LifecycleOwner) {
-    viewModel?.clearObservers(lifecycleOwner)
+    viewModel?.clearViewModel(lifecycleOwner)
     weakContentRef?.clear()
     weakLoadingRef?.clear()
     weakToolbarRef?.clear()
@@ -70,16 +71,27 @@ fun IBaseFragment<*>.clear(lifecycleOwner: LifecycleOwner) {
     weakToolbarRef = null
 }
 
-fun IResultViewModel.clearObservers(lifecycleOwner: LifecycleOwner) {
-    (this as? IBaseViewModel)?.apply {
-        resultLiveData?.removeObservers(lifecycleOwner)
-        supportLiveData.removeObservers(lifecycleOwner)
-        navigationLiveData.removeObservers(lifecycleOwner)
-        anyLiveData?.removeObservers(lifecycleOwner)
-        toolbarTitle?.removeObservers(lifecycleOwner)
-        toolbarSubTitle?.removeObservers(lifecycleOwner)
-        liveDataToObserve.forEach { it.removeObservers(lifecycleOwner) }
+fun IBaseFragment<*>.addViewModelObservers(vm: IResultViewModel?) {
+    when(vm) {
+        is IBaseViewModel -> observeBaseViewModel(vm)
+        is IStateViewModel -> observeStateViewModel(vm)
     }
+}
+
+fun IResultViewModel.clearViewModel(lifecycleOwner: LifecycleOwner) {
+    when(this) {
+        is IBaseViewModel -> this.apply {
+            resultLiveData?.removeObservers(lifecycleOwner)
+            supportLiveData.removeObservers(lifecycleOwner)
+            navigationLiveData.removeObservers(lifecycleOwner)
+            anyLiveData?.removeObservers(lifecycleOwner)
+            toolbarTitle?.removeObservers(lifecycleOwner)
+            toolbarSubTitle?.removeObservers(lifecycleOwner)
+            liveDataToObserve.forEach { it.removeObservers(lifecycleOwner) }
+        }
+        is IStateViewModel -> this.clear()
+    }
+
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -99,54 +111,85 @@ fun IBaseFragment<*>.observeBaseViewModel(currentBaseVm: IBaseViewModel) {
 }
 
 fun IBaseFragment<*>.observeStateViewModel(currentStateVM: IStateViewModel) {
-    (this as? LifecycleOwner)?.lifecycleScope?.launch {
-        currentStateVM.apply {
-            resultFlow?.collect { it?.applyForType(::onResultHandler) }
-            navigationFlow.collect { it.applyForType(::onResultHandler) }
-            supportFlow.collect { it.applyForType(::onResultHandler) }
-            navigationFlow.collect { it.applyForType(::onResultHandler) }
-            anyDataFlow?.collect { onAnyDataHandler(it) }
+    (currentStateVM as? BaseContextViewModel)?.statesScope?.let { vmScope ->
 
-            toolbarTitle?.collect {
-                toolbarTitleHandler(it)
+        currentStateVM.resultFlow?.let {
+            vmScope.launch {
+                it.collect { result ->
+                    result?.applyForType<SResult<*>> {
+                        it.applyIf(!it.isHandled, ::onResultHandler)
+                    }
+                }
             }
-            toolbarSubTitle?.collect {
-                toolbarSubTitleHandler(it)
+        }
+
+        vmScope.launch {
+            currentStateVM.navigationFlow.collect { result ->
+                result.applyIf(!result.isHandled, ::onResultHandler)
+            }
+        }
+
+        vmScope.launch {
+            currentStateVM.supportFlow.collect { result ->
+                result.applyIf(!result.isHandled, ::onResultHandler)
+            }
+        }
+
+        currentStateVM.anyDataFlow?.let {
+            vmScope.launch {
+                it.collect { onAnyDataHandler(it) }
+            }
+        }
+
+        currentStateVM.toolbarTitle?.let {
+            vmScope.launch {
+                it.collect {
+                    toolbarTitleHandler(it)
+                }
+            }
+        }
+
+        currentStateVM.toolbarSubTitle?.let {
+            vmScope.launch {
+                it.collect {
+                    toolbarSubTitleHandler(it)
+                }
             }
         }
     }
 }
 
 fun <T : SResult<*>> Fragment.onResultChange(data: LiveData<T>?, stateHandle: InHandler<T>) {
-    data?.observe(viewLifecycleOwner, { result ->
+    data?.observe(viewLifecycleOwner, Observer { result ->
         result.applyIf(!result.isHandled, stateHandle)
     })
 }
 
-fun <T : SResult<*>> androidx.lifecycle.LifecycleOwner.onResultChange(
+fun <T : SResult<*>> LifecycleOwner.onResultChange(
     data: LiveData<T>?,
     stateHandle: InHandler<T>
 ) {
-    data?.observe(this, { result ->
+    data?.observe(this, Observer { result ->
         result.applyIf(!result.isHandled, stateHandle)
     })
 }
 
 fun <T : Any> BaseFragment<*>.onAnyChange(data: LiveData<T>?, stateHandle: InHandler<T>? = null) {
-    data?.observe(viewLifecycleOwner, {
+    data?.observe(viewLifecycleOwner,Observer {
         stateHandle?.invoke(it)
     })
 }
 
 fun <B : ViewDataBinding, VM : BaseContextViewModel> IBaseBindingFragment<B, VM>.setupBinding(
     inflater: LayoutInflater,
-    container: ViewGroup?
+    container: ViewGroup?,
+    viewModelBRId: Int? = null
 ): View {
     return viewModel?.let { vm ->
         (this as Fragment).createBindingWithViewModel<B, VM>(
             layoutId = layoutId,
             viewModel = vm,
-            viewModelBRId = BR.vm,
+            viewModelBRId = viewModelBRId ?: BR.vm,
             container = container,
             attachToParent = false
         )
@@ -164,11 +207,11 @@ fun <B : ViewDataBinding, VM : BaseContextViewModel> IBaseBindingFragment<B, VM>
     }.root
 }
 
-fun <T : Any> androidx.lifecycle.LifecycleOwner.onAnyChange(
+fun <T : Any> LifecycleOwner.onAnyChange(
     data: LiveData<T>?,
     stateHandle: InHandler<T>? = null
 ) {
-    data?.observe(this, {
+    data?.observe(this, Observer {
         stateHandle?.invoke(it)
     })
 }

@@ -1,10 +1,8 @@
 package com.rasalexman.sresult.common.extensions
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.FlowCollector
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.*
 
 /**
  * Запускает flow на IO потоке
@@ -28,3 +26,11 @@ fun <T> safeIoFlow(defaultValue: T? = null, flowBlock: suspend FlowCollector<T>.
             logg { throwable.message }
             defaultValue?.let { emit(it) }
         }
+
+fun <T : Any> Flow<T>.asState(
+    scope: CoroutineScope,
+    initialValue: T,
+    started: SharingStarted = SharingStarted.WhileSubscribed()
+): StateFlow<T> {
+    return this.stateIn(scope, started, initialValue)
+}

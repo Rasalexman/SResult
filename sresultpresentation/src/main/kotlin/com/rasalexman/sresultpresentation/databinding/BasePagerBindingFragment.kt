@@ -6,7 +6,8 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.rasalexman.sresult.common.extensions.unsafeLazy
-import com.rasalexman.sresultpresentation.extensions.clearObservers
+import com.rasalexman.sresultpresentation.extensions.addViewModelObservers
+import com.rasalexman.sresultpresentation.extensions.clearViewModel
 import com.rasalexman.sresultpresentation.extensions.stringArr
 import com.rasalexman.sresultpresentation.viewModels.BaseContextViewModel
 import com.rasalexman.sresultpresentation.viewModels.IBasePagerViewModel
@@ -34,7 +35,9 @@ abstract class BasePagerBindingFragment<B : ViewDataBinding, VM : BaseContextVie
     abstract fun setupViewPagerConfig(binding: B)
 
     protected open fun addPagesViewModelsToObserve(vmList: List<IResultViewModel>) {
-        vmList.forEach(::addViewModelObservers)
+        vmList.forEach {
+            addViewModelObservers(it)
+        }
     }
 
     protected open fun setupTabMediator(tabLayout: TabLayout, viewPager: ViewPager2) {
@@ -70,7 +73,7 @@ abstract class BasePagerBindingFragment<B : ViewDataBinding, VM : BaseContextVie
         tabLayoutMediator?.detach()
         tabLayoutMediator = null
         pagesVMList.forEach { pageVM ->
-            pageVM.clearObservers(this.viewLifecycleOwner)
+            pageVM.clearViewModel(this.viewLifecycleOwner)
         }
         super.onDestroyView()
     }

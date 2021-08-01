@@ -1,18 +1,21 @@
 package com.rasalexman.sresultpresentation.extensions
 
 import androidx.lifecycle.*
+import com.rasalexman.sresult.common.extensions.asState
 import com.rasalexman.sresult.common.extensions.errorResult
 import com.rasalexman.sresult.common.extensions.loggE
 import com.rasalexman.sresult.common.extensions.toErrorResult
 import com.rasalexman.sresult.common.typealiases.AnyResult
 import com.rasalexman.sresult.data.dto.ISEvent
 import com.rasalexman.sresult.data.dto.SResult
+import com.rasalexman.sresultpresentation.viewModels.BaseContextViewModel
+import com.rasalexman.sresultpresentation.viewModels.BaseStateViewModel
 import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
 import com.rasalexman.sresultpresentation.viewModels.IResultViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
-fun BaseViewModel.launchUITryCatch(
+fun BaseContextViewModel.launchUITryCatch(
     dispatcher: CoroutineDispatcher = Dispatchers.Main,
     start: CoroutineStart = CoroutineStart.DEFAULT,
     catchBlock: ((Throwable) -> Unit)? = null, tryBlock: suspend CoroutineScope.() -> Unit
@@ -24,7 +27,7 @@ fun BaseViewModel.launchUITryCatch(
     }
 }
 
-fun BaseViewModel.launchAsyncTryCatch(catchBlock: ((Throwable) -> Unit)? = null, tryBlock: suspend CoroutineScope.() -> Unit) {
+fun BaseContextViewModel.launchAsyncTryCatch(catchBlock: ((Throwable) -> Unit)? = null, tryBlock: suspend CoroutineScope.() -> Unit) {
     try {
         launchAsync(block = tryBlock)
     } catch (e: Throwable) {
@@ -32,7 +35,7 @@ fun BaseViewModel.launchAsyncTryCatch(catchBlock: ((Throwable) -> Unit)? = null,
     }
 }
 
-fun BaseViewModel.launchAsync(
+fun BaseContextViewModel.launchAsync(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
     start: CoroutineStart = CoroutineStart.DEFAULT,
     block: suspend CoroutineScope.() -> Unit
@@ -40,10 +43,11 @@ fun BaseViewModel.launchAsync(
     viewModelScope.launch(viewModelScope.coroutineContext + dispatcher + superVisorJob, start, block)
 }
 
-inline fun <reified T> BaseViewModel.asyncLiveData(
+inline fun <reified T> BaseContextViewModel.asyncLiveData(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
     noinline block: suspend LiveDataScope<T>.() -> Unit
 ) = liveData(context = viewModelScope.coroutineContext + dispatcher + superVisorJob, block = block)
+
 
 /**
  *
@@ -153,6 +157,27 @@ inline fun <reified E : ISEvent, reified T : Any> BaseViewModel.onEventFlow(
         } else {
             asLiveData(dispatcher)
         }
+    }
+}
+
+inline fun <reified E : ISEvent, reified T : Any> BaseStateViewModel.onEventFlow(
+    dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    isDistincted: Boolean = false,
+    eventDelay: Long = 0,
+    noinline emitOnStart: (() -> T)? = null,
+    crossinline block: suspend FlowCollector<T>.(E) -> Unit
+): Flow<T> {
+    val currentEventFlow = if(isDistincted) eventsFlow.distinctUntilChanged()
+    else eventsFlow
+
+    return createEventFlow<E, T>(
+        eventFlow = currentEventFlow,
+        dispatcher = dispatcher,
+        eventDelay = eventDelay,
+        emitOnStart = emitOnStart,
+        block = block
+    ) {
+        supportFlow.tryEmit(errorResult(exception = it))
     }
 }
 

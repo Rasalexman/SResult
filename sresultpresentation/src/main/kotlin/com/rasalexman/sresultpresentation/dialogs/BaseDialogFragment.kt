@@ -13,9 +13,7 @@ import com.rasalexman.sresult.common.extensions.getMessage
 import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultpresentation.extensions.*
 import com.rasalexman.sresultpresentation.fragments.IBaseFragment
-import com.rasalexman.sresultpresentation.viewModels.IBaseViewModel
 import com.rasalexman.sresultpresentation.viewModels.IResultViewModel
-import com.rasalexman.sresultpresentation.viewModels.IStateViewModel
 import java.lang.ref.WeakReference
 
 abstract class BaseDialogFragment<VM : IResultViewModel> : AppCompatDialogFragment(),
@@ -50,13 +48,6 @@ abstract class BaseDialogFragment<VM : IResultViewModel> : AppCompatDialogFragme
         showToolbar()
         initLayout()
         addViewModelObservers(viewModel)
-    }
-
-    protected open fun addViewModelObservers(vm: IResultViewModel?) {
-        when(vm) {
-            is IBaseViewModel -> observeBaseViewModel(vm)
-            is IStateViewModel -> observeStateViewModel(vm)
-        }
     }
 
     /**

@@ -36,6 +36,11 @@
         android:name="com.rasalexman.sresultexample.emptyvm.EmptyVmFragment"
         android:label="EmptyVmFragment" />
 
+    <fragment
+        android:id="@+id/stateFlowFragment"
+        android:name="com.rasalexman.sresultexample.state.StateFlowFragment"
+        android:label="StateFlowFragment" />
+
     <dialog android:id="@+id/userBottomDialogFragment"
         android:name="com.rasalexman.sresultexample.bottom.UserBottomDialogFragment"
         android:label="UserBottomDialogFragment"
@@ -72,6 +77,9 @@
 
     <action android:id="@+id/showEmptyFragment"
         app:destination="@+id/emptyFragment"/>
+
+    <action android:id="@+id/showStateFlowFragment"
+        app:destination="@+id/stateFlowFragment"/>
 
     <action android:id="@+id/showUsersFragment"
         app:destination="@+id/usersFragment">

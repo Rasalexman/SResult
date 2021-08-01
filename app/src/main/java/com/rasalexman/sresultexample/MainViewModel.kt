@@ -94,4 +94,8 @@ class MainViewModel : BaseViewModel() {
             itemId = "HELLO WORLD"
         ).toNavigateResult()
     }
+
+    fun onStateButtonClicked() {
+        navigationLiveData.value = MainFragmentDirections.showStateFlowFragment().toNavigateResult()
+    }
 }

@@ -30,7 +30,9 @@ import com.rasalexman.sresultpresentation.BR
 import com.rasalexman.sresultpresentation.R
 import com.rasalexman.sresultpresentation.extensions.*
 import com.rasalexman.sresultpresentation.fragments.IBaseFragment
-import com.rasalexman.sresultpresentation.viewModels.*
+import com.rasalexman.sresultpresentation.viewModels.BaseContextViewModel
+import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
+import com.rasalexman.sresultpresentation.viewModels.CustomViewModelLazy
 import java.lang.ref.WeakReference
 
 abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseContextViewModel, F : Fragment> :
@@ -137,17 +139,10 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseContextViewModel
         currentBinding?.let {
             it.lifecycleOwner = this
             it.setVariable(BR.vm, viewModel)
-            it.executePendingBindings()
             initBinding(it)
+            it.executePendingBindings()
         }
         addViewModelObservers(viewModel)
-    }
-
-    protected open fun addViewModelObservers(vm: IResultViewModel?) {
-        when(vm) {
-            is IBaseViewModel -> observeBaseViewModel(vm)
-            is IStateViewModel -> observeStateViewModel(vm)
-        }
     }
 
     override fun onDetachedFromWindow() {

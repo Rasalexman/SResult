@@ -30,8 +30,8 @@ open class BaseViewModel : BaseContextViewModel(), IBaseViewModel {
     /**
      * Handle Some error states with [SResult.AbstractFailure]
      */
-    open fun handleErrorState(errorResult: SResult.AbstractFailure) {
-        supportLiveData.value = errorResult(message = errorResult.message.toString(), exception = errorResult.exception)
+    override fun handleErrorState(errorResult: SResult.AbstractFailure) {
+        supportLiveData.value = createFailure(errorResult)
     }
 
     override fun processViewEvent(viewEvent: ISEvent) {
@@ -46,7 +46,7 @@ open class BaseViewModel : BaseContextViewModel(), IBaseViewModel {
      * When need to go back from layout
      * Don't forget to set canGoBack in Fragment to true
      */
-    open fun onBackClicked() {
+    override fun onBackClicked() {
         navigationLiveData.value = navigateBackResult()
     }
 
