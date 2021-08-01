@@ -91,6 +91,9 @@ sealed class SResult<out T : Any> {
 
         abstract class BaseNavigationResult : NavigateResult()
 
+        //
+        object EmptyNavigation : NavigateResult()
+
         data class NavigateTo(
             override val navDirection: Any
         ) : BaseNavigationResult()

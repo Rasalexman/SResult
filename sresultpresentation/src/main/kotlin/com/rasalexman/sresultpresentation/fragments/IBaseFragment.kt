@@ -5,9 +5,10 @@ import androidx.appcompat.widget.Toolbar
 import com.rasalexman.sresultpresentation.R
 import com.rasalexman.sresultpresentation.base.IComplexHandler
 import com.rasalexman.sresultpresentation.viewModels.IBaseViewModel
+import com.rasalexman.sresultpresentation.viewModels.IResultViewModel
 import java.lang.ref.WeakReference
 
-interface IBaseFragment<out VM : IBaseViewModel> : IComplexHandler, Toolbar.OnMenuItemClickListener {
+interface IBaseFragment<out VM : IResultViewModel> : IComplexHandler, Toolbar.OnMenuItemClickListener {
 
     val viewModel: VM?
     val layoutId: Int
@@ -88,4 +89,8 @@ interface IBaseFragment<out VM : IBaseViewModel> : IComplexHandler, Toolbar.OnMe
             weakLoadingRef = WeakReference(it)
         }
     }
+
+    fun onAnyDataHandler(data: Any?)
+    fun toolbarTitleHandler(title: String)
+    fun toolbarSubTitleHandler(subtitle: String)
 }

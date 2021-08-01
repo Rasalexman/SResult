@@ -8,6 +8,7 @@ import com.rasalexman.sresult.common.typealiases.AnyResult
 import com.rasalexman.sresult.data.dto.ISEvent
 import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
+import com.rasalexman.sresultpresentation.viewModels.IResultViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
@@ -134,8 +135,37 @@ inline fun <reified E : ISEvent, reified T : Any> BaseViewModel.onEventFlow(
     noinline emitOnStart: (() -> T)? = null,
     crossinline block: suspend FlowCollector<T>.(E) -> Unit
 ): LiveData<T> {
-    return flow<T> {
-        eventLiveData.asFlow().collect {
+    val eventFlow = eventLiveData.asFlow()
+    val currentEventFlow = if(isDistincted) eventFlow.distinctUntilChanged()
+    else eventFlow
+
+    return createEventFlow<E, T>(
+        eventFlow = currentEventFlow,
+        dispatcher = dispatcher,
+        eventDelay = eventDelay,
+        emitOnStart = emitOnStart,
+        block = block
+    ) {
+        supportLiveData.postValue(errorResult(exception = it))
+    }.run {
+        if(asMutable) {
+            asLiveData(dispatcher) as MutableLiveData<T>
+        } else {
+            asLiveData(dispatcher)
+        }
+    }
+}
+
+inline fun <reified E : ISEvent, reified T : Any> IResultViewModel.createEventFlow(
+    eventFlow: Flow<ISEvent>,
+    dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    eventDelay: Long = 0,
+    noinline emitOnStart: (() -> T)? = null,
+    crossinline block: suspend FlowCollector<T>.(E) -> Unit,
+    noinline catchBlock: ((Throwable) -> Unit)? = null
+): Flow<T> {
+    return flow {
+        eventFlow.collect {
             if(it is E) {
                 if(eventDelay > 0) {
                     delay(eventDelay)
@@ -144,21 +174,13 @@ inline fun <reified E : ISEvent, reified T : Any> BaseViewModel.onEventFlow(
             }
         }
     }.flowOn(dispatcher).apply {
-        if(isDistincted) distinctUntilChanged()
-
         emitOnStart?.let { startAction ->
             onStart {
                 emit(startAction())
             }
         }
     }.catch {
-        supportLiveData.postValue(errorResult(exception = it))
-    }.run {
-        if(asMutable) {
-            asLiveData(dispatcher) as MutableLiveData<T>
-        } else {
-            asLiveData(dispatcher)
-        }
+        catchBlock?.invoke(it)
     }
 }
 

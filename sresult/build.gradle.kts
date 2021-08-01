@@ -8,13 +8,13 @@ plugins {
 }
 
 android {
-    compileSdkVersion(Builds.COMPILE_VERSION)
+    compileSdk = Builds.COMPILE_VERSION
     buildToolsVersion = Builds.BUILD_TOOLS
     defaultConfig {
-        minSdkVersion(Builds.MIN_VERSION)
-        targetSdkVersion(Builds.TARGET_VERSION)
-        versionCode = Builds.SResult.VERSION_CODE
-        versionName = Builds.SResult.VERSION_NAME
+        minSdk = Builds.MIN_VERSION
+        targetSdk = Builds.TARGET_VERSION
+        //versionCode = Builds.SResult.VERSION_CODE
+        //versionName = Builds.SResult.VERSION_NAME
         //testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -23,7 +23,7 @@ android {
     buildTypes {
         getByName("debug") {
             isMinifyEnabled = false
-            isDebuggable = true
+            //isDebuggable = true
         }
 
         getByName("release") {
@@ -41,7 +41,7 @@ android {
     }
 
     // Declare the task that will monitor all configurations.
-    configurations.all {
+    /*configurations.all {
         // 2 Define the resolution strategy in case of conflicts.
         resolutionStrategy {
             // Fail eagerly on version conflict (includes transitive dependencies),
@@ -51,7 +51,7 @@ android {
             // Prefer modules that are part of this build (multi-project or composite build) over external modules.
             preferProjectModules()
         }
-    }
+    }*/
 
     sourceSets {
         getByName("main") {
@@ -102,11 +102,11 @@ afterEvaluate {
             }*/
         }
 
-        repositories {
+        /*repositories {
             maven {
                 name = "sresult"
                 url = uri(layout.buildDirectory.dir("repo"))
             }
-        }
+        }*/
     }
 }

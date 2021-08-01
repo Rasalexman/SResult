@@ -5,21 +5,20 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.MenuRes
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.appcompat.widget.Toolbar
-import androidx.lifecycle.LiveData
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import com.rasalexman.sresult.common.extensions.getMessage
-import com.rasalexman.sresultpresentation.extensions.AnyResultLiveData
 import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultpresentation.extensions.*
 import com.rasalexman.sresultpresentation.fragments.IBaseFragment
 import com.rasalexman.sresultpresentation.viewModels.IBaseViewModel
+import com.rasalexman.sresultpresentation.viewModels.IResultViewModel
+import com.rasalexman.sresultpresentation.viewModels.IStateViewModel
 import java.lang.ref.WeakReference
 
-abstract class BaseDialogFragment<VM : IBaseViewModel> : AppCompatDialogFragment(),
+abstract class BaseDialogFragment<VM : IResultViewModel> : AppCompatDialogFragment(),
     IBaseFragment<VM> {
 
     override val contentView: View?
@@ -50,9 +49,14 @@ abstract class BaseDialogFragment<VM : IBaseViewModel> : AppCompatDialogFragment
         super.onViewCreated(view, savedInstanceState)
         showToolbar()
         initLayout()
-        addResultLiveDataObservers()
-        addSupportLiveDataObservers()
-        addNavigateLiveDataObserver()
+        addViewModelObservers(viewModel)
+    }
+
+    protected open fun addViewModelObservers(vm: IResultViewModel?) {
+        when(vm) {
+            is IBaseViewModel -> observeBaseViewModel(vm)
+            is IStateViewModel -> observeStateViewModel(vm)
+        }
     }
 
     /**
@@ -77,37 +81,6 @@ abstract class BaseDialogFragment<VM : IBaseViewModel> : AppCompatDialogFragment
         return true
     }
 
-    protected open fun addNavigateLiveDataObserver() {
-        viewModel?.navigationLiveData?.apply(::observeNavigationLiveData)
-    }
-
-    /**
-     * Add Standard Live data Observers to handler [SResult] event
-     */
-    @Suppress("UNCHECKED_CAST")
-    protected open fun addResultLiveDataObservers() {
-        (viewModel?.resultLiveData as? AnyResultLiveData)?.let {
-            onResultChange(it, ::onResultHandler)
-        }
-    }
-
-    /**
-     * Add Standard Live data Observers to handler [SResult] event
-     */
-    @Suppress("UNCHECKED_CAST")
-    protected open fun addSupportLiveDataObservers() {
-        (viewModel?.supportLiveData as? AnyResultLiveData)?.let {
-            onResultChange(it, ::onResultHandler)
-        }
-    }
-
-    /**
-     * Observe only [SResult.NavigateResult] live data
-     */
-    protected open fun observeNavigationLiveData(data: LiveData<SResult.NavigateResult>) {
-        onResultChange(data, ::onResultHandler)
-    }
-
     override fun onResultHandler(result: SResult<*>) {
         onBaseResultHandler(result)
     }
@@ -129,6 +102,7 @@ abstract class BaseDialogFragment<VM : IBaseViewModel> : AppCompatDialogFragment
     override fun showProgress(progress: Int, message: Any?) = Unit
     override fun showNavigationError(e: Exception?, navResId: Int?) = Unit
     override fun showSuccess(result: SResult.Success<*>) = Unit
+    override fun onAnyDataHandler(data: Any?) = Unit
 
     /**
      * Navigate by direction [NavDirections]
@@ -202,9 +176,17 @@ abstract class BaseDialogFragment<VM : IBaseViewModel> : AppCompatDialogFragment
         )
     }
 
+    override fun toolbarTitleHandler(title: String) {
+        toolbarView?.setupToolbarTitle(title, toolbarTitleResId, centerToolbarTitle)
+    }
+    override fun toolbarSubTitleHandler(subtitle: String) {
+        toolbarView?.setupToolbarSubtitle(subtitle, centerToolbarTitle)
+    }
+
     override fun onDestroyView() {
         this.clear(this.viewLifecycleOwner)
         this.view.clearView()
+        (view as? ViewGroup)?.removeAllViews()
         super.onDestroyView()
     }
 }

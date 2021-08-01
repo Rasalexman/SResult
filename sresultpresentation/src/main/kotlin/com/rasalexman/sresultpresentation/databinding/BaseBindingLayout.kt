@@ -18,11 +18,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.findFragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
 import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
 import com.rasalexman.easyrecyclerbinding.createBinding
 import com.rasalexman.easyrecyclerbinding.getOwner
+import com.rasalexman.sresult.common.extensions.applyIf
 import com.rasalexman.sresult.common.extensions.loggE
 import com.rasalexman.sresult.common.extensions.or
 import com.rasalexman.sresult.data.dto.SResult
@@ -30,12 +30,10 @@ import com.rasalexman.sresultpresentation.BR
 import com.rasalexman.sresultpresentation.R
 import com.rasalexman.sresultpresentation.extensions.*
 import com.rasalexman.sresultpresentation.fragments.IBaseFragment
-import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
-import com.rasalexman.sresultpresentation.viewModels.CustomViewModelLazy
-import com.rasalexman.sresultpresentation.viewModels.IBaseViewModel
+import com.rasalexman.sresultpresentation.viewModels.*
 import java.lang.ref.WeakReference
 
-abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel, F : Fragment> :
+abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseContextViewModel, F : Fragment> :
     FrameLayout,
     LifecycleOwner, IBaseFragment<VM>, IBaseBindingFragment<VB, VM> {
 
@@ -142,7 +140,14 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel, F : F
             it.executePendingBindings()
             initBinding(it)
         }
-        addViewModelBasicObservers()
+        addViewModelObservers(viewModel)
+    }
+
+    protected open fun addViewModelObservers(vm: IResultViewModel?) {
+        when(vm) {
+            is IBaseViewModel -> observeBaseViewModel(vm)
+            is IStateViewModel -> observeStateViewModel(vm)
+        }
     }
 
     override fun onDetachedFromWindow() {
@@ -169,64 +174,14 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel, F : F
     override fun showAlert(alert: SResult.AbstractFailure.Alert) = Unit
     override fun showFailure(error: SResult.AbstractFailure.Failure) = Unit
 
-    protected open fun addViewModelBasicObservers() {
-        viewModel?.let { currentViewModel ->
-            addSupportLiveDataObservers(currentViewModel)
-            addResultLiveDataObservers(currentViewModel)
-            addNavigateLiveDataObserver(currentViewModel)
-            currentViewModel.anyLiveData?.let {
-                onAnyChange(it, ::onAnyDataHandler)
-            }
-            currentViewModel.liveDataToObserve.forEach {
-                onAnyChange(it)
-            }
-        }
-    }
-
-    /**
-     * Add Standard Live data Observers to handler [SResult] event
-     */
-    @Suppress("UNCHECKED_CAST")
-    protected open fun addResultLiveDataObservers(currentVM: BaseViewModel) {
-        (currentVM.resultLiveData as? AnyResultLiveData)?.let {
-            onResultChange(it, ::onResultHandler)
-        }
-    }
-
-    /**
-     * Add Standard Live data Observers to handler [SResult] event
-     */
-    protected open fun addSupportLiveDataObservers(currentVM: BaseViewModel) {
-        (currentVM.supportLiveData as? AnyResultLiveData)?.let {
-            onResultChange(it, ::onResultHandler)
-        }
-    }
-
-    /**
-     * Add Standard Live data Observers to handler [SResult.NavigateResult] event
-     */
-    protected open fun addNavigateLiveDataObserver(currentVM: BaseViewModel) {
-        currentVM.navigationLiveData.apply(::observeNavigationLiveData)
-    }
-
-    /**
-     * Observe only [SResult.NavigateResult] live data
-     */
-    protected open fun observeNavigationLiveData(data: LiveData<SResult.NavigateResult>) {
-        onResultChange(data, ::onResultHandler)
-    }
-
     /**
      * Base Result handler function
      */
     override fun onResultHandler(result: SResult<*>) {
-        onBaseResultHandler(result)
+        result.applyIf(!result.isHandled) {
+            onBaseResultHandler(result)
+        }
     }
-
-    /**
-     * Any data types handler for [IBaseViewModel.anyLiveData]
-     */
-    protected open fun onAnyDataHandler(data: Any?) = Unit
 
     /**
      * Navigate by direction [NavDirections]
@@ -309,4 +264,7 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseViewModel, F : F
     override fun onToolbarBackPressed() = Unit
     override fun showEmptyLayout() = Unit
     override fun onNextPressed() = Unit
+    override fun onAnyDataHandler(data: Any?) = Unit
+    override fun toolbarTitleHandler(title: String) = Unit
+    override fun toolbarSubTitleHandler(subtitle: String) = Unit
 }

@@ -7,9 +7,9 @@ import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
 import com.rasalexman.sresultpresentation.extensions.setupBinding
 import com.rasalexman.sresultpresentation.fragments.BaseFragment
-import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
+import com.rasalexman.sresultpresentation.viewModels.BaseContextViewModel
 
-abstract class BaseBindingFragment<B : ViewDataBinding, VM : BaseViewModel> : BaseFragment<VM>(),
+abstract class BaseBindingFragment<B : ViewDataBinding, VM : BaseContextViewModel> : BaseFragment<VM>(),
     IBaseBindingFragment<B, VM> {
 
     override var currentBinding: B? = null

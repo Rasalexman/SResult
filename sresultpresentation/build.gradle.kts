@@ -6,13 +6,13 @@ plugins {
 }
 
 android {
-    compileSdkVersion(config.Builds.COMPILE_VERSION)
+    compileSdk = config.Builds.COMPILE_VERSION
     buildToolsVersion = config.Builds.BUILD_TOOLS
     defaultConfig {
-        minSdkVersion(config.Builds.MIN_VERSION)
-        targetSdkVersion(config.Builds.TARGET_VERSION)
-        versionCode = config.Builds.SResult.VERSION_CODE
-        versionName = config.Builds.SResult.VERSION_NAME
+        minSdk = config.Builds.MIN_VERSION
+        targetSdk = config.Builds.TARGET_VERSION
+        //versionCode = config.Builds.SResult.VERSION_CODE
+        //versionName = config.Builds.SResult.VERSION_NAME
         //testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -21,7 +21,7 @@ android {
     buildTypes {
         getByName("debug") {
             isMinifyEnabled = false
-            isDebuggable = true
+            //isDebuggable = true
         }
 
         getByName("release") {
@@ -39,7 +39,7 @@ android {
     }
 
     // Declare the task that will monitor all configurations.
-    configurations.all {
+    /*configurations.all {
         // 2 Define the resolution strategy in case of conflicts.
         resolutionStrategy {
             // Fail eagerly on version conflict (includes transitive dependencies),
@@ -49,7 +49,7 @@ android {
             // Prefer modules that are part of this build (multi-project or composite build) over external modules.
             preferProjectModules()
         }
-    }
+    }*/
 
     sourceSets {
         getByName("main") {
@@ -65,6 +65,11 @@ android {
         languageVersion = "1.5"
         apiVersion = "1.5"
     }
+}
+
+kapt {
+    useBuildCache = true
+    generateStubs = false
 }
 
 dependencies {
@@ -121,11 +126,11 @@ afterEvaluate {
             }
         }
 
-        repositories {
+        /*repositories {
             maven {
                 name = "sresultpresentation"
                 url = uri(layout.buildDirectory.dir("repo-presentation"))
             }
-        }
+        }*/
     }
 }

@@ -26,7 +26,7 @@ class MainFragment : BaseBindingFragment<FragmentMainBinding, MainViewModel>() {
     override fun onResultHandler(result: SResult<*>) {
         super.onResultHandler(result)
         result.applyIfSuccessTyped<UserModel> {
-            logg { "-----> applyIfSuccessTyped = ${this}" }
+            logg { "-----> applyIfSuccessTyped = $this" }
             binding.progressTV.text = it.token
         }.applyIfType<SResult.Progress> {
             binding.progressTV.text = buildString {

@@ -15,11 +15,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.Navigation
 import com.rasalexman.easyrecyclerbinding.createBinding
 import com.rasalexman.easyrecyclerbinding.createBindingWithViewModel
+import com.rasalexman.sresult.common.extensions.applyForType
 import com.rasalexman.sresult.common.extensions.applyIf
 import com.rasalexman.sresult.common.extensions.loggE
 import com.rasalexman.sresult.common.extensions.or
@@ -30,7 +32,9 @@ import com.rasalexman.sresultpresentation.R
 import com.rasalexman.sresultpresentation.databinding.IBaseBindingFragment
 import com.rasalexman.sresultpresentation.fragments.BaseFragment
 import com.rasalexman.sresultpresentation.fragments.IBaseFragment
-import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
+import com.rasalexman.sresultpresentation.viewModels.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 private var lastSoftInput = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN
 
@@ -57,7 +61,17 @@ fun Fragment.stringArr(@ArrayRes resource: Int): Array<String> = resources.getSt
 fun Fragment.drawable(@DrawableRes resource: Int): Drawable? = requireActivity().drawable(resource)
 
 fun IBaseFragment<*>.clear(lifecycleOwner: LifecycleOwner) {
-    viewModel?.apply {
+    viewModel?.clearObservers(lifecycleOwner)
+    weakContentRef?.clear()
+    weakLoadingRef?.clear()
+    weakToolbarRef?.clear()
+    weakContentRef = null
+    weakLoadingRef = null
+    weakToolbarRef = null
+}
+
+fun IResultViewModel.clearObservers(lifecycleOwner: LifecycleOwner) {
+    (this as? IBaseViewModel)?.apply {
         resultLiveData?.removeObservers(lifecycleOwner)
         supportLiveData.removeObservers(lifecycleOwner)
         navigationLiveData.removeObservers(lifecycleOwner)
@@ -66,13 +80,40 @@ fun IBaseFragment<*>.clear(lifecycleOwner: LifecycleOwner) {
         toolbarSubTitle?.removeObservers(lifecycleOwner)
         liveDataToObserve.forEach { it.removeObservers(lifecycleOwner) }
     }
+}
 
-    weakContentRef?.clear()
-    weakLoadingRef?.clear()
-    weakToolbarRef?.clear()
-    weakContentRef = null
-    weakLoadingRef = null
-    weakToolbarRef = null
+fun IBaseFragment<*>.observeBaseViewModel(currentBaseVm: IBaseViewModel) {
+    (this as? LifecycleOwner)?.apply {
+        onResultChange(currentBaseVm.navigationLiveData, ::onResultHandler)
+        onResultChange(currentBaseVm.supportLiveData, ::onResultHandler)
+        onAnyChange(currentBaseVm.anyLiveData, ::onAnyDataHandler)
+        onResultChange((currentBaseVm.resultLiveData as? AnyResultLiveData), ::onResultHandler)
+        onAnyChange(currentBaseVm.toolbarTitle, ::toolbarTitleHandler)
+        onAnyChange(currentBaseVm.toolbarSubTitle, ::toolbarSubTitleHandler)
+
+        currentBaseVm.liveDataToObserve.forEach {
+            onAnyChange(it)
+        }
+    }
+}
+
+fun IBaseFragment<*>.observeStateViewModel(currentStateVM: IStateViewModel) {
+    (this as? LifecycleOwner)?.lifecycleScope?.launch {
+        currentStateVM.apply {
+            resultFlow?.collect { it?.applyForType(::onResultHandler) }
+            navigationFlow.collect { it.applyForType(::onResultHandler) }
+            supportFlow.collect { it.applyForType(::onResultHandler) }
+            navigationFlow.collect { it.applyForType(::onResultHandler) }
+            anyDataFlow?.collect { onAnyDataHandler(it) }
+
+            toolbarTitle?.collect {
+                toolbarTitleHandler(it)
+            }
+            toolbarSubTitle?.collect {
+                toolbarSubTitleHandler(it)
+            }
+        }
+    }
 }
 
 fun <T : SResult<*>> Fragment.onResultChange(data: LiveData<T>?, stateHandle: InHandler<T>) {
@@ -96,7 +137,7 @@ fun <T : Any> BaseFragment<*>.onAnyChange(data: LiveData<T>?, stateHandle: InHan
     })
 }
 
-fun <B : ViewDataBinding, VM : BaseViewModel> IBaseBindingFragment<B, VM>.setupBinding(
+fun <B : ViewDataBinding, VM : BaseContextViewModel> IBaseBindingFragment<B, VM>.setupBinding(
     inflater: LayoutInflater,
     container: ViewGroup?
 ): View {

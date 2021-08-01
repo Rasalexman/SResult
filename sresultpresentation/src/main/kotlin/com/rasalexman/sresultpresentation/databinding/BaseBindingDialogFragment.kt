@@ -7,9 +7,9 @@ import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
 import com.rasalexman.sresultpresentation.dialogs.BaseDialogFragment
 import com.rasalexman.sresultpresentation.extensions.setupBinding
-import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
+import com.rasalexman.sresultpresentation.viewModels.BaseContextViewModel
 
-abstract class BaseBindingDialogFragment<B : ViewDataBinding, VM : BaseViewModel> :
+abstract class BaseBindingDialogFragment<B : ViewDataBinding, VM : BaseContextViewModel> :
     BaseDialogFragment<VM>(),
     IBaseBindingFragment<B, VM> {
 

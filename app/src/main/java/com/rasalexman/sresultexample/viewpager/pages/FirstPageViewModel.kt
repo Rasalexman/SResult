@@ -1,10 +1,11 @@
 package com.rasalexman.sresultexample.viewpager.pages
 
 import androidx.lifecycle.MutableLiveData
+import com.rasalexman.easyrecyclerbinding.IBindingModel
 import com.rasalexman.sresultexample.R
-import com.rasalexman.sresultpresentation.viewModels.BasePageViewModel
+import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
 
-class FirstPageViewModel : BasePageViewModel() {
+class FirstPageViewModel : BaseViewModel(), IBindingModel {
 
     val login: MutableLiveData<String> = MutableLiveData()
     val password: MutableLiveData<String> = MutableLiveData()

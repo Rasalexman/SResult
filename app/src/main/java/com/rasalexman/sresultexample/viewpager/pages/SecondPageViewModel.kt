@@ -1,17 +1,18 @@
 package com.rasalexman.sresultexample.viewpager.pages
 
 import androidx.lifecycle.LiveData
+import com.rasalexman.easyrecyclerbinding.IBindingModel
 import com.rasalexman.easyrecyclerbinding.recyclerConfig
 import com.rasalexman.sresult.common.extensions.unsafeLazy
 import com.rasalexman.sresultexample.BR
 import com.rasalexman.sresultexample.R
 import com.rasalexman.sresultexample.databinding.ItemRecyclerBinding
 import com.rasalexman.sresultpresentation.extensions.asyncLiveData
-import com.rasalexman.sresultpresentation.viewModels.BasePageViewModel
+import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
 import java.util.*
 import kotlin.random.Random
 
-class SecondPageViewModel : BasePageViewModel() {
+class SecondPageViewModel : BaseViewModel(), IBindingModel {
     override val layoutResId: Int
         get() = R.layout.item_vp2_second_page
 
