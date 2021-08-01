@@ -17,7 +17,7 @@ object Builds {
     }
 
     object SResult {
-        const val VERSION_CODE = 103004
-        const val VERSION_NAME = "1.3.4"
+        const val VERSION_CODE = 103005
+        const val VERSION_NAME = "1.3.5"
     }
 }
