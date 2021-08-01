@@ -4,7 +4,6 @@ import android.view.View
 import androidx.appcompat.widget.Toolbar
 import com.rasalexman.sresultpresentation.R
 import com.rasalexman.sresultpresentation.base.IComplexHandler
-import com.rasalexman.sresultpresentation.viewModels.IBaseViewModel
 import com.rasalexman.sresultpresentation.viewModels.IResultViewModel
 import java.lang.ref.WeakReference
 

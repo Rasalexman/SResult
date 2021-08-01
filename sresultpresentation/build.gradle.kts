@@ -65,11 +65,11 @@ android {
         languageVersion = "1.5"
         apiVersion = "1.5"
     }
-}
 
-kapt {
-    useBuildCache = true
-    generateStubs = false
+    kapt {
+        useBuildCache = true
+        generateStubs = false
+    }
 }
 
 dependencies {

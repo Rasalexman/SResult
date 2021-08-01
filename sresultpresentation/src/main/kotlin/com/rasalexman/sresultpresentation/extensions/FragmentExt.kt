@@ -82,6 +82,7 @@ fun IResultViewModel.clearObservers(lifecycleOwner: LifecycleOwner) {
     }
 }
 
+@Suppress("UNCHECKED_CAST")
 fun IBaseFragment<*>.observeBaseViewModel(currentBaseVm: IBaseViewModel) {
     (this as? LifecycleOwner)?.apply {
         onResultChange(currentBaseVm.navigationLiveData, ::onResultHandler)
