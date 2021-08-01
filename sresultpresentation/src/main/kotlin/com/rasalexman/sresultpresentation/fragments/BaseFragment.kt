@@ -27,10 +27,10 @@ import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultpresentation.R
 import com.rasalexman.sresultpresentation.extensions.*
 import com.rasalexman.sresultpresentation.viewModels.IBaseViewModel
-import com.rasalexman.sresultpresentation.viewModels.IResultViewModel
+import com.rasalexman.sresultpresentation.viewModels.IEventableViewModel
 import java.lang.ref.WeakReference
 
-abstract class BaseFragment<VM : IResultViewModel> : Fragment(), IBaseFragment<VM>, INavigationHandler {
+abstract class BaseFragment<VM : IEventableViewModel> : Fragment(), IBaseFragment<VM>, INavigationHandler {
 
     override val contentView: View?
         get() = this.view
@@ -291,16 +291,14 @@ abstract class BaseFragment<VM : IResultViewModel> : Fragment(), IBaseFragment<V
      * Base [SResult] handle function
      */
     override fun onResultHandler(result: SResult<*>) {
-        result.applyIf(!result.isHandled) {
-            onBaseResultHandler(result)
-        }
+        onBaseResultHandler(result)
     }
 
     /**
      * Process [SEvent] to view model
      */
     protected open fun processViewEvent(viewEvent: ISEvent) {
-        this.viewModel?.processViewEvent(viewEvent)
+        this.viewModel?.processEvent(viewEvent)
     }
 
     /**

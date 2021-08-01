@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.rasalexman.sresult.data.dto.ISEvent
 import com.rasalexman.sresult.data.dto.SResult
 
-interface IBaseViewModel : IResultViewModel {
+interface IBaseViewModel : IEventableViewModel {
     val selectedPage: MutableLiveData<Int>
     val eventLiveData: MutableLiveData<ISEvent>
     val navigationLiveData: MutableLiveData<SResult.NavigateResult>

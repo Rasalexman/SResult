@@ -1,4 +1,4 @@
-package com.rasalexman.sresultpresentation.viewModels
+package com.rasalexman.sresultpresentation.viewModels.flowable
 
 import com.rasalexman.sresult.common.extensions.navigateBackResult
 import com.rasalexman.sresult.common.extensions.unsafeLazy
@@ -6,12 +6,15 @@ import com.rasalexman.sresult.common.typealiases.AnyResult
 import com.rasalexman.sresult.data.dto.ISEvent
 import com.rasalexman.sresult.data.dto.SEvent
 import com.rasalexman.sresult.data.dto.SResult
+import com.rasalexman.sresultpresentation.viewModels.BaseContextViewModel
+import com.rasalexman.sresultpresentation.viewModels.flowable.config.ISharedFlowConfig
+import com.rasalexman.sresultpresentation.viewModels.flowable.config.SharedFlowConfig
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 
-open class BaseStateViewModel : BaseContextViewModel(), IStateViewModel {
+open class FlowableViewModel : BaseContextViewModel(), IFlowableViewModel {
 
     protected open val eventConfig: ISharedFlowConfig = SharedFlowConfig()
     protected open val supportConfig: ISharedFlowConfig = SharedFlowConfig()
@@ -50,10 +53,10 @@ open class BaseStateViewModel : BaseContextViewModel(), IStateViewModel {
     override val toolbarTitle: MutableStateFlow<String>? = null
 
     override fun processEventAsync(viewEvent: ISEvent) {
-        processViewEvent(viewEvent)
+        processEvent(viewEvent)
     }
 
-    override fun processViewEvent(viewEvent: ISEvent) {
+    override fun processEvent(viewEvent: ISEvent) {
         eventsFlow.tryEmit(viewEvent)
     }
 
@@ -71,6 +74,10 @@ open class BaseStateViewModel : BaseContextViewModel(), IStateViewModel {
 
     override fun clear() {
         superVisorJob.cancelChildren()
+        clearEventsFlow()
+    }
+
+    protected open fun clearEventsFlow() {
         eventsFlow.tryEmit(SEvent.Empty)
     }
 }

@@ -15,20 +15,16 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 
-abstract class BaseContextViewModel : ViewModel(), IKodi, IResultViewModel {
+abstract class BaseContextViewModel : ViewModel(), IKodi, IEventableViewModel {
     protected val context: Context by immutableInstance()
     val superVisorJob: Job by lazy { SupervisorJob() }
-
-    val statesScope: CoroutineScope by unsafeLazy {
-        CoroutineScope(this.viewModelScope.coroutineContext + superVisorJob)
-    }
 
     /**
      * Process [com.rasalexman.sresult.data.dto.SEvent] from Presentation View Controller (such as Activity or Fragment) to ViewModel
      *
      * @param viewEvent [SEvent] - any implementation to handler with this fragment
      */
-    override fun processViewEvent(viewEvent: ISEvent) = Unit
+    override fun processEvent(viewEvent: ISEvent) = Unit
 
     /**
      * Process [SEvent] from Presentation View Controller (such as Activity or Fragment) to ViewModel

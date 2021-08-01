@@ -86,7 +86,7 @@ class MainViewModel : BaseViewModel() {
     fun onGenerateClicked() {
         val rand = Random.nextInt(10, 54)
         val event: ISEvent = if(rand % 2 == 0) SEvent.Fetch else SEvent.Refresh
-        processViewEvent(event)
+        processEvent(event)
     }
 
     fun onUsersClicked() {

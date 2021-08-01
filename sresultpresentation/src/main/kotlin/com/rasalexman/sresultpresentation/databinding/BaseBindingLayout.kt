@@ -30,66 +30,25 @@ import com.rasalexman.sresultpresentation.BR
 import com.rasalexman.sresultpresentation.R
 import com.rasalexman.sresultpresentation.extensions.*
 import com.rasalexman.sresultpresentation.fragments.IBaseFragment
+import com.rasalexman.sresultpresentation.layout.BaseLayout
 import com.rasalexman.sresultpresentation.viewModels.BaseContextViewModel
 import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
 import com.rasalexman.sresultpresentation.viewModels.CustomViewModelLazy
 import java.lang.ref.WeakReference
 
 abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseContextViewModel, F : Fragment> :
-    FrameLayout,
-    LifecycleOwner, IBaseFragment<VM>, IBaseBindingFragment<VB, VM> {
-
-    inline fun <reified VM : BaseViewModel> viewModels(
-        noinline fragmentProducer: () -> F = { this.findFragment() }
-    ): Lazy<VM> {
-        return CustomViewModelLazy(VM::class, fragmentProducer)
-    }
-
-    protected open var parentWeakLifecycle: WeakReference<Lifecycle>? = null
-
-    private val parentLifecycle: Lifecycle
-        get() {
-            return parentWeakLifecycle?.get().or {
-                try {
-                    this.findFragment<F>().viewLifecycleOwner.lifecycle
-                } catch (e: Exception) {
-                    context.getOwner<LifecycleOwner>().lifecycle
-                }.also {
-                    parentWeakLifecycle = WeakReference(it)
-                }
-            }
-        }
-
-    override var weakContentRef: WeakReference<View>? = null
-    override var weakLoadingRef: WeakReference<View>? = null
-    override var weakToolbarRef: WeakReference<Toolbar>? = null
-
-    /**
-     * Need to attach to parent when inflate data binding view
-     */
-    open val attachToParent: Boolean = true
-
-    /**
-     * View reference getter
-     */
-    override val contentView: View?
-        get() = this
+    BaseLayout<VM, F>, IBaseBindingFragment<VB, VM> {
 
     override var currentBinding: VB? = null
     override val binding: VB
         get() = currentBinding ?: throw NullPointerException("Binding is not initialized")
 
-    /**
-     * Fragment ViewModel instance
-     */
-    override val viewModel: VM? = null
-
     constructor(context: Context) : super(context) {
-        createLayout(context)
+        createBindingLayout(context)
     }
 
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
-        createLayout(context, attrs)
+        createBindingLayout(context, attrs)
     }
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
@@ -97,7 +56,7 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseContextViewModel
         attrs,
         defStyleAttr
     ) {
-        createLayout(context, attrs, defStyleAttr)
+        createBindingLayout(context, attrs, defStyleAttr)
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -112,10 +71,17 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseContextViewModel
         defStyleAttr,
         defStyleRes
     ) {
-        createLayout(context, attrs, defStyleAttr)
+        createBindingLayout(context, attrs, defStyleAttr)
     }
 
-    private fun createLayout(
+    override fun createLayout(
+        context: Context,
+        attrs: AttributeSet?,
+        defStyleAttr: Int,
+        defStyleRes: Int
+    ) = Unit
+
+    private fun createBindingLayout(
         context: Context,
         attrs: AttributeSet? = null,
         defStyleAttr: Int = 0,
@@ -135,131 +101,20 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseContextViewModel
     }
 
     override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
         currentBinding?.let {
             it.lifecycleOwner = this
             it.setVariable(BR.vm, viewModel)
             initBinding(it)
             it.executePendingBindings()
         }
-        addViewModelObservers(viewModel)
+        super.onAttachedToWindow()
     }
 
     override fun onDetachedFromWindow() {
-        val lifecycleOwner = this
-        this.clear(lifecycleOwner)
         currentBinding?.unbind()
         currentBinding = null
-        clearView()
-        parentWeakLifecycle?.clear()
-        parentWeakLifecycle = null
         super.onDetachedFromWindow()
     }
 
-    protected open fun applyAdditionalParameters(
-        context: Context,
-        attrs: AttributeSet?,
-        defStyleAttr: Int,
-        defStyleRes: Int
-    ) = Unit
-
     override fun initBinding(binding: VB) = Unit
-    protected open fun initLayout(view: View) = Unit
-    override fun showSuccess(result: SResult.Success<*>) = Unit
-    override fun showAlert(alert: SResult.AbstractFailure.Alert) = Unit
-    override fun showFailure(error: SResult.AbstractFailure.Failure) = Unit
-
-    /**
-     * Base Result handler function
-     */
-    override fun onResultHandler(result: SResult<*>) {
-        result.applyIf(!result.isHandled) {
-            onBaseResultHandler(result)
-        }
-    }
-
-    /**
-     * Navigate by direction [NavDirections]
-     */
-    override fun navigateTo(direction: Any) {
-        (direction as? NavDirections)?.let {
-            this.navigateTo(context, findNavController(), it)
-        }
-    }
-
-    /**
-     * Navigate by navResId [Int]
-     */
-    override fun navigateBy(navResId: Int) {
-        this.navigateBy(context, findNavController(), navResId)
-    }
-
-    /**
-     * Navigate back by pop with navResId
-     */
-    override fun navigatePopTo(navResId: Int?, isInclusive: Boolean, backArgs: Bundle?) {
-        this.navigatePopTo(context, findNavController(), navResId, isInclusive, backArgs)
-    }
-
-    /**
-     * Navigate to pop on context navigator
-     */
-    override fun navigatePop(backArgs: Bundle?) {
-        this.navigatePop(context, backArgs)
-    }
-
-    /**
-     * When navigation is broke
-     */
-    override fun showNavigationError(e: Exception?, navResId: Int?) {
-        loggE(
-            e,
-            "There is no navigation direction from ${this::class.java.simpleName} with contentViewLayout id = $navResId"
-        )
-        showToast(R.string.error_internal, Toast.LENGTH_LONG)
-    }
-
-    override fun showToast(message: Any?, interval: Int) {
-        hideKeyboard()
-        hideLoading()
-        context?.toast(message, interval)
-    }
-
-    override fun showLoading() {
-        hideKeyboard()
-        contentViewLayout?.hide()
-        loadingViewLayout?.show()
-    }
-
-    override fun hideLoading() {
-        hideKeyboard()
-        loadingViewLayout?.hide()
-        contentViewLayout?.show()
-    }
-
-    override fun showProgress(progress: Int, message: Any?) = Unit
-
-    /**
-     * get view [Lifecycle] from its [Context]
-     */
-    override fun getLifecycle(): Lifecycle {
-        return parentLifecycle
-    }
-
-    ///------- UNUSED SECTION ----///
-    override val toolbarTitle: String = ""
-    override val toolbarTitleResId: Int? = null
-    override val toolbarMenuId: Int? = null
-    override val toolbarSubTitle: String = ""
-
-    override fun onMenuItemClick(item: MenuItem?): Boolean = true
-    override fun onBackPressed(): Boolean = false
-    override fun startActivityForResult(intent: Intent?, requestCode: Int) = Unit
-    override fun inflateToolBarMenu(toolbar: Toolbar, menuResId: Int) = Unit
-    override fun onToolbarBackPressed() = Unit
-    override fun showEmptyLayout() = Unit
-    override fun onNextPressed() = Unit
-    override fun onAnyDataHandler(data: Any?) = Unit
-    override fun toolbarTitleHandler(title: String) = Unit
-    override fun toolbarSubTitleHandler(subtitle: String) = Unit
 }

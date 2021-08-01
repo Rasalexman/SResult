@@ -34,7 +34,7 @@ open class BaseViewModel : BaseContextViewModel(), IBaseViewModel {
         supportLiveData.value = createFailure(errorResult)
     }
 
-    override fun processViewEvent(viewEvent: ISEvent) {
+    override fun processEvent(viewEvent: ISEvent) {
         eventLiveData.value = viewEvent
     }
 

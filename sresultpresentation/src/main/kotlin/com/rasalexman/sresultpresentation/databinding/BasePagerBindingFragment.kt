@@ -11,7 +11,7 @@ import com.rasalexman.sresultpresentation.extensions.clearViewModel
 import com.rasalexman.sresultpresentation.extensions.stringArr
 import com.rasalexman.sresultpresentation.viewModels.BaseContextViewModel
 import com.rasalexman.sresultpresentation.viewModels.IBasePagerViewModel
-import com.rasalexman.sresultpresentation.viewModels.IResultViewModel
+import com.rasalexman.sresultpresentation.viewModels.IEventableViewModel
 
 abstract class BasePagerBindingFragment<B : ViewDataBinding, VM : BaseContextViewModel> :
     BaseBindingFragment<B, VM>() {
@@ -24,7 +24,7 @@ abstract class BasePagerBindingFragment<B : ViewDataBinding, VM : BaseContextVie
     }
 
     private var tabLayoutMediator: TabLayoutMediator? = null
-    abstract val pagesVMList: List<IResultViewModel>
+    abstract val pagesVMList: List<IEventableViewModel>
 
     override fun initBinding(binding: B) {
         super.initBinding(binding)
@@ -34,7 +34,7 @@ abstract class BasePagerBindingFragment<B : ViewDataBinding, VM : BaseContextVie
 
     abstract fun setupViewPagerConfig(binding: B)
 
-    protected open fun addPagesViewModelsToObserve(vmList: List<IResultViewModel>) {
+    protected open fun addPagesViewModelsToObserve(vmList: List<IEventableViewModel>) {
         vmList.forEach {
             addViewModelObservers(it)
         }

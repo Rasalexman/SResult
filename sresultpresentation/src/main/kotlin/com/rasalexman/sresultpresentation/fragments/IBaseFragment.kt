@@ -4,10 +4,10 @@ import android.view.View
 import androidx.appcompat.widget.Toolbar
 import com.rasalexman.sresultpresentation.R
 import com.rasalexman.sresultpresentation.base.IComplexHandler
-import com.rasalexman.sresultpresentation.viewModels.IResultViewModel
+import com.rasalexman.sresultpresentation.viewModels.IEventableViewModel
 import java.lang.ref.WeakReference
 
-interface IBaseFragment<out VM : IResultViewModel> : IComplexHandler, Toolbar.OnMenuItemClickListener {
+interface IBaseFragment<out VM : IEventableViewModel> : IComplexHandler, Toolbar.OnMenuItemClickListener {
 
     val viewModel: VM?
     val layoutId: Int

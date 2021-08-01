@@ -1,4 +1,4 @@
-package com.rasalexman.sresultpresentation.viewModels
+package com.rasalexman.sresultpresentation.viewModels.flowable.config
 
 import kotlinx.coroutines.channels.BufferOverflow
 
