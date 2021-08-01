@@ -4,7 +4,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import kotlin.reflect.KClass
 
-class CustomViewModelLazy<VM : BaseViewModel>(
+class CustomViewModelLazy<VM : BaseContextViewModel>(
     private val viewModelClass: KClass<VM>,
     private val fragmentProducer: () -> Fragment
 ) : Lazy<VM> {

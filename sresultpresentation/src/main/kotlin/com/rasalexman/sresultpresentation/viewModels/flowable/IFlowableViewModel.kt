@@ -1,12 +1,13 @@
-package com.rasalexman.sresultpresentation.viewModels
+package com.rasalexman.sresultpresentation.viewModels.flowable
 
 import com.rasalexman.sresult.data.dto.ISEvent
 import com.rasalexman.sresult.data.dto.SResult
+import com.rasalexman.sresultpresentation.viewModels.IEventableViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 
-interface IStateViewModel : IResultViewModel {
+interface IFlowableViewModel : IEventableViewModel {
     val selectedPage: MutableStateFlow<Int>
 
     val eventsFlow: MutableSharedFlow<ISEvent>

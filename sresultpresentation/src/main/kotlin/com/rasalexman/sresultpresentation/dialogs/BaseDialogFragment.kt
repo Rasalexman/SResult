@@ -13,10 +13,10 @@ import com.rasalexman.sresult.common.extensions.getMessage
 import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultpresentation.extensions.*
 import com.rasalexman.sresultpresentation.fragments.IBaseFragment
-import com.rasalexman.sresultpresentation.viewModels.IResultViewModel
+import com.rasalexman.sresultpresentation.viewModels.IEventableViewModel
 import java.lang.ref.WeakReference
 
-abstract class BaseDialogFragment<VM : IResultViewModel> : AppCompatDialogFragment(),
+abstract class BaseDialogFragment<VM : IEventableViewModel> : AppCompatDialogFragment(),
     IBaseFragment<VM> {
 
     override val contentView: View?

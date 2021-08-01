@@ -11,6 +11,7 @@ import androidx.annotation.*
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.postDelayed
 import androidx.databinding.ViewDataBinding
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
@@ -21,19 +22,19 @@ import com.rasalexman.easyrecyclerbinding.createBinding
 import com.rasalexman.easyrecyclerbinding.createBindingWithViewModel
 import com.rasalexman.sresult.common.extensions.*
 import com.rasalexman.sresult.common.typealiases.InHandler
-import com.rasalexman.sresult.data.dto.SEvent
 import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultpresentation.BR
 import com.rasalexman.sresultpresentation.R
+import com.rasalexman.sresultpresentation.databinding.BaseBindingLayout
 import com.rasalexman.sresultpresentation.databinding.IBaseBindingFragment
+import com.rasalexman.sresultpresentation.dialogs.BaseDialogFragment
 import com.rasalexman.sresultpresentation.fragments.BaseFragment
 import com.rasalexman.sresultpresentation.fragments.IBaseFragment
+import com.rasalexman.sresultpresentation.layout.BaseLayout
 import com.rasalexman.sresultpresentation.viewModels.BaseContextViewModel
 import com.rasalexman.sresultpresentation.viewModels.IBaseViewModel
-import com.rasalexman.sresultpresentation.viewModels.IResultViewModel
-import com.rasalexman.sresultpresentation.viewModels.IStateViewModel
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.cancelChildren
+import com.rasalexman.sresultpresentation.viewModels.IEventableViewModel
+import com.rasalexman.sresultpresentation.viewModels.flowable.IFlowableViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -71,14 +72,7 @@ fun IBaseFragment<*>.clear(lifecycleOwner: LifecycleOwner) {
     weakToolbarRef = null
 }
 
-fun IBaseFragment<*>.addViewModelObservers(vm: IResultViewModel?) {
-    when(vm) {
-        is IBaseViewModel -> observeBaseViewModel(vm)
-        is IStateViewModel -> observeStateViewModel(vm)
-    }
-}
-
-fun IResultViewModel.clearViewModel(lifecycleOwner: LifecycleOwner) {
+fun IEventableViewModel.clearViewModel(lifecycleOwner: LifecycleOwner) {
     when(this) {
         is IBaseViewModel -> this.apply {
             resultLiveData?.removeObservers(lifecycleOwner)
@@ -89,9 +83,15 @@ fun IResultViewModel.clearViewModel(lifecycleOwner: LifecycleOwner) {
             toolbarSubTitle?.removeObservers(lifecycleOwner)
             liveDataToObserve.forEach { it.removeObservers(lifecycleOwner) }
         }
-        is IStateViewModel -> this.clear()
+        is IFlowableViewModel -> this.clear()
     }
+}
 
+fun IBaseFragment<*>.addViewModelObservers(vm: IEventableViewModel?) {
+    when(vm) {
+        is IBaseViewModel -> observeBaseViewModel(vm)
+        is IFlowableViewModel -> observeStateViewModel(vm)
+    }
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -99,8 +99,9 @@ fun IBaseFragment<*>.observeBaseViewModel(currentBaseVm: IBaseViewModel) {
     (this as? LifecycleOwner)?.apply {
         onResultChange(currentBaseVm.navigationLiveData, ::onResultHandler)
         onResultChange(currentBaseVm.supportLiveData, ::onResultHandler)
-        onAnyChange(currentBaseVm.anyLiveData, ::onAnyDataHandler)
         onResultChange((currentBaseVm.resultLiveData as? AnyResultLiveData), ::onResultHandler)
+        onAnyChange(currentBaseVm.anyLiveData, ::onAnyDataHandler)
+
         onAnyChange(currentBaseVm.toolbarTitle, ::toolbarTitleHandler)
         onAnyChange(currentBaseVm.toolbarSubTitle, ::toolbarSubTitleHandler)
 
@@ -110,47 +111,57 @@ fun IBaseFragment<*>.observeBaseViewModel(currentBaseVm: IBaseViewModel) {
     }
 }
 
-fun IBaseFragment<*>.observeStateViewModel(currentStateVM: IStateViewModel) {
-    (currentStateVM as? BaseContextViewModel)?.statesScope?.let { vmScope ->
+fun IBaseFragment<*>.observeStateViewModel(currentFlowableVM: IFlowableViewModel) {
+    val lifecycleOwner = when(this) {
+        is BaseFragment<*> -> viewLifecycleOwner
+        is BaseDialogFragment<*> -> viewLifecycleOwner
+        is BaseLayout<*, *> -> this
+        else -> null
+    }
 
-        currentStateVM.resultFlow?.let {
-            vmScope.launch {
+    //(currentFlowableVM as? BaseContextViewModel)?.statesScope?.let { vmScope ->
+    lifecycleOwner?.lifecycleScope?.let { vmScope ->
+
+        currentFlowableVM.resultFlow?.let {
+            vmScope.launchWhenStarted {
                 it.collect { result ->
-                    result?.applyForType<SResult<*>> {
-                        it.applyIf(!it.isHandled, ::onResultHandler)
+                    if(result is SResult<*>) {
+                        result.applyIf(!result.isHandled, ::onResultHandler)
+                    } else {
+                        onAnyDataHandler(result)
                     }
                 }
             }
         }
 
-        vmScope.launch {
-            currentStateVM.navigationFlow.collect { result ->
+        vmScope.launchWhenStarted {
+            currentFlowableVM.navigationFlow.collect { result ->
                 result.applyIf(!result.isHandled, ::onResultHandler)
             }
         }
 
-        vmScope.launch {
-            currentStateVM.supportFlow.collect { result ->
+        vmScope.launchWhenStarted {
+            currentFlowableVM.supportFlow.collect { result ->
                 result.applyIf(!result.isHandled, ::onResultHandler)
             }
         }
 
-        currentStateVM.anyDataFlow?.let {
-            vmScope.launch {
+        currentFlowableVM.anyDataFlow?.let {
+            vmScope.launchWhenStarted {
                 it.collect { onAnyDataHandler(it) }
             }
         }
 
-        currentStateVM.toolbarTitle?.let {
-            vmScope.launch {
+        currentFlowableVM.toolbarTitle?.let {
+            vmScope.launchWhenStarted {
                 it.collect {
                     toolbarTitleHandler(it)
                 }
             }
         }
 
-        currentStateVM.toolbarSubTitle?.let {
-            vmScope.launch {
+        currentFlowableVM.toolbarSubTitle?.let {
+            vmScope.launchWhenStarted {
                 it.collect {
                     toolbarSubTitleHandler(it)
                 }

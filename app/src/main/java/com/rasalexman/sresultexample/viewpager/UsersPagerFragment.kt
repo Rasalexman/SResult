@@ -8,7 +8,7 @@ import com.rasalexman.sresultexample.databinding.FragmentVpUsersBinding
 import com.rasalexman.sresultexample.viewpager.pages.FirstPageViewModel
 import com.rasalexman.sresultexample.viewpager.pages.SecondPageViewModel
 import com.rasalexman.sresultpresentation.databinding.BasePagerBindingFragment
-import com.rasalexman.sresultpresentation.viewModels.IResultViewModel
+import com.rasalexman.sresultpresentation.viewModels.IEventableViewModel
 
 class UsersPagerFragment : BasePagerBindingFragment<FragmentVpUsersBinding, UserPagerViewModel>() {
     override val layoutId: Int get() = R.layout.fragment_vp_users
@@ -18,7 +18,7 @@ class UsersPagerFragment : BasePagerBindingFragment<FragmentVpUsersBinding, User
         get() = true
 
     override val pageTitles: Array<String> = arrayOf("Login", "With Recycler")
-    override val pagesVMList: List<IResultViewModel> by lazy {
+    override val pagesVMList: List<IEventableViewModel> by lazy {
         listOf(firstPageViewModel, secondPageViewModel)
     }
 

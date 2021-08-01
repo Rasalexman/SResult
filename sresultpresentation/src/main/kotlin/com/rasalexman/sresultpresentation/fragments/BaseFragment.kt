@@ -26,11 +26,10 @@ import com.rasalexman.sresultpresentation.base.*
 import com.rasalexman.sresultpresentation.compose.*
 import com.rasalexman.sresultpresentation.extensions.*
 import com.rasalexman.sresultpresentation.viewModels.IBaseViewModel
-import com.rasalexman.sresultpresentation.viewModels.IResultViewModel
+import com.rasalexman.sresultpresentation.viewModels.IEventableViewModel
 import java.lang.ref.WeakReference
 
-abstract class BaseFragment<VM : IResultViewModel> : Fragment(),
-    IBaseFragment<VM>, INavigationHandler {
+abstract class BaseFragment<VM : IEventableViewModel> : Fragment(), IBaseFragment<VM>, INavigationHandler {
 
     override val contentView: View?
         get() = this.view
@@ -111,7 +110,6 @@ abstract class BaseFragment<VM : IResultViewModel> : Fragment(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         observeBackStackArguments()
         showToolbar()
         initLayout()
@@ -318,17 +316,14 @@ abstract class BaseFragment<VM : IResultViewModel> : Fragment(),
      * Base [SResult] handle function
      */
     override fun onResultHandler(result: SResult<*>) {
-        result.applyIf(!result.isHandled) {
-            resultComplexResolver.onResultHandler(result)
-            //onBaseResultHandler(result)
-        }
+        onBaseResultHandler(result)
     }
 
     /**
      * Process [SEvent] to view model
      */
     protected open fun processViewEvent(viewEvent: ISEvent) {
-        this.viewModel?.processViewEvent(viewEvent)
+        this.viewModel?.processEvent(viewEvent)
     }
 
     /**

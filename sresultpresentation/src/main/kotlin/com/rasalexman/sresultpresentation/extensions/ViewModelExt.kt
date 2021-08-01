@@ -1,7 +1,6 @@
 package com.rasalexman.sresultpresentation.extensions
 
 import androidx.lifecycle.*
-import com.rasalexman.sresult.common.extensions.asState
 import com.rasalexman.sresult.common.extensions.errorResult
 import com.rasalexman.sresult.common.extensions.loggE
 import com.rasalexman.sresult.common.extensions.toErrorResult
@@ -9,9 +8,9 @@ import com.rasalexman.sresult.common.typealiases.AnyResult
 import com.rasalexman.sresult.data.dto.ISEvent
 import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultpresentation.viewModels.BaseContextViewModel
-import com.rasalexman.sresultpresentation.viewModels.BaseStateViewModel
+import com.rasalexman.sresultpresentation.viewModels.flowable.FlowableViewModel
 import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
-import com.rasalexman.sresultpresentation.viewModels.IResultViewModel
+import com.rasalexman.sresultpresentation.viewModels.IEventableViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
@@ -160,7 +159,7 @@ inline fun <reified E : ISEvent, reified T : Any> BaseViewModel.onEventFlow(
     }
 }
 
-inline fun <reified E : ISEvent, reified T : Any> BaseStateViewModel.onEventFlow(
+inline fun <reified E : ISEvent, reified T : Any> FlowableViewModel.onEventFlow(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
     isDistincted: Boolean = false,
     eventDelay: Long = 0,
@@ -181,7 +180,7 @@ inline fun <reified E : ISEvent, reified T : Any> BaseStateViewModel.onEventFlow
     }
 }
 
-inline fun <reified E : ISEvent, reified T : Any> IResultViewModel.createEventFlow(
+inline fun <reified E : ISEvent, reified T : Any> IEventableViewModel.createEventFlow(
     eventFlow: Flow<ISEvent>,
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
     eventDelay: Long = 0,

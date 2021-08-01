@@ -8,12 +8,12 @@ import com.rasalexman.sresultexample.MainFragmentDirections
 import com.rasalexman.sresultexample.R
 import com.rasalexman.sresultpresentation.extensions.launchUITryCatch
 import com.rasalexman.sresultpresentation.extensions.onEventFlow
-import com.rasalexman.sresultpresentation.viewModels.BaseStateViewModel
+import com.rasalexman.sresultpresentation.viewModels.flowable.FlowableViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import java.util.*
 
-class StateFlowViewModel : BaseStateViewModel() {
+class StateFlowViewModel : FlowableViewModel() {
 
     override val toolbarTitle: MutableStateFlow<String> = MutableStateFlow(string(R.string.title_state_flow))
 
@@ -45,7 +45,7 @@ class StateFlowViewModel : BaseStateViewModel() {
     }
 
     fun onDoActionClicked() {
-        processViewEvent(SEvent.Fetch)
+        processEvent(SEvent.Fetch)
     }
 
     fun onSuccessClicked() = launchUITryCatch {
