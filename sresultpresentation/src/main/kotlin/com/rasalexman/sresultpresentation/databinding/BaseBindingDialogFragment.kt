@@ -29,7 +29,7 @@ abstract class BaseBindingDialogFragment<B : ViewDataBinding, VM : BaseContextVi
         inflater: LayoutInflater,
         container: ViewGroup?
     ): View {
-        return setupBinding<B, VM>(inflater, container)
+        return setupBinding(inflater, container)
     }
 
     override fun initBinding(binding: B) = Unit

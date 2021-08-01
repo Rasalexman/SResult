@@ -3,10 +3,10 @@ import config.Libs
 
 plugins {
     id("com.android.application")
-    kotlin("android")
+    id("kotlin-android")
     id("kotlin-parcelize")
     id("androidx.navigation.safeargs.kotlin")
-    kotlin("kapt")
+    id("kotlin-kapt")
 }
 
 android {
@@ -18,6 +18,7 @@ android {
         targetSdk = Builds.TARGET_VERSION
         versionCode = Builds.App.VERSION_CODE
         versionName = Builds.App.VERSION_NAME
+        multiDexEnabled = true
         //testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -34,9 +35,10 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
     }
+
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
 
     packagingOptions {
@@ -61,13 +63,9 @@ android {
     }
 
     kotlinOptions {
+        jvmTarget = "1.8"
         languageVersion = "1.5"
         apiVersion = "1.5"
-    }
-
-    kapt {
-        useBuildCache = true
-        generateStubs = false
     }
 }
 

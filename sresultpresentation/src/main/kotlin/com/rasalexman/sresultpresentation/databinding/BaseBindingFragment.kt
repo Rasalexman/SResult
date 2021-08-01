@@ -28,7 +28,7 @@ abstract class BaseBindingFragment<B : ViewDataBinding, VM : BaseContextViewMode
         inflater: LayoutInflater,
         container: ViewGroup?
     ): View {
-        return setupBinding<B, VM>(inflater, container)
+        return setupBinding(inflater, container)
     }
 
     /** starts in onCreateView */

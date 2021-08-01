@@ -4,7 +4,7 @@
     <data>
         <variable
             name="vm"
-            type="com.rasalexman.sresultpresentation.viewModels.BaseViewModel" />
+            type="com.rasalexman.sresultpresentation.viewModels.BaseContextViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

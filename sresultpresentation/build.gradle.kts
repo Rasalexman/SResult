@@ -1,8 +1,8 @@
 plugins {
     id("com.android.library")
-    kotlin("android")
+    id("kotlin-android")
     id("maven-publish")
-    kotlin("kapt")
+    id("kotlin-kapt")
 }
 
 android {
@@ -11,8 +11,9 @@ android {
     defaultConfig {
         minSdk = config.Builds.MIN_VERSION
         targetSdk = config.Builds.TARGET_VERSION
-        //versionCode = config.Builds.SResult.VERSION_CODE
-        //versionName = config.Builds.SResult.VERSION_NAME
+        versionCode = config.Builds.SResult.VERSION_CODE
+        versionName = config.Builds.SResult.VERSION_NAME
+        multiDexEnabled = true
         //testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -21,7 +22,7 @@ android {
     buildTypes {
         getByName("debug") {
             isMinifyEnabled = false
-            //isDebuggable = true
+            isDebuggable = true
         }
 
         getByName("release") {
@@ -30,16 +31,16 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
 
     packagingOptions {
-        exclude("META-INF/notice.txt")
+        this.resources.excludes.add("META-INF/notice.txt")
     }
 
     // Declare the task that will monitor all configurations.
-    /*configurations.all {
+    configurations.all {
         // 2 Define the resolution strategy in case of conflicts.
         resolutionStrategy {
             // Fail eagerly on version conflict (includes transitive dependencies),
@@ -49,7 +50,7 @@ android {
             // Prefer modules that are part of this build (multi-project or composite build) over external modules.
             preferProjectModules()
         }
-    }*/
+    }
 
     sourceSets {
         getByName("main") {
@@ -57,19 +58,30 @@ android {
         }
     }
 
+    dexOptions {
+        javaMaxHeapSize = "4g"
+    }
+
     buildFeatures {
         dataBinding = true
+        androidResources = true
     }
 
     kotlinOptions {
+        jvmTarget = "1.8"
         languageVersion = "1.5"
         apiVersion = "1.5"
     }
+}
 
-    kapt {
-        useBuildCache = true
-        generateStubs = false
-    }
+kapt {
+    useBuildCache = true
+    generateStubs = false
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 dependencies {
@@ -126,11 +138,11 @@ afterEvaluate {
             }
         }
 
-        /*repositories {
+        repositories {
             maven {
                 name = "sresultpresentation"
-                url = uri(layout.buildDirectory.dir("repo-presentation"))
+                setUrl(layout.buildDirectory.dir("repo-presentation").toString())
             }
-        }*/
+        }
     }
 }

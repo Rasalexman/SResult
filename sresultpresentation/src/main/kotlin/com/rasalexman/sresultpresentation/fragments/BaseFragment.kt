@@ -17,7 +17,6 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
-import com.rasalexman.sresult.common.extensions.applyIf
 import com.rasalexman.sresult.common.extensions.getMessage
 import com.rasalexman.sresult.common.extensions.loggE
 import com.rasalexman.sresult.common.extensions.unsafeLazy
@@ -202,7 +201,7 @@ abstract class BaseFragment<VM : IEventableViewModel> : Fragment(), IBaseFragmen
     }
 
     /**
-     * Hide laouts for loading
+     * Hide layouts for loading
      */
     protected open fun hideLayoutLoading() {
         hideKeyboard()

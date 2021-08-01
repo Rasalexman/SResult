@@ -9,9 +9,7 @@ import com.rasalexman.sresult.common.extensions.toNavigateResult
 import com.rasalexman.sresult.common.extensions.unsafeLazy
 import com.rasalexman.sresultexample.MainFragmentDirections
 import com.rasalexman.sresultexample.R
-import com.rasalexman.sresultpresentation.extensions.mutableMap
 import com.rasalexman.sresultpresentation.extensions.mutableSwitchMap
-import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
 import com.rasalexman.sresultpresentation.viewModels.SharedSavedStateViewModel
 import java.util.*
 

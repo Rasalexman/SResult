@@ -224,6 +224,9 @@ val <T : Any> SResult<T>.isEmpty: Boolean
 val <T : Any> SResult<T>.isLoading: Boolean
     get() = this is SResult.Loading
 
+val <T : Any> SResult<T>.isProgress: Boolean
+    get() = this is SResult.Progress
+
 val <T : Any> SResult<T>.isToast: Boolean
     get() = this is SResult.Toast
 

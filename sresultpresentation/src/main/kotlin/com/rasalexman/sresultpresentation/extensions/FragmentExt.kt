@@ -11,21 +11,24 @@ import androidx.annotation.*
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.postDelayed
 import androidx.databinding.ViewDataBinding
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.*
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.Navigation
 import com.rasalexman.easyrecyclerbinding.createBinding
 import com.rasalexman.easyrecyclerbinding.createBindingWithViewModel
-import com.rasalexman.sresult.common.extensions.*
+import com.rasalexman.sresult.common.extensions.applyIf
+import com.rasalexman.sresult.common.extensions.loggE
+import com.rasalexman.sresult.common.extensions.or
 import com.rasalexman.sresult.common.typealiases.InHandler
 import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultpresentation.BR
 import com.rasalexman.sresultpresentation.R
-import com.rasalexman.sresultpresentation.databinding.BaseBindingLayout
 import com.rasalexman.sresultpresentation.databinding.IBaseBindingFragment
 import com.rasalexman.sresultpresentation.dialogs.BaseDialogFragment
 import com.rasalexman.sresultpresentation.fragments.BaseFragment
@@ -36,15 +39,14 @@ import com.rasalexman.sresultpresentation.viewModels.IBaseViewModel
 import com.rasalexman.sresultpresentation.viewModels.IEventableViewModel
 import com.rasalexman.sresultpresentation.viewModels.flowable.IFlowableViewModel
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 
 private var lastSoftInput = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN
 
 const val KEY_BACK_ARGS = "key_back_arguments"
 
 fun Fragment.hideKeyboard() = activity?.hideKeyboard()
-fun Fragment.showKeyboard() {
-    this.view?.postDelayed(100L) {
+fun Fragment.showKeyboard(delay: Long = 100L) {
+    this.view?.postDelayed(delay) {
         activity?.showKeyboardIfNeeded()
     }
 }
@@ -193,14 +195,13 @@ fun <T : Any> BaseFragment<*>.onAnyChange(data: LiveData<T>?, stateHandle: InHan
 
 fun <B : ViewDataBinding, VM : BaseContextViewModel> IBaseBindingFragment<B, VM>.setupBinding(
     inflater: LayoutInflater,
-    container: ViewGroup?,
-    viewModelBRId: Int? = null
+    container: ViewGroup?
 ): View {
     return viewModel?.let { vm ->
         (this as Fragment).createBindingWithViewModel<B, VM>(
             layoutId = layoutId,
             viewModel = vm,
-            viewModelBRId = viewModelBRId ?: BR.vm,
+            viewModelBRId = BR.vm,
             container = container,
             attachToParent = false
         )

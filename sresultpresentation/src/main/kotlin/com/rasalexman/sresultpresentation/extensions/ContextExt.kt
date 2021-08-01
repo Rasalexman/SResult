@@ -2,7 +2,6 @@ package com.rasalexman.sresultpresentation.extensions
 
 import android.app.Dialog
 import android.content.Context
-import android.content.ContextWrapper
 import android.graphics.drawable.Drawable
 import android.widget.Toast
 import androidx.annotation.ColorRes

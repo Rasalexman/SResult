@@ -79,12 +79,12 @@ private val TextView.drawables: Array<Drawable?>
     @SuppressLint("ObsoleteSdkInt")
     get() = if (Build.VERSION.SDK_INT >= 17) compoundDrawablesRelative else compoundDrawables
 
-private fun TextView.setDrawables(start: Drawable?, top: Drawable?, end: Drawable?, buttom: Drawable?) {
+private fun TextView.setDrawables(start: Drawable?, top: Drawable?, end: Drawable?, bottom: Drawable?) {
     @SuppressLint("ObsoleteSdkInt")
     if (Build.VERSION.SDK_INT >= 17)
-        setCompoundDrawablesRelativeWithIntrinsicBounds(start, top, end, buttom)
+        setCompoundDrawablesRelativeWithIntrinsicBounds(start, top, end, bottom)
     else
-        setCompoundDrawablesWithIntrinsicBounds(start, top, end, buttom)
+        setCompoundDrawablesWithIntrinsicBounds(start, top, end, bottom)
 }
 
 fun View.toast(

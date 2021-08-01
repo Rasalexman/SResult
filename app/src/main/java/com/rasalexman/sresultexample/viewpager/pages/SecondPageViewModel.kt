@@ -17,7 +17,7 @@ class SecondPageViewModel : BaseViewModel(), IBindingModel {
         get() = R.layout.item_vp2_second_page
 
     val items: LiveData<MutableList<IRecyclerItem>> by unsafeLazy {
-        asyncLiveData<MutableList<IRecyclerItem>> {
+        asyncLiveData {
             val existedList = mutableListOf<IRecyclerItem>()
             val itemsList = mutableListOf<IRecyclerItem>()
             val itemCounts = Random.nextInt(20, 100)

@@ -20,7 +20,6 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:text="@{vm.toolbarTitle}"
                 android:layout_marginHorizontal="@dimen/size_36dp"
                 android:layout_marginVertical="@dimen/size_24dp"
                 android:textSize="@dimen/text_size_20sp"

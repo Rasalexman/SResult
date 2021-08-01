@@ -24,7 +24,6 @@ abstract class BaseHostFragment<VM : IBaseViewModel> : BaseFragment<VM>(), IBase
         super.onViewCreated(view, savedInstanceState)
         unbindNavController()
         bindNavController()
-        //log { "Navigator is binded with tag ${getNavigator(navigatorTag).tag}" }
     }
 
     override fun onDestroyView() {

@@ -2,7 +2,6 @@ package com.rasalexman.sresultpresentation.viewModels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.rasalexman.sresult.common.extensions.errorResult
 import com.rasalexman.sresult.common.extensions.navigateBackResult
 import com.rasalexman.sresult.common.extensions.unsafeLazy
 import com.rasalexman.sresult.data.dto.ISEvent

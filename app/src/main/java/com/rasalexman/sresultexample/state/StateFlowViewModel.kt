@@ -1,6 +1,7 @@
 package com.rasalexman.sresultexample.state
 
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
 import com.rasalexman.sresult.common.extensions.*
 import com.rasalexman.sresult.common.typealiases.AnyResult
 import com.rasalexman.sresult.data.dto.SEvent
@@ -27,11 +28,11 @@ class StateFlowViewModel : FlowableViewModel() {
         }
     }
 
-    val isLoadingInvisible: StateFlow<Boolean> by unsafeLazy {
+    val isLoadingInvisible: LiveData<Boolean> by unsafeLazy {
         resultFlow.map { result ->
             println("------> isLoadingInvisible = $result")
             !result.isLoading
-        }.asState(viewModelScope, true)
+        }.asLiveData()
     }
 
     override val anyDataFlow: Flow<*> by unsafeLazy {

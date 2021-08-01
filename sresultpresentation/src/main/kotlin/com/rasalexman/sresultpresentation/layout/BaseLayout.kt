@@ -26,7 +26,6 @@ import com.rasalexman.sresultpresentation.R
 import com.rasalexman.sresultpresentation.extensions.*
 import com.rasalexman.sresultpresentation.fragments.IBaseFragment
 import com.rasalexman.sresultpresentation.viewModels.BaseContextViewModel
-import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
 import com.rasalexman.sresultpresentation.viewModels.CustomViewModelLazy
 import java.lang.ref.WeakReference
 
