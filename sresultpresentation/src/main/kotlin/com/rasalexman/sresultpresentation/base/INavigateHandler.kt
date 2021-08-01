@@ -2,7 +2,7 @@ package com.rasalexman.sresultpresentation.base
 
 import android.os.Bundle
 
-interface INavigateHandler : IProgressHandler, IControlHandler {
+interface INavigateHandler : IControlHandler {
     fun navigateTo(direction: Any)
     fun navigateBy(navResId: Int)
     fun navigatePopTo(

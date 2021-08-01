@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.SharedFlow
 typealias UnitHandler = () -> Unit
 typealias InHandler<T> = (T) -> Unit
 typealias DoubleInHandler<T, P> = (T, P) -> Unit
+typealias TripleInHandler<T, P, R> = (T, P, R) -> Unit
 typealias OutHandler<T> = () -> T
 typealias InSameOutHandler<T> = (T) -> T
 typealias InOutHandler<T, R> = (T) -> R

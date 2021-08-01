@@ -2,7 +2,7 @@ package com.rasalexman.sresultpresentation.base
 
 import com.rasalexman.sresult.data.dto.SResult
 
-interface IFailureHandler : ILoadingHandler {
+interface IFailureHandler : IProgressHandler {
 
     /**
      * When [SResult.AbstractFailure.Error] is coming

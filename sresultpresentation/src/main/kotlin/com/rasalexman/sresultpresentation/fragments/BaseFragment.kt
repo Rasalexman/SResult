@@ -17,20 +17,20 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
-import com.rasalexman.sresult.common.extensions.applyIf
-import com.rasalexman.sresult.common.extensions.getMessage
-import com.rasalexman.sresult.common.extensions.loggE
-import com.rasalexman.sresult.common.extensions.unsafeLazy
+import com.rasalexman.sresult.common.extensions.*
 import com.rasalexman.sresult.data.dto.ISEvent
 import com.rasalexman.sresult.data.dto.SEvent
 import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultpresentation.R
+import com.rasalexman.sresultpresentation.base.*
+import com.rasalexman.sresultpresentation.compose.*
 import com.rasalexman.sresultpresentation.extensions.*
 import com.rasalexman.sresultpresentation.viewModels.IBaseViewModel
 import com.rasalexman.sresultpresentation.viewModels.IResultViewModel
 import java.lang.ref.WeakReference
 
-abstract class BaseFragment<VM : IResultViewModel> : Fragment(), IBaseFragment<VM>, INavigationHandler {
+abstract class BaseFragment<VM : IResultViewModel> : Fragment(),
+    IBaseFragment<VM>, INavigationHandler {
 
     override val contentView: View?
         get() = this.view
@@ -74,6 +74,32 @@ abstract class BaseFragment<VM : IResultViewModel> : Fragment(), IBaseFragment<V
         }
     }
 
+    private val resultComplexResolver: IComplexHandler by unsafeLazy {
+        resultResolver {
+            this.onNavigateTo = this@BaseFragment::navigateTo
+            this.onNavigatePop = this@BaseFragment::navigatePop
+            this.onNavigatePopTo = this@BaseFragment::navigatePopTo
+            this.onNavigateBy = this@BaseFragment::navigateBy
+            this.onShowNavigationError = this@BaseFragment::showNavigationError
+
+            this.onBackPressed = this@BaseFragment::onBackPressed
+            this.onNextPressed = this@BaseFragment::onNextPressed
+            this.onToolbarBackPressed = this@BaseFragment::onToolbarBackPressed
+
+            this.onShowProgress = this@BaseFragment::showProgress
+            this.onShowLoading = this@BaseFragment::showLoading
+            this.onHideLoading = this@BaseFragment::hideLoading
+
+            this.onShowEmpty = this@BaseFragment::showEmptyLayout
+            this.onShowAlert = this@BaseFragment::showAlert
+            this.onShowFailure = this@BaseFragment::showFailure
+            this.onShowToast = { t, v ->
+                logg { "THIS IS FROM COMPLEX RESOLVER" }
+                this@BaseFragment.showToast(t, v)
+            }
+        }
+    }
+
     /**
      * when need to create view
      */
@@ -85,6 +111,7 @@ abstract class BaseFragment<VM : IResultViewModel> : Fragment(), IBaseFragment<V
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         observeBackStackArguments()
         showToolbar()
         initLayout()
@@ -292,7 +319,8 @@ abstract class BaseFragment<VM : IResultViewModel> : Fragment(), IBaseFragment<V
      */
     override fun onResultHandler(result: SResult<*>) {
         result.applyIf(!result.isHandled) {
-            onBaseResultHandler(result)
+            resultComplexResolver.onResultHandler(result)
+            //onBaseResultHandler(result)
         }
     }
 

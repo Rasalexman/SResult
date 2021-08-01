@@ -2,6 +2,6 @@ package com.rasalexman.sresultpresentation.base
 
 import com.rasalexman.sresult.data.dto.SResult
 
-interface ISuccessHandler : ILoadingHandler {
+interface ISuccessHandler : IBaseHandler, ILoadingHandler {
     fun showSuccess(result: SResult.Success<*>)
 }

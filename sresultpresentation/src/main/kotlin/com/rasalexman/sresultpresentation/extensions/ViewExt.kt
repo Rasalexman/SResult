@@ -291,7 +291,7 @@ fun View.focusAndShowKeyboard() {
     }
 }
 
-fun ISResultHandler.onBaseResultHandler(result: SResult<*>) {
+fun IBaseHandler.onBaseResultHandler(result: SResult<*>) {
     if (result.isHandled) return
     result.handle()
 

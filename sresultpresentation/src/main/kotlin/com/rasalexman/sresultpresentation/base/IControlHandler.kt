@@ -1,6 +1,6 @@
 package com.rasalexman.sresultpresentation.base
 
-interface IControlHandler : ILoadingHandler {
+interface IControlHandler : IProgressHandler {
     fun onBackPressed(): Boolean
     fun onToolbarBackPressed()
     fun onNextPressed()

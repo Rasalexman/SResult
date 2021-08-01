@@ -2,6 +2,6 @@ package com.rasalexman.sresultpresentation.base
 
 import com.rasalexman.sresult.data.dto.SResult
 
-interface ISResultHandler {
+interface ISResultHandler : IBaseHandler {
     fun onResultHandler(result: SResult<*>)
 }
