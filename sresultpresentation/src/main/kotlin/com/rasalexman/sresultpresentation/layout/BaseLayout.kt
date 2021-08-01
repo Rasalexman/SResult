@@ -59,7 +59,7 @@ abstract class BaseLayout<VM : BaseContextViewModel, F : Fragment> : FrameLayout
         defStyleRes
     )
 
-    inline fun <reified VM : BaseViewModel> viewModels(
+    inline fun <reified VM : BaseContextViewModel> viewModels(
         noinline fragmentProducer: () -> F = { this.findFragment() }
     ): Lazy<VM> {
         return CustomViewModelLazy(VM::class, fragmentProducer)

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="vm"
+            type="com.rasalexman.sresultexample.state.StateLayoutViewModel" />
+    </data>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:text="@{vm.toolbarTitle}"
+                android:layout_marginHorizontal="@dimen/size_36dp"
+                android:layout_marginVertical="@dimen/size_24dp"
+                android:textSize="@dimen/text_size_20sp"
+                android:gravity="center_horizontal"
+                android:textColor="@color/black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="@string/app_name" />
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:id="@+id/generateLoadingLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                android:visibility="gone"
+                android:layout_gravity="center"/>
+
+        </FrameLayout>
+
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_generate"
+            android:layout_marginTop="@dimen/size_24dp"
+            android:layout_marginBottom="@dimen/size_16dp"
+            app:onViewClick="@{() -> vm.onGenerateClicked()}" />
+
+    </LinearLayout>
+</layout>
