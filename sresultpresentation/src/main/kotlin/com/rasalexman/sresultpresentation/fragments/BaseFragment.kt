@@ -99,6 +99,51 @@ abstract class BaseFragment<VM : IEventableViewModel> : Fragment(), IBaseFragmen
         }
     }
 
+    private val complexResolver: IComplexHandler by unsafeLazy {
+        complexHandler {
+            this.navigateHandler = navigateHandler {
+                this.onNavigateTo = this@BaseFragment::navigateTo
+                this.onNavigatePop = this@BaseFragment::navigatePop
+                this.onNavigatePopTo = this@BaseFragment::navigatePopTo
+                this.onNavigateBy = this@BaseFragment::navigateBy
+                this.onShowNavigationError = this@BaseFragment::showNavigationError
+
+                this.controlHandler = controlHandler {
+                    this.onBackPressed = this@BaseFragment::onBackPressed
+                    this.onNextPressed = this@BaseFragment::onNextPressed
+                    this.onToolbarBackPressed = this@BaseFragment::onToolbarBackPressed
+
+                    this.progressHandler = progressHandler {
+                        this.onShowProgress = this@BaseFragment::showProgress
+
+                        this.loadingHandler = loadingHandler {
+                            this.onShowLoading = this@BaseFragment::showLoading
+                            this.onHideLoading = this@BaseFragment::hideLoading
+                        }
+                    }
+                }
+            }
+            this.toastHandler = toastHandler {
+                this.onShowToast = { t, v ->
+                    logg { "THIS IS FROM $this RESOLVER" }
+                    this@BaseFragment.showToast(t, v)
+                }
+            }
+            this.failureHandler = failureHandler {
+                this.onShowAlert = this@BaseFragment::showAlert
+                this.onShowFailure = this@BaseFragment::showFailure
+            }
+        }
+    }
+
+    /**
+     * Base [SResult] handle function
+     */
+    override fun onResultHandler(result: SResult<*>) {
+        onBaseResultHandler(result)
+        //complexResolver.onResultHandler(result)
+    }
+
     /**
      * when need to create view
      */
@@ -310,13 +355,6 @@ abstract class BaseFragment<VM : IEventableViewModel> : Fragment(), IBaseFragmen
      */
     override fun onSupportNavigateUp(): Boolean {
         return true
-    }
-
-    /**
-     * Base [SResult] handle function
-     */
-    override fun onResultHandler(result: SResult<*>) {
-        onBaseResultHandler(result)
     }
 
     /**

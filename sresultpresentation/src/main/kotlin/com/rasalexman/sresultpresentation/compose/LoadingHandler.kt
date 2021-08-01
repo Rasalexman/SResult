@@ -1,8 +1,10 @@
 package com.rasalexman.sresultpresentation.compose
 
 import com.rasalexman.sresult.common.typealiases.UnitHandler
+import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultpresentation.base.ILoadingHandler
 import com.rasalexman.sresultpresentation.base.ISResultHandler
+import com.rasalexman.sresultpresentation.extensions.onBaseResultHandler
 
 data class LoadingHandler(
     val onHideLoading: UnitHandler? = null,
@@ -22,6 +24,10 @@ data class LoadingHandler(
                 onResultHandler = onResultHandler ?: sresultHandler {  }
             )
         }
+    }
+
+    override fun onResultHandler(result: SResult<*>) {
+        onBaseResultHandler(result)
     }
 
     override fun hideLoading() {

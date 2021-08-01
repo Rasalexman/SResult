@@ -2,7 +2,7 @@ package config
 
 object Versions {
     const val gradle = "7.0.0"
-    const val kotlin = "1.5.21"
+    const val kotlin = "1.5.10"
 
     const val appCoreX = "1.6.0"
     const val constraintLayout = "2.0.4"
@@ -10,6 +10,7 @@ object Versions {
     const val navigation = "2.3.5"
     const val lifecycle: String = "2.3.1"
     const val fragment: String = "1.3.5"
+    const val compose: String = "1.0.0"
 
     const val timber = "4.7.1"
     const val coroutinesManager: String = "1.3.2"

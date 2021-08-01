@@ -4,11 +4,12 @@ import com.rasalexman.sresult.common.typealiases.InHandler
 import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultpresentation.base.ILoadingHandler
 import com.rasalexman.sresultpresentation.base.ISuccessHandler
+import com.rasalexman.sresultpresentation.extensions.onBaseResultHandler
 
 data class SuccessHandler(
     val onShowSuccess: InHandler<SResult.Success<*>>? = null,
     val progressHandler: ILoadingHandler
-) : ISuccessHandler, ILoadingHandler by progressHandler {
+) : ISuccessHandler, SResultHandler(), ILoadingHandler by progressHandler {
 
     class SuccessHandlerBuilder : IHandlerBuilder<ISuccessHandler> {
 
@@ -21,6 +22,10 @@ data class SuccessHandler(
                 progressHandler = progressHandler ?: loadingHandler { }
             )
         }
+    }
+
+    override fun onResultHandler(result: SResult<*>) {
+        onBaseResultHandler(result)
     }
 
     override fun showSuccess(result: SResult.Success<*>) {

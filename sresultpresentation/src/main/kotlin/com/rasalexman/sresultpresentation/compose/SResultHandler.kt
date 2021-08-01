@@ -6,7 +6,7 @@ import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultpresentation.base.ISResultHandler
 import com.rasalexman.sresultpresentation.extensions.onBaseResultHandler
 
-data class SResultHandler(
+open class SResultHandler(
     val onResultHandler: InHandler<SResult<*>>? = null
 ) : ISResultHandler {
 

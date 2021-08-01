@@ -4,6 +4,7 @@ import com.rasalexman.sresult.common.typealiases.InHandler
 import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultpresentation.base.IFailureHandler
 import com.rasalexman.sresultpresentation.base.IProgressHandler
+import com.rasalexman.sresultpresentation.extensions.onBaseResultHandler
 
 data class FailureHandler(
     val onShowFailure: InHandler<SResult.AbstractFailure.Failure>? = null,
@@ -23,6 +24,10 @@ data class FailureHandler(
                 progressHandler = progressHandler ?: progressHandler {  }
             )
         }
+    }
+
+    override fun onResultHandler(result: SResult<*>) {
+        onBaseResultHandler(result)
     }
 
     override fun showFailure(error: SResult.AbstractFailure.Failure) {

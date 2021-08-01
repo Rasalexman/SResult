@@ -9,12 +9,13 @@ import timber.log.Timber
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        initTimber()
-
         kodi {
+            unbind<Context>()
             bind<Context>() with single { this@MainActivity.applicationContext }
         }
+
+        setContentView(R.layout.activity_main)
+        initTimber()
     }
 
     private fun initTimber() {

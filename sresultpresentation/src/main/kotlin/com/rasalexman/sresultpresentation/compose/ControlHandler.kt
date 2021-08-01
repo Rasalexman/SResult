@@ -2,9 +2,11 @@ package com.rasalexman.sresultpresentation.compose
 
 import com.rasalexman.sresult.common.typealiases.OutHandler
 import com.rasalexman.sresult.common.typealiases.UnitHandler
+import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultpresentation.base.IControlHandler
 import com.rasalexman.sresultpresentation.base.IProgressHandler
 import com.rasalexman.sresultpresentation.base.ISResultHandler
+import com.rasalexman.sresultpresentation.extensions.onBaseResultHandler
 
 data class ControlHandler(
     val onBackPressed: OutHandler<Boolean>? = null,
@@ -24,9 +26,13 @@ data class ControlHandler(
                 onBackPressed = onBackPressed,
                 onToolbarBackPressed = onToolbarBackPressed,
                 onNextPressed = onNextPressed,
-                progressHandler = progressHandler ?: progressHandler {  }
+                progressHandler = progressHandler ?: progressHandler { }
             )
         }
+    }
+
+    override fun onResultHandler(result: SResult<*>) {
+        onBaseResultHandler(result)
     }
 
     override fun onBackPressed(): Boolean {

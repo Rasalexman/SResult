@@ -41,6 +41,11 @@
         android:name="com.rasalexman.sresultexample.state.StateFlowFragment"
         android:label="StateFlowFragment" />
 
+    <fragment
+        android:id="@+id/composeFragment"
+        android:name="com.rasalexman.sresultexample.composeui.ComposeFragment"
+        android:label="ComposeFragment" />
+
     <dialog android:id="@+id/userBottomDialogFragment"
         android:name="com.rasalexman.sresultexample.bottom.UserBottomDialogFragment"
         android:label="UserBottomDialogFragment"
@@ -56,6 +61,9 @@
 
     <action android:id="@+id/showBottomRecyclerFragment"
         app:destination="@+id/bottomRecyclerDialogFragment"/>
+
+    <action android:id="@+id/showComposeFragment"
+        app:destination="@+id/composeFragment"/>
 
     <action android:id="@+id/showProfileFragment"
         app:destination="@+id/profileFragment">

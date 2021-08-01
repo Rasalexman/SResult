@@ -39,8 +39,14 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
+    composeOptions {
+        kotlinCompilerExtensionVersion = config.Versions.compose
+        kotlinCompilerVersion = config.Versions.kotlin
+    }
+
     packagingOptions {
         exclude("META-INF/notice.txt")
+        exclude("/META-INF/{AL2.0,LGPL2.1}")
     }
 
     // Declare the task that will monitor all configurations.
@@ -58,6 +64,7 @@ android {
 
     buildFeatures {
         dataBinding = true
+        compose = true
     }
 
     kotlinOptions {
@@ -74,6 +81,23 @@ android {
 dependencies {
     implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
     implementation(kotlin("stdlib-jdk8", config.Versions.kotlin))
+
+    //implementation("androidx.navigation:navigation-compose:2.4.0-alpha05")
+
+    //implementation("androidx.activity:activity-compose:1.3.0")
+
+    //------ Compose Core
+    implementation("androidx.compose.ui:ui:${config.Versions.compose}")
+    implementation("com.google.android.material:compose-theme-adapter:${config.Versions.compose}")
+    // Tooling support (Previews, etc.)
+    implementation("androidx.compose.ui:ui-tooling:${config.Versions.compose}")
+    implementation("androidx.compose.ui:ui-tooling-preview:${config.Versions.compose}")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:${config.Versions.compose}-alpha07")
+    //implementation("androidx.compose.runtime:runtime-livedata:${config.Versions.compose}")
+    // Foundation (Border, Background, Box, Image, Scroll, shapes, animations, etc.)
+    //implementation("androidx.compose.foundation:foundation:1.0.0")
+    // Material Design
+    implementation("androidx.compose.material:material:${config.Versions.compose}")
 
     implementation(project(":sresultpresentation"))
 

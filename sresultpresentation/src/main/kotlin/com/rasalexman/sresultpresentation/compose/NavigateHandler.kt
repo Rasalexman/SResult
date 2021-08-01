@@ -4,8 +4,10 @@ import android.os.Bundle
 import com.rasalexman.sresult.common.typealiases.DoubleInHandler
 import com.rasalexman.sresult.common.typealiases.InHandler
 import com.rasalexman.sresult.common.typealiases.TripleInHandler
+import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultpresentation.base.IControlHandler
 import com.rasalexman.sresultpresentation.base.INavigateHandler
+import com.rasalexman.sresultpresentation.extensions.onBaseResultHandler
 
 data class NavigateHandler(
     val onNavigateTo: InHandler<Any>? = null,
@@ -31,9 +33,13 @@ data class NavigateHandler(
                 onNavigatePopTo = onNavigatePopTo,
                 onNavigatePop = onNavigatePop,
                 onShowNavigationError = onShowNavigationError,
-                controlHandler = controlHandler ?: controlHandler { }
+                controlHandler = controlHandler ?: controlHandler {}
             )
         }
+    }
+
+    override fun onResultHandler(result: SResult<*>) {
+        onBaseResultHandler(result)
     }
 
     override fun navigateTo(direction: Any) {

@@ -98,4 +98,8 @@ class MainViewModel : BaseViewModel() {
     fun onStateButtonClicked() {
         navigationLiveData.value = MainFragmentDirections.showStateFlowFragment().toNavigateResult()
     }
+
+    fun onComposeButtonClicked() {
+        navigationLiveData.value = MainFragmentDirections.showComposeFragment().toNavigateResult()
+    }
 }

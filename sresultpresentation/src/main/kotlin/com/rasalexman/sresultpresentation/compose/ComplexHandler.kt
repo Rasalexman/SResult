@@ -5,6 +5,7 @@ import androidx.appcompat.widget.Toolbar
 import com.rasalexman.sresult.common.typealiases.DoubleInHandler
 import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultpresentation.base.*
+import com.rasalexman.sresultpresentation.extensions.onBaseResultHandler
 
 data class ComplexHandler(
     val emptyHandler: IEmptyHandler,
@@ -27,20 +28,35 @@ data class ComplexHandler(
         var onStartActivityForResult: DoubleInHandler<Intent?, Int>? = null
 
         override fun build(): IComplexHandler {
+            val navHandler = navigateHandler ?: navigateHandler { }
+            val sucHandler = successHandler ?: successHandler { }
+            val empHandler = emptyHandler ?: emptyHandler { }
+            val flrHandler = failureHandler ?: failureHandler { }
+            val tstHandler = toastHandler ?: toastHandler { }
+
             return ComplexHandler(
-                navigateHandler = navigateHandler ?: navigateHandler { },
-                successHandler = successHandler ?: successHandler { },
-                emptyHandler = emptyHandler ?: emptyHandler { },
-                failureHandler = failureHandler ?: failureHandler { },
-                toastHandler = toastHandler ?: toastHandler { },
+                navigateHandler = navHandler,
+                successHandler = sucHandler,
+                emptyHandler = empHandler,
+                failureHandler = flrHandler,
+                toastHandler = tstHandler,
                 onInflateToolBarMenu = onInflateToolBarMenu,
                 onStartActivityForResult = onStartActivityForResult
             )
         }
     }
 
-    override fun inflateToolBarMenu(toolbar: Toolbar, menuResId: Int) = Unit
-    override fun startActivityForResult(intent: Intent?, requestCode: Int) = Unit
+    override fun onResultHandler(result: SResult<*>) {
+        onBaseResultHandler(result)
+    }
+
+    override fun inflateToolBarMenu(toolbar: Toolbar, menuResId: Int) {
+        onInflateToolBarMenu?.invoke(toolbar, menuResId)
+    }
+
+    override fun startActivityForResult(intent: Intent?, requestCode: Int) {
+        onStartActivityForResult?.invoke(intent, requestCode)
+    }
 
     override fun showEmptyLayout() {
         emptyHandler.showEmptyLayout()
