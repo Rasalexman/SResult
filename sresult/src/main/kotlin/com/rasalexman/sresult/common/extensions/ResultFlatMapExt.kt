@@ -1,6 +1,7 @@
 package com.rasalexman.sresult.common.extensions
 
 import com.rasalexman.sresult.common.typealiases.FlowResult
+import com.rasalexman.sresult.common.typealiases.FlowResultList
 import com.rasalexman.sresult.common.typealiases.ResultList
 import com.rasalexman.sresult.data.dto.SResult
 import kotlinx.coroutines.flow.Flow
@@ -139,6 +140,15 @@ suspend inline fun <reified I : Any, reified O : Any> ResultList<*>.flatMapIfLis
     crossinline block: suspend (List<I>) -> ResultList<O>
 ): ResultList<O> {
     return (this.data as? List<I>)?.let { block(it) } ?: this as ResultList<O>
+}
+
+@Suppress("UNCHECKED_CAST")
+suspend inline fun <reified I : Any, reified O : Any> FlowResultList<*>.flatMapIfFlowListDataTypedSuspend(
+    crossinline block: suspend (List<I>) -> ResultList<O>
+): FlowResultList<O> {
+    return this.map {
+        it.flatMapIfListDataTypedSuspend<I, O>(block)
+    }
 }
 
 @Suppress("UNCHECKED_CAST")

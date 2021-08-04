@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.*
  * @param flowBlock блок, выполняемый в flow, с литералом FlowCollector
  */
 @Suppress("EXPERIMENTAL_API_USAGE")
-fun <T> ioFlow(flowBlock: suspend FlowCollector<T>.() -> Unit) = flow(flowBlock)
+fun <T : Any> ioFlow(flowBlock: suspend FlowCollector<T>.() -> Unit) = flow(flowBlock)
     .flowOn(Dispatchers.IO)
 
 /**
@@ -21,19 +21,25 @@ fun <T> ioFlow(flowBlock: suspend FlowCollector<T>.() -> Unit) = flow(flowBlock)
  * @param flowBlock блок, выполняемый в flow, с литералом FlowCollector
  */
 @Suppress("EXPERIMENTAL_API_USAGE")
-fun <T> safeIoFlow(defaultValue: T? = null, flowBlock: suspend FlowCollector<T>.() -> Unit) =
+fun <T : Any> safeIoFlow(defaultValue: T? = null, flowBlock: suspend FlowCollector<T>.() -> Unit) =
     ioFlow(flowBlock)
         .catch { throwable ->
             logg { throwable.message }
             defaultValue?.let { emit(it) }
         }
 
-fun safeIoResultFlow(flowBlock: suspend FlowCollector<SResult<*>>.() -> Unit) =
+/**
+ *
+ */
+fun<T : Any> safeIoResultFlow(flowBlock: suspend FlowCollector<SResult<T>>.() -> Unit) =
     ioFlow(flowBlock).catch { throwable ->
         logg { throwable.message }
         emit(errorResult(exception = throwable))
     }
 
+/**
+ *
+ */
 fun <T : Any> Flow<T>.asState(
     scope: CoroutineScope,
     initialValue: T,

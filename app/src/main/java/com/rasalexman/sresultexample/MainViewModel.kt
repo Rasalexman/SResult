@@ -75,7 +75,7 @@ class MainViewModel : BaseViewModel() {
 
         val result = getAnotherResult()
 
-        safeIoResultFlow {
+        safeIoResultFlow<Int> {
             emit( result)
         }
 

@@ -188,6 +188,13 @@ fun SResult.AbstractFailure.getMessage(): Any? {
         }
 }
 
+
+fun SResult.AbstractFailure.getStringMessage(): String {
+    return (this.message as? String)?.takeIf { it.isNotEmpty() }.or {
+        this.exception?.message.or { this.exception?.localizedMessage }.orEmpty()
+    }
+}
+
 ///--- Inline Applying functions
 inline fun <reified I : Any> SResult<I>.doIfSuccess(block: InHandler<I>): SResult<I> {
     if (this is SResult.Success) block(this.data)
@@ -256,5 +263,5 @@ inline fun <reified O : Any> Flow<List<O>>.toFlowSuccess(): FlowResultList<O> {
 
 inline fun <reified T : Any> ResultList<T>.size() = this.data?.size.orZero()
 
-inline fun <reified T : Any> Flow<T>.mapToFlowResult(): FlowResult<T> =
-    this.map { it.toSuccessResult() }
+inline fun <reified T : Any> Flow<T>.mapToFlowResult(noinline mapper: SInSameOutHandler<T>? = null): FlowResult<T> =
+    this.map { (mapper?.invoke(it) ?: it).toSuccessResult() }
