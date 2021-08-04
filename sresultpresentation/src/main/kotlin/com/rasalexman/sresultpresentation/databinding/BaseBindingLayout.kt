@@ -83,6 +83,7 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseContextViewModel
     }
 
     override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
         if (!isInEditMode) {
             currentBinding?.let {
                 it.lifecycleOwner = this
@@ -91,7 +92,6 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseContextViewModel
                 it.executePendingBindings()
             }
         }
-        super.onAttachedToWindow()
     }
 
     override fun onDetachedFromWindow() {
