@@ -1,6 +1,7 @@
 package com.rasalexman.sresult.common.extensions
 
 import com.rasalexman.sresult.common.typealiases.FlowResult
+import com.rasalexman.sresult.common.typealiases.ResultList
 import com.rasalexman.sresult.data.dto.SResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -14,8 +15,7 @@ inline fun <reified I : Any, reified O : Any> SResult<I>.flatMapIfSuccess(block:
 @Suppress("UNCHECKED_CAST")
 inline fun <reified I : Any, reified O : Any> FlowResult<I>.flatMapIfFlowSuccess(crossinline block: (I) -> SResult<O>): FlowResult<O> {
     return this.map {
-        if (it is SResult.Success) block(it.data)
-        else it as SResult<O>
+        it.flatMapIfSuccess(block)
     }
 }
 
@@ -28,10 +28,25 @@ inline fun <reified I : Any, reified O : Any> SResult<I>.flatMapIfEmpty(block: (
 @Suppress("UNCHECKED_CAST")
 inline fun <reified I : Any, reified O : Any> FlowResult<I>.flatMapIfFlowEmpty(crossinline block: () -> SResult<O>): FlowResult<O> {
     return this.map {
-        if (it is SResult.Empty) block()
-        else it as SResult<O>
+        it.flatMapIfEmpty(block)
     }
 }
+
+
+@Suppress("UNCHECKED_CAST")
+inline fun <reified I : Any, reified O : Any> SResult<I>.flatMapIfError(crossinline block: (SResult.AbstractFailure) -> SResult<O>): SResult<O> {
+    return if (this is SResult.AbstractFailure) block(this)
+    else this as SResult<O>
+}
+
+@Suppress("UNCHECKED_CAST")
+inline fun <reified I : Any, reified O : Any> FlowResult<I>.flatMapIfFlowError(crossinline block: (SResult.AbstractFailure) -> SResult<O>): FlowResult<O> {
+    return this.map {
+        it.flatMapIfError(block)
+    }
+}
+
+
 
 @Suppress("UNCHECKED_CAST")
 suspend inline fun <reified I : Any, reified O : Any> SResult<I>.flatMapIfSuccessSuspend(
@@ -42,12 +57,19 @@ suspend inline fun <reified I : Any, reified O : Any> SResult<I>.flatMapIfSucces
 }
 
 @Suppress("UNCHECKED_CAST")
+suspend inline fun <reified I : Any, reified O : Any> SResult<*>.flatMapIfSuccessSuspendTyped(
+    crossinline block: suspend (I) -> SResult<O>
+): SResult<O> {
+    return if (this is SResult.Success && data is I) block(this.data as I)
+    else this as SResult<O>
+}
+
+@Suppress("UNCHECKED_CAST")
 suspend inline fun <reified I : Any, reified O : Any> FlowResult<I>.flatMapIfFlowSuccessSuspend(
     crossinline block: suspend (I) -> SResult<O>
 ): FlowResult<O> {
     return this.map {
-        if (it is SResult.Success) block(it.data)
-        else it as SResult<O>
+        it.flatMapIfSuccessSuspend(block)
     }
 }
 
@@ -62,8 +84,7 @@ suspend inline fun <reified I : Any, reified O : Any> FlowResult<I>.flatMapIfFlo
     crossinline block: suspend (SResult.AbstractFailure) -> SResult<O>
 ): FlowResult<O> {
     return this.map {
-        if (it is SResult.AbstractFailure) block(it)
-        else it as SResult<O>
+        it.flatMapIfErrorSuspend(block)
     }
 }
 
@@ -78,15 +99,23 @@ suspend inline fun <reified I : Any, reified O : Any> FlowResult<I>.flatMapIfFlo
     crossinline block: suspend () -> SResult<O>
 ): FlowResult<O> {
     return this.map {
-        if (it is SResult.Empty) block()
-        else it as SResult<O>
+        it.flatMapIfEmptySuspend(block)
     }
 }
 
 @Suppress("UNCHECKED_CAST")
-inline fun <reified I : SResult<*>, reified O : SResult<*>> SResult<*>.flatMapIfType(block: (I) -> O): O {
+inline fun <reified I : SResult<*>> SResult<*>.flatMapIfType(block: (I) -> SResult<*>): SResult<*> {
     return if (this::class == I::class) block(this as I)
-    else this as O
+    else this
+}
+
+
+@Suppress("UNCHECKED_CAST")
+inline fun <reified I : Any, reified O : Any> SResult<*>.flatMapIfSuccessTyped(
+    block: (I) -> SResult<O>
+): SResult<O> {
+    return if (this is SResult.Success && this.data is I) block(this.data as I)
+    else this as SResult<O>
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -98,11 +127,34 @@ suspend inline fun <reified I : SResult<*>, reified O : SResult<*>> SResult<*>.f
 }
 
 @Suppress("UNCHECKED_CAST")
-suspend inline fun <reified I : SResult<*>, reified O : SResult<*>> Flow<SResult<*>>.flatMapIfFlowTypeSuspend(
+suspend inline fun <reified I : Any, reified O : Any> SResult<*>.flatMapIfDataTypedSuspend(
+    crossinline block: suspend (I) -> SResult<O>
+): SResult<O> {
+    return if (this.data is I) block(this.data as I)
+    else this as SResult<O>
+}
+
+@Suppress("UNCHECKED_CAST")
+suspend inline fun <reified I : Any, reified O : Any> ResultList<*>.flatMapIfListDataTypedSuspend(
+    crossinline block: suspend (List<I>) -> ResultList<O>
+): ResultList<O> {
+    return (this.data as? List<I>)?.let { block(it) } ?: this as ResultList<O>
+}
+
+@Suppress("UNCHECKED_CAST")
+suspend inline fun <reified I : SResult<*>, reified O : SResult<*>> Flow<SResult<*>>.flatMapIfFlowTypedSuspend(
     crossinline block: suspend (I) -> O
 ): Flow<O> {
     return this.map {
-        if (it::class == I::class) block(it as I)
-        else it as O
+        it.flatMapIfTypeSuspend<I, O>(block)
+    }
+}
+
+@Suppress("UNCHECKED_CAST")
+suspend inline fun <reified I : Any, reified O : Any> Flow<SResult<*>>.flatMapIfFlowDataTypedSuspend(
+    crossinline block: suspend (I) -> SResult<O>
+): FlowResult<O> {
+    return this.map {
+        it.flatMapIfDataTypedSuspend<I, O>(block)
     }
 }

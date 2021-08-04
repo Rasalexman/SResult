@@ -1,10 +1,13 @@
 package com.rasalexman.sresultexample
 
+import android.service.autofill.UserData
 import androidx.lifecycle.MutableLiveData
 import com.rasalexman.sresult.common.extensions.*
+import com.rasalexman.sresult.common.typealiases.AnyResult
 import com.rasalexman.sresultpresentation.extensions.AnyResultMutableLiveData
 import com.rasalexman.sresult.data.dto.ISEvent
 import com.rasalexman.sresult.data.dto.SEvent
+import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresult.models.IDropDownItem
 import com.rasalexman.sresultpresentation.extensions.mutableMap
 import com.rasalexman.sresultpresentation.extensions.onEventFlowAnyResult
@@ -70,7 +73,21 @@ class MainViewModel : BaseViewModel() {
         )
         emit(progressResult(70))
 
+        val result = getAnotherResult()
+
+        safeIoResultFlow {
+            emit( result)
+        }
+
         emit(UserAuthState.Success(user))
+    }
+
+    suspend fun getAnotherResult(): SResult<Int> {
+        return getResult().flatMapIfDataTypedSuspend<UserModel, Int> {
+            1.toSuccessResult()
+        }.flatMapIfSuccessTyped<Int, Int> {
+            9.toSuccessResult()
+        }
     }
 
     override val supportLiveData = onEventFlowAnyResult<SEvent.Refresh>(
@@ -87,6 +104,14 @@ class MainViewModel : BaseViewModel() {
         val rand = Random.nextInt(10, 54)
         val event: ISEvent = if(rand % 2 == 0) SEvent.Fetch else SEvent.Refresh
         processEvent(event)
+    }
+
+    private fun getResult(): SResult<UserModel> {
+        return UserModel(
+            name = "Alex",
+            email = "sphc@yandex.ru",
+            token = UUID.randomUUID().toString()
+        ).toSuccessResult()
     }
 
     fun onUsersClicked() {

@@ -16,8 +16,8 @@ inline fun <reified I : Any, reified O : Any> SResult<I>.flatMapDataIfSuccess(bl
 }
 
 @Suppress("UNCHECKED_CAST")
-inline fun <reified I : Any, reified O : Any> SResult<I>.flatMapDataIfNotSuccess(block: () -> O): O? {
-    return if (this !is SResult.Success) block()
+inline fun <reified I : Any, reified O : Any> SResult<I>.flatMapDataIfNotSuccess(block: (SResult<I>) -> O): O? {
+    return if (this !is SResult.Success) block(this)
     else null
 }
 
@@ -28,7 +28,7 @@ inline fun <reified I : Any, reified O : Any> SResult<I>.flatMapDataIfEmpty(bloc
 }
 
 @Suppress("UNCHECKED_CAST")
-inline fun <reified I : Any, reified O : Any> SResult<I>.flatMapDataIfError(block: (Throwable?) -> O): O? {
-    return if (this is SResult.AbstractFailure) block(this.exception)
+inline fun <reified I : Any, reified O : Any> SResult<I>.flatMapDataIfError(block: (SResult.AbstractFailure) -> O): O? {
+    return if (this is SResult.AbstractFailure) block(this)
     else null
 }

@@ -143,7 +143,7 @@ inline fun <reified O : Any> ResultList<O>.getMutableList(): MutableList<O> {
 inline fun <reified O : Any, reified I : IConvertable> SResult<I>.convertTo(): SResult<O> {
     return when (this) {
         is SResult.Success -> {
-            this.data.convert<O>()?.toSuccessResult() ?: emptyResult()
+            this.data.convert<O>().toSuccessResult()
         }
         else -> this as SResult<O>
     }
@@ -153,7 +153,7 @@ inline fun <reified O : Any, reified I : IConvertable> SResult<I>.convertTo(): S
 inline fun <reified O : Any, reified I : IConvertableWithParams<O, I>> SResult<I>.convertTo(param: I): SResult<O> {
     return when (this) {
         is SResult.Success -> {
-            this.data.convert(param)?.toSuccessResult() ?: emptyResult()
+            this.data.convert(param).toSuccessResult()
         }
         else -> this as SResult<O>
     }
@@ -242,7 +242,7 @@ fun <T : Any> SResult<T>?.orError(
     exception: Throwable? = null
 ): SResult<T> = this ?: SResult.AbstractFailure.Error(message, code, exception)
 
-fun <T : Any> T?.orErrorResult(
+fun <T : Any> T?.toSuccessOrErrorResult(
     message: Any? = null,
     code: Int = 0,
     exception: Throwable? = null

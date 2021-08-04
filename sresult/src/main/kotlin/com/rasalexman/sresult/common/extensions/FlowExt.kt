@@ -1,5 +1,6 @@
 package com.rasalexman.sresult.common.extensions
 
+import com.rasalexman.sresult.data.dto.SResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -26,6 +27,12 @@ fun <T> safeIoFlow(defaultValue: T? = null, flowBlock: suspend FlowCollector<T>.
             logg { throwable.message }
             defaultValue?.let { emit(it) }
         }
+
+fun safeIoResultFlow(flowBlock: suspend FlowCollector<SResult<*>>.() -> Unit) =
+    ioFlow(flowBlock).catch { throwable ->
+        logg { throwable.message }
+        emit(errorResult(exception = throwable))
+    }
 
 fun <T : Any> Flow<T>.asState(
     scope: CoroutineScope,

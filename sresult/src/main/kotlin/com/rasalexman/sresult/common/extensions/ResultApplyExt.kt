@@ -68,7 +68,7 @@ inline fun <reified I : Any> FlowResult<I>.applyIfFlowSuccess(crossinline block:
 }
 
 // /--- Inline Applying functions
-inline fun <reified I> SResult<Any>.applyIfSuccessTyped(block: InHandler<I>): AnyResult {
+inline fun <reified I> SResult<*>.applyIfSuccessTyped(block: InHandler<I>): SResult<*> {
     if (this is SResult.Success && this.data is I) block(this.data as I)
     return this
 }
