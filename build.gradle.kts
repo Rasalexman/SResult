@@ -1,7 +1,6 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    val JAVA_HOME by extra("/Library/Java/JavaVirtualMachines/jdk1.8.0_161.jdk/Contents/Home")
     repositories {
         google()
         mavenCentral()

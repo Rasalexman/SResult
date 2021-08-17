@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.map
 
 // /------ ViewResult extensions
-inline fun <reified T : Any> Any.successResult(data: T): SResult<T> = SResult.Success<T>(data)
+inline fun <reified T : Any> Any.successResult(data: T): SResult<T> = SResult.Success(data)
 
 fun Any?.loadingResult(isNeedHandle: Boolean = true) = SResult.Loading(isNeedHandle)
 fun Any?.emptyResult(isNeedHandle: Boolean = true) = if(isNeedHandle) {

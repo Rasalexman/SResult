@@ -28,7 +28,7 @@ class BottomRecyclerFragment :
     }
 
     override val toolbarMenuId: Int
-        get() = R.menu.menu_close
+        get() = R.menu.menu_refresh
 
     override val toolbarTitle: String
         get() = string(R.string.title_bottom_recycler)
@@ -45,14 +45,10 @@ class BottomRecyclerFragment :
 
             diffUtilCallback = object : DiffCallback<UserItem>() {
                 override fun areItemsTheSame(
-                    oldItem: UserItem?,
-                    newItem: UserItem?
+                    oldItem: UserItem,
+                    newItem: UserItem
                 ): Boolean {
-                    return if (oldItem != null && newItem != null) {
-                        oldItem.id == newItem.id
-                    } else {
-                        oldItem == null && newItem == null
-                    }
+                    return oldItem.id == newItem.id
                 }
             }
         }
@@ -64,8 +60,9 @@ class BottomRecyclerFragment :
     }
 
     override fun onMenuItemClick(item: MenuItem): Boolean {
-        if (item.itemId == R.id.actionClose) {
-            dismiss()
+        if (item.itemId == R.id.actionRefresh) {
+            //dismiss()
+            viewModel.onShowEmpty()
         }
         return super.onMenuItemClick(item)
     }

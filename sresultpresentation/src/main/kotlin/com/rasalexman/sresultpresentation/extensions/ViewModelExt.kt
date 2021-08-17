@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.rasalexman.sresultpresentation.extensions
 
 import androidx.lifecycle.*

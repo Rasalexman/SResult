@@ -16,6 +16,11 @@ abstract class BaseBindingFragment<B : ViewDataBinding, VM : BaseContextViewMode
     override val binding: B
             get() = currentBinding ?: throw NullPointerException("Binding is not initialized")
 
+    /**
+     *
+     */
+    override val needCallPending: Boolean = false
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -28,7 +33,7 @@ abstract class BaseBindingFragment<B : ViewDataBinding, VM : BaseContextViewMode
         inflater: LayoutInflater,
         container: ViewGroup?
     ): View {
-        return setupBinding(inflater, container)
+        return setupBinding(inflater, container, needCallPending)
     }
 
     /** starts in onCreateView */

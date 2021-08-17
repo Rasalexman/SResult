@@ -1,6 +1,5 @@
 package com.rasalexman.sresult.common.extensions
 
-import com.rasalexman.sresult.BuildConfig
 import com.rasalexman.sresult.common.typealiases.InHandler
 import com.rasalexman.sresult.common.typealiases.OutHandler
 import timber.log.Timber
@@ -8,15 +7,11 @@ import timber.log.Timber
 const val DEFAULT_TAG = "------> "
 
 inline fun Any.logg(lambda: () -> String?) {
-    //if (BuildConfig.DEBUG) {
-        Timber.d("$DEFAULT_TAG[${this::class.java.simpleName}]: ${lambda().orEmpty()}")
-    //}
+    Timber.d("$DEFAULT_TAG[${this::class.java.simpleName}]: ${lambda().orEmpty()}")
 }
 
 fun Any.logg(message: String?, tag: String = DEFAULT_TAG) {
-    //if (BuildConfig.DEBUG) {
-        Timber.d("$tag [${this::class.java.simpleName}]: ${message.orEmpty()}")
-   // }
+    Timber.d("$tag [${this::class.java.simpleName}]: ${message.orEmpty()}")
 }
 
 fun Any.loggE(exception: Throwable? = null, message: String? = null) {
@@ -57,17 +52,6 @@ inline fun <reified I : Any, reified R : Any> Any.flatMapForType(block: (I) -> R
 inline fun <reified T, reified R> R.unsafeLazy(noinline init: () -> T): Lazy<T> =
     lazy(LazyThreadSafetyMode.NONE, init)
 
-inline fun runIfDebug(function: () -> Unit) {
-    if (BuildConfig.DEBUG) {
-        function()
-    }
-}
-
-inline fun runIfRelease(function: () -> Unit) {
-    if (!BuildConfig.DEBUG) {
-        function()
-    }
-}
 
 fun <T: Any>T?.logIfNull(message: String): T? {
     if (this == null) {

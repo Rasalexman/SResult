@@ -18,6 +18,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
+import com.rasalexman.easyrecyclerbinding.findPrimaryFragment
 import com.rasalexman.easyrecyclerbinding.getOwner
 import com.rasalexman.sresult.common.extensions.loggE
 import com.rasalexman.sresult.common.extensions.or
@@ -29,7 +30,7 @@ import com.rasalexman.sresultpresentation.viewModels.BaseContextViewModel
 import com.rasalexman.sresultpresentation.viewModels.CustomViewModelLazy
 import java.lang.ref.WeakReference
 
-abstract class BaseLayout<VM : BaseContextViewModel, F : Fragment> : FrameLayout,
+abstract class BaseLayout<VM : BaseContextViewModel> : FrameLayout,
     IBaseFragment<VM>, LifecycleOwner {
 
     /**
@@ -59,20 +60,36 @@ abstract class BaseLayout<VM : BaseContextViewModel, F : Fragment> : FrameLayout
     )
 
     inline fun <reified VM : BaseContextViewModel> viewModels(
-        noinline fragmentProducer: () -> F = { this.findFragment() }
+        noinline fragmentProducer: () -> Fragment = { parentFragment }
     ): Lazy<VM> {
         return CustomViewModelLazy(VM::class, fragmentProducer)
     }
 
     protected open var parentWeakLifecycle: WeakReference<Lifecycle>? = null
+    protected open var parentWeakFragment: WeakReference<Fragment>? = null
 
-    protected val parentLifecycle: Lifecycle
+    val parentFragment: Fragment
+        get() = parentWeakFragment?.get().or {
+            try {
+                this.findFragment<Fragment>()
+            } catch (e: Exception) {
+                this.context.findPrimaryFragment()!!
+            }
+        }.also {
+            parentWeakFragment = WeakReference(it)
+        }
+
+    private val parentLifecycle: Lifecycle
         get() {
             return parentWeakLifecycle?.get().or {
                 try {
-                    this.findFragment<F>().viewLifecycleOwner.lifecycle
+                    parentFragment.viewLifecycleOwner.lifecycle
                 } catch (e: Exception) {
-                    context.getOwner<LifecycleOwner>().lifecycle
+                    try {
+                        this.context.findPrimaryFragment()!!.lifecycle
+                    } catch (e: Exception) {
+                        context.getOwner<LifecycleOwner>()!!.lifecycle
+                    }
                 }.also {
                     parentWeakLifecycle = WeakReference(it)
                 }
@@ -100,22 +117,34 @@ abstract class BaseLayout<VM : BaseContextViewModel, F : Fragment> : FrameLayout
         defStyleAttr: Int = 0,
         defStyleRes: Int = 0
     ) {
-        val view = LayoutInflater.from(context).inflate(layoutId, this, attachToParent)
-        applyAdditionalParameters(context, attrs, defStyleAttr, defStyleRes)
-        initLayout(view)
+        if (!isInEditMode) {
+            val view = LayoutInflater.from(context).inflate(layoutId, this, attachToParent)
+            applyAdditionalParameters(context, attrs, defStyleAttr, defStyleRes)
+            initLayout(view)
+        } else {
+            inflate(context, layoutId, this)
+        }
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        addViewModelObservers(viewModel)
+        if (!isInEditMode) {
+            addViewModelObservers(viewModel)
+        }
     }
 
     override fun onDetachedFromWindow() {
-        val lifecycleOwner = this
-        this.clear(lifecycleOwner)
-        clearView()
-        parentWeakLifecycle?.clear()
-        parentWeakLifecycle = null
+        if (!isInEditMode) {
+            val lifecycleOwner = this
+            this.clear(lifecycleOwner)
+            if (needToClearView) {
+                clearView()
+            }
+            parentWeakLifecycle?.clear()
+            parentWeakLifecycle = null
+            parentWeakFragment?.clear()
+            parentWeakFragment = null
+        }
         super.onDetachedFromWindow()
     }
 

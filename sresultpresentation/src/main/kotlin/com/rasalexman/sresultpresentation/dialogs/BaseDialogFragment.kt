@@ -42,7 +42,6 @@ abstract class BaseDialogFragment<VM : IEventableViewModel> : AppCompatDialogFra
         return inflater.inflate(layoutId, container, false)
     }
 
-    @Suppress("UNCHECKED_CAST")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         showToolbar()
@@ -175,9 +174,22 @@ abstract class BaseDialogFragment<VM : IEventableViewModel> : AppCompatDialogFra
     }
 
     override fun onDestroyView() {
-        this.clear(this.viewLifecycleOwner)
-        this.view.clearView()
-        (view as? ViewGroup)?.removeAllViews()
+        clearObservers()
+        closeContextAlert()
+        clearFragmentView()
         super.onDestroyView()
+    }
+
+    protected open fun closeContextAlert() {
+        context.closeAlert()
+    }
+
+    protected open fun clearFragmentView() {
+        if(needToClearView) contentView.clearView()
+        //(view as? ViewGroup)?.removeAllViews()
+    }
+
+    protected open fun clearObservers() {
+        this.clear(this)
     }
 }

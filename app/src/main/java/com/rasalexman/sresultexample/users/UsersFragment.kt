@@ -40,14 +40,10 @@ class UsersFragment : BaseBindingFragment<FragmentUsersBinding, UsersViewModel>(
 
             diffUtilCallback = object : DiffCallback<UserItem>() {
                 override fun areItemsTheSame(
-                    oldItem: UserItem?,
-                    newItem: UserItem?
+                    oldItem: UserItem,
+                    newItem: UserItem
                 ): Boolean {
-                    return if (oldItem != null && newItem != null) {
-                        oldItem.id == newItem.id
-                    } else {
-                        oldItem == null && newItem == null
-                    }
+                    return oldItem.id == newItem.id
                 }
             }
         }

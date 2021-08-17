@@ -88,15 +88,17 @@ dependencies {
     implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
     implementation(kotlin("stdlib-jdk8", config.Versions.kotlin))
 
-    api(config.Libs.Core.coreKtx)
+    //api(config.Libs.Core.coreKtx)
     api(config.Libs.Core.material)
     api(config.Libs.Core.constraintlayout)
     api(config.Libs.Core.fragment_ktx)
     api(config.Libs.Core.navigationFragmentKtx)
+    api(config.Libs.Core.paging3)
 
     api(config.Libs.Lifecycle.livedataKtx)
     api(config.Libs.Lifecycle.viewmodelKtx)
-    api(config.Libs.Lifecycle.savedStateViewModel)
+
+    //api(config.Libs.Lifecycle.savedStateViewModel)
     //api(config.Libs.Lifecycle.common)
 
     api(config.Libs.Common.easyRecyclerBinding)

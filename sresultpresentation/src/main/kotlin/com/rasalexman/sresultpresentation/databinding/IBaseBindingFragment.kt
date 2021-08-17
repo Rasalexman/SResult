@@ -10,6 +10,7 @@ import com.rasalexman.sresultpresentation.viewModels.IEventableViewModel
 interface IBaseBindingFragment<B : ViewDataBinding, VM : IEventableViewModel> : IBaseFragment<VM> {
     var currentBinding: B?
     val binding: B
+    val needCallPending: Boolean
 
     fun setupBindingView(
         inflater: LayoutInflater,

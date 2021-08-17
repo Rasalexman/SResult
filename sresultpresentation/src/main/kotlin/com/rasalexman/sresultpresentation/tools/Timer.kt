@@ -2,6 +2,7 @@ package com.rasalexman.sresultpresentation.tools
 
 import com.rasalexman.sresult.common.extensions.loggE
 import kotlinx.coroutines.*
+import kotlin.math.max
 import kotlin.system.measureTimeMillis
 
 fun CoroutineScope.timer(
@@ -26,7 +27,7 @@ fun CoroutineScope.timer(
             }
 
             if (fixedRate) {
-                delay(Math.max(0, interval - time))
+                delay(max(0, interval - time))
             } else {
                 delay(interval)
             }

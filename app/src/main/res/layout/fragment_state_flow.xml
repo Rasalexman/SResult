@@ -27,7 +27,7 @@
 
         <TextView
             android:id="@+id/screenDesc"
-            android:text="@string/hint_loading"
+            android:text="@{vm.description}"
             android:layout_marginHorizontal="@dimen/size_36dp"
             android:layout_marginTop="@dimen/size_24dp"
             android:textSize="@dimen/text_size_20sp"

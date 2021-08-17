@@ -1,3 +1,4 @@
+@file:Suppress("UNCHECKED_CAST")
 package com.rasalexman.sresult.common.extensions
 
 import com.rasalexman.sresult.common.typealiases.FlowResultList
@@ -10,7 +11,7 @@ import kotlinx.coroutines.flow.map
 
 
 // /------- Mapper function
-@Suppress("UNCHECKED_CAST")
+
 inline fun <reified O : Any> ResultList<IConvertable>.mapListTo(): ResultList<O> {
     return when (this) {
         is SResult.Success -> {
@@ -20,7 +21,7 @@ inline fun <reified O : Any> ResultList<IConvertable>.mapListTo(): ResultList<O>
     }
 }
 
-@Suppress("UNCHECKED_CAST")
+
 inline fun <reified O : Any, reified T : Any> ResultList<IConvertableWithParams<O, T>>.mapListToWithParams(params: T): ResultList<O> {
     return when (this) {
         is SResult.Success -> {
@@ -36,7 +37,7 @@ inline fun <reified O : Any> FlowResultList<IConvertable>.mapFlowListTo(): FlowR
     }
 }
 
-@Suppress("UNCHECKED_CAST")
+
 inline fun <reified O : Any, reified T : Any> FlowResultList<IConvertableWithParams<O, T>>.mapFlowListToWithParams(params: T): FlowResultList<O> {
     return this.map { result ->
         result.mapListToWithParams(params)

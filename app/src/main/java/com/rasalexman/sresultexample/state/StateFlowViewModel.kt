@@ -1,6 +1,5 @@
 package com.rasalexman.sresultexample.state
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import com.rasalexman.sresult.common.extensions.*
 import com.rasalexman.sresult.common.typealiases.AnyResult
@@ -10,6 +9,7 @@ import com.rasalexman.sresultexample.R
 import com.rasalexman.sresultpresentation.extensions.launchUITryCatch
 import com.rasalexman.sresultpresentation.extensions.onEventFlow
 import com.rasalexman.sresultpresentation.viewModels.flowable.FlowableViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import java.util.*
@@ -28,21 +28,18 @@ class StateFlowViewModel : FlowableViewModel() {
         }
     }
 
-    val isLoadingInvisible: LiveData<Boolean> by unsafeLazy {
-        resultFlow.map { result ->
-            println("------> isLoadingInvisible = $result")
-            !result.isLoading
-        }.asLiveData()
-    }
-
-    override val anyDataFlow: Flow<*> by unsafeLazy {
+    override val anyDataFlow: Flow<String> by unsafeLazy {
         resultFlow.combine(supportFlow) { r, s ->
             println("------> anyDataFlow combined = $r | $s")
             val text = r.takeIf { r.isToast }?.run {
-                "result is Toast | support = $s"
-            }.orEmpty()
+                "result is Toast | support = ${s.data}"
+            }.or { string(R.string.app_name) }
             text
-        }.filter { it.isNotEmpty() }
+        }.flowOn(Dispatchers.Default).filter { it.isNotEmpty() }
+    }
+
+    val description by unsafeLazy {
+        anyDataFlow.asLiveData()
     }
 
     fun onDoActionClicked() {

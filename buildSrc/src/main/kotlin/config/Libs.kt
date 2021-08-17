@@ -8,6 +8,7 @@ object Libs {
         const val navigationFragmentKtx = "androidx.navigation:navigation-fragment-ktx:${Versions.navigation}"
         const val material = "com.google.android.material:material:${Versions.material}"
         const val fragment_ktx = "androidx.fragment:fragment-ktx:${Versions.fragment}"
+        const val paging3 = "androidx.paging:paging-runtime:${Versions.paging3}"
     }
 
     object Lifecycle {

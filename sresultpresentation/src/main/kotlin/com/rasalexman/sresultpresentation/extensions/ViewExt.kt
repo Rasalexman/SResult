@@ -120,10 +120,12 @@ fun ImageView.clear() {
 
 fun Button.clear(isClearText: Boolean = true) {
     if (isClearText) this.text = null
+    this.setOnClickListener(null)
 }
 
 fun CheckBox.clear() {
     this.setOnCheckedChangeListener(null)
+    this.setOnClickListener(null)
 }
 
 fun Toolbar.clear() {

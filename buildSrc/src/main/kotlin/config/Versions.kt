@@ -9,12 +9,13 @@ object Versions {
     const val material = "1.4.0"
     const val navigation = "2.3.5"
     const val lifecycle: String = "2.3.1"
-    const val fragment: String = "1.3.5"
+    const val fragment: String = "1.3.6"
+    const val paging3: String = "3.0.1"
 
     const val timber = "4.7.1"
     const val coroutinesManager: String = "1.3.2"
-    const val easyBinding: String = "0.1.4"
-    const val kodi = "1.5.14"
+    const val easyBinding: String = "1.0.1"
+    const val kodi = "1.5.16"
     const val leakcanary: String = "2.7"
 
     /* test */

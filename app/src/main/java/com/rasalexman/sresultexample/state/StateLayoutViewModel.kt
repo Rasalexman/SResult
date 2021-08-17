@@ -1,6 +1,5 @@
 package com.rasalexman.sresultexample.state
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import com.rasalexman.sresult.common.extensions.loadingResult
 import com.rasalexman.sresult.common.extensions.toSuccessResult
@@ -30,8 +29,10 @@ class StateLayoutViewModel : FlowableViewModel() {
         }
     }
 
-    val generatedText: LiveData<String> by unsafeLazy {
+    val generatedText by unsafeLazy {
         resultFlow.map { it.data.orEmpty() }.asLiveData()
+        // only with AGP 7.+
+        //.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), "")
     }
 
     fun onGenerateClicked() {

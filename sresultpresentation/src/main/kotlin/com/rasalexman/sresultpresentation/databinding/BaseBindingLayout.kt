@@ -8,18 +8,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
-import androidx.fragment.app.Fragment
 import com.rasalexman.easyrecyclerbinding.createBinding
 import com.rasalexman.sresultpresentation.BR
 import com.rasalexman.sresultpresentation.layout.BaseLayout
 import com.rasalexman.sresultpresentation.viewModels.BaseContextViewModel
 
-abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseContextViewModel, F : Fragment> :
-    BaseLayout<VM, F>, IBaseBindingFragment<VB, VM> {
+abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseContextViewModel> :
+    BaseLayout<VM>, IBaseBindingFragment<VB, VM> {
 
     override var currentBinding: VB? = null
     override val binding: VB
         get() = currentBinding ?: throw NullPointerException("Binding is not initialized")
+
+    /**
+     *
+     */
+    override val needCallPending: Boolean = false
 
     constructor(context: Context) : super(context) {
         createBindingLayout(context)
@@ -89,7 +93,9 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseContextViewModel
                 it.lifecycleOwner = this
                 it.setVariable(BR.vm, viewModel)
                 initBinding(it)
-                it.executePendingBindings()
+                if(needCallPending) {
+                    it.executePendingBindings()
+                }
             }
         }
     }

@@ -26,6 +26,12 @@ interface IBaseFragment<out VM : IEventableViewModel> : IComplexHandler, Toolbar
         get() = null
 
     /**
+     * Is need to call ext func on view.clearView()
+     */
+    val needToClearView: Boolean
+        get() = true
+
+    /**
      * Need to center toolbar title
      */
     val centerToolbarTitle: Boolean

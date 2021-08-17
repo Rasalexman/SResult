@@ -11,6 +11,7 @@ import androidx.annotation.*
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.postDelayed
 import androidx.databinding.ViewDataBinding
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
@@ -117,7 +118,7 @@ fun IBaseFragment<*>.observeStateViewModel(currentFlowableVM: IFlowableViewModel
     val lifecycleOwner = when(this) {
         is BaseFragment<*> -> viewLifecycleOwner
         is BaseDialogFragment<*> -> viewLifecycleOwner
-        is BaseLayout<*, *> -> this
+        is BaseLayout<*> -> this
         else -> null
     }
 
@@ -172,8 +173,16 @@ fun IBaseFragment<*>.observeStateViewModel(currentFlowableVM: IFlowableViewModel
     }
 }
 
+
+
 fun <T : SResult<*>> Fragment.onResultChange(data: LiveData<T>?, stateHandle: InHandler<T>) {
     data?.observe(viewLifecycleOwner, Observer { result ->
+        result.applyIf(!result.isHandled, stateHandle)
+    })
+}
+
+fun <T : SResult<*>> DialogFragment.onResultChange(data: LiveData<T>?, stateHandle: InHandler<T>) {
+    data?.observe(this, Observer { result ->
         result.applyIf(!result.isHandled, stateHandle)
     })
 }
@@ -188,14 +197,15 @@ fun <T : SResult<*>> LifecycleOwner.onResultChange(
 }
 
 fun <T : Any> BaseFragment<*>.onAnyChange(data: LiveData<T>?, stateHandle: InHandler<T>? = null) {
-    data?.observe(viewLifecycleOwner,Observer {
+    data?.observe(viewLifecycleOwner, Observer {
         stateHandle?.invoke(it)
     })
 }
 
 fun <B : ViewDataBinding, VM : BaseContextViewModel> IBaseBindingFragment<B, VM>.setupBinding(
     inflater: LayoutInflater,
-    container: ViewGroup?
+    container: ViewGroup?,
+    needPending: Boolean = false
 ): View {
     return viewModel?.let { vm ->
         (this as Fragment).createBindingWithViewModel<B, VM>(
@@ -213,9 +223,11 @@ fun <B : ViewDataBinding, VM : BaseContextViewModel> IBaseBindingFragment<B, VM>
             findLifeCycle = true
         )
     }.also {
-        it.executePendingBindings()
         currentBinding = it
         initBinding(it)
+        if(needPending) {
+            it.executePendingBindings()
+        }
     }.root
 }
 

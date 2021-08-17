@@ -17,6 +17,8 @@ abstract class BaseBindingDialogFragment<B : ViewDataBinding, VM : BaseContextVi
     override val binding: B
         get() = currentBinding ?: throw NullPointerException("Binding is not initialized")
 
+    override val needCallPending: Boolean = false
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -29,7 +31,7 @@ abstract class BaseBindingDialogFragment<B : ViewDataBinding, VM : BaseContextVi
         inflater: LayoutInflater,
         container: ViewGroup?
     ): View {
-        return setupBinding(inflater, container)
+        return setupBinding(inflater, container, needCallPending)
     }
 
     override fun initBinding(binding: B) = Unit

@@ -24,6 +24,9 @@ class EmptyVmFragment : BaseBindingFragment<FragmentEmptyVmBinding, BaseViewMode
         binding.recyclerBottomButton.setOnClickListener {
             onResultHandler(MainFragmentDirections.showBottomRecyclerFragment().toNavigateResult())
         }
+        binding.customDialogButton.setOnClickListener {
+            onResultHandler(MainFragmentDirections.showCustomDialogFragment().toNavigateResult())
+        }
     }
 
     override fun onBackArgumentsHandler(backArgs: Bundle) {

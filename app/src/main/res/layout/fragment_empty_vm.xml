@@ -47,5 +47,16 @@
             app:layout_constraintTop_toBottomOf="@+id/selectedTV"
             />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/customDialogButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_custom_dialog"
+            android:layout_marginTop="@dimen/size_24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recyclerBottomButton"
+            />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

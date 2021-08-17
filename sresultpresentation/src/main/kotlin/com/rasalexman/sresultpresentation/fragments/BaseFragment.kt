@@ -189,7 +189,6 @@ abstract class BaseFragment<VM : IEventableViewModel> : Fragment(), IBaseFragmen
      */
     protected open fun showLayoutLoading() {
         hideKeyboard()
-        contentViewLayout?.hide()
         loadingViewLayout?.show()
     }
 
@@ -206,7 +205,6 @@ abstract class BaseFragment<VM : IEventableViewModel> : Fragment(), IBaseFragmen
     protected open fun hideLayoutLoading() {
         hideKeyboard()
         loadingViewLayout?.hide()
-        contentViewLayout?.show()
     }
 
     /**
@@ -364,8 +362,8 @@ abstract class BaseFragment<VM : IEventableViewModel> : Fragment(), IBaseFragmen
     }
 
     protected open fun clearFragmentView() {
-        view.clearView()
-        (view as? ViewGroup)?.removeAllViews()
+        if(needToClearView) contentView.clearView()
+        //(view as? ViewGroup)?.removeAllViews()
     }
 
     protected open fun clearObservers() {

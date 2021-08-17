@@ -1,3 +1,4 @@
+@file:Suppress("UNCHECKED_CAST", "REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE", "unused")
 package com.rasalexman.sresult.common.extensions
 
 import com.rasalexman.sresult.common.typealiases.*
@@ -5,20 +6,20 @@ import com.rasalexman.sresult.data.dto.SResult
 import kotlinx.coroutines.flow.onEach
 
 
-@Suppress("REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE")
+
 suspend inline fun <reified I : Any> SResult<I>.applyIfSuccessSuspend(crossinline block: SInHandler<I>): SResult<I> {
     if (this is SResult.Success) block(this.data)
     return this
 }
 
-@Suppress("REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE")
+
 suspend inline fun <reified I : Any> FlowResult<I>.applyIfFlowSuccessSuspend(crossinline block: SInHandler<I>): FlowResult<I> {
     return this.onEach { result ->
         if (result is SResult.Success) block(result.data)
     }
 }
 
-@Suppress("REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE")
+
 suspend inline fun <reified I : Any> SResult<I>.applyIfEmptySuspend(crossinline block: SUnitHandler): SResult<I> {
     if (this is SResult.Empty) block()
     return this
@@ -30,7 +31,7 @@ suspend inline fun <reified I : Any> FlowResult<I>.applyIfFlowEmptySuspend(cross
     }
 }
 
-@Suppress("REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE")
+
 suspend inline fun <reified I : Any> SResult<I>.applyIfNothingSuspend(crossinline block: SUnitHandler): SResult<I> {
     if (this is SResult.NothingResult) block()
     return this
@@ -42,7 +43,7 @@ suspend inline fun <reified I : Any> FlowResult<I>.applyIfFlowNothingSuspend(cro
     }
 }
 
-@Suppress("REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE")
+
 suspend inline fun <reified I : Any> SResult<I>.applyIfErrorSuspend(crossinline block: SInHandler<SResult.AbstractFailure>): SResult<I> {
     if (this is SResult.AbstractFailure) block(this)
     return this
@@ -89,7 +90,7 @@ inline fun <reified I : SResult<*>> SResult<*>.applyIfType(block: I.() -> Unit):
     return this
 }
 
-@Suppress("REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE")
+
 suspend inline fun <reified I : SResult<*>> SResult<*>.applyIfTypeSuspend(crossinline block: suspend I.() -> Unit): SResult<*> {
     if (this::class == I::class) block(this as I)
     return this

@@ -23,6 +23,7 @@
                 android:layout_marginHorizontal="@dimen/size_36dp"
                 android:layout_marginVertical="@dimen/size_24dp"
                 android:textSize="@dimen/text_size_20sp"
+                android:text="@{vm.generatedText}"
                 android:gravity="center_horizontal"
                 android:textColor="@color/black"
                 android:layout_width="match_parent"

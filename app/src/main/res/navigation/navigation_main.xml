@@ -51,8 +51,16 @@
         android:label="BottomRecyclerFragment"
         />
 
+    <dialog android:id="@+id/customDialogFragment"
+        android:name="com.rasalexman.sresultexample.dialog.CustomDialogFragment"
+        android:label="CustomDialogFragment"
+        />
+
     <action android:id="@+id/showUsersBottomFragment"
         app:destination="@+id/userBottomDialogFragment"/>
+
+    <action android:id="@+id/showCustomDialogFragment"
+        app:destination="@+id/customDialogFragment"/>
 
     <action android:id="@+id/showBottomRecyclerFragment"
         app:destination="@+id/bottomRecyclerDialogFragment"/>
