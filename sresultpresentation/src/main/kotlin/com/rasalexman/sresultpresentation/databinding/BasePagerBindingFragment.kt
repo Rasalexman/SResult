@@ -16,14 +16,17 @@ import com.rasalexman.sresultpresentation.viewModels.IEventableViewModel
 abstract class BasePagerBindingFragment<B : ViewDataBinding, VM : BaseContextViewModel> :
     BaseBindingFragment<B, VM>() {
 
-    open val pagesTitleArrayResId: Int = -1
+    /**
+     * Pages titles string array resource id
+     */
+    protected open val pagesTitleArrayResId: Int = -1
 
-    open val pageTitles: Array<String> by unsafeLazy {
+    protected open val pageTitles: Array<String> by unsafeLazy {
         if (pagesTitleArrayResId > 0) stringArr(pagesTitleArrayResId)
         else emptyArray()
     }
 
-    private var tabLayoutMediator: TabLayoutMediator? = null
+    protected open var tabLayoutMediator: TabLayoutMediator? = null
     abstract val pagesVMList: List<IEventableViewModel>
 
     override fun initBinding(binding: B) {
@@ -34,23 +37,36 @@ abstract class BasePagerBindingFragment<B : ViewDataBinding, VM : BaseContextVie
 
     abstract fun setupViewPagerConfig(binding: B)
 
+    /**
+     * Setup pager view models
+     */
     protected open fun addPagesViewModelsToObserve(vmList: List<IEventableViewModel>) {
         vmList.forEach {
             addViewModelObservers(it)
         }
     }
 
+    /**
+     *
+     */
     protected open fun setupTabMediator(tabLayout: TabLayout, viewPager: ViewPager2) {
         tabLayoutMediator =
             TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-                tab.setText(pageTitles.getOrNull(position).orEmpty())
+                setupTab(tab, position)
             }
+    }
+
+    /**
+     *
+     */
+    protected open fun setupTab(tab: TabLayout.Tab, position: Int) {
+        tab.setText(pageTitles.getOrNull(position).orEmpty())
     }
 
     /**
      * This function add to observe inner viewPager pages viewModels
      */
-    private fun setupPagesItems() {
+    protected open fun setupPagesItems() {
         addPagesViewModelsToObserve(pagesVMList)
         (viewModel as? IBasePagerViewModel)?.items = pagesVMList
     }
@@ -61,7 +77,7 @@ abstract class BasePagerBindingFragment<B : ViewDataBinding, VM : BaseContextVie
         attachViewPagerMediator()
     }
 
-    private fun attachViewPagerMediator() {
+    protected open fun attachViewPagerMediator() {
         tabLayoutMediator?.let {
             if (!it.isAttached) {
                 it.attach()
