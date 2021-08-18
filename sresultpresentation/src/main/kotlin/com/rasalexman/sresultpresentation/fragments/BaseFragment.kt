@@ -234,7 +234,7 @@ abstract class BaseFragment<VM : IEventableViewModel> : Fragment(), IBaseFragmen
             cancelTitle = alert.cancelTitle,
             cancelHandler = alert.cancelHandler,
             okHandler = alert.okHandler,
-            showCancel = alert.cancelHandler != null
+            showCancel = alert.cancelHandler != null || alert.cancelTitle != null
         )
     }
 
