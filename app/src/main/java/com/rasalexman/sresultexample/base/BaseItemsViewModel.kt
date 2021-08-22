@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.switchMap
 import com.rasalexman.sresult.common.extensions.getList
+import com.rasalexman.sresult.common.extensions.loadingResult
 import com.rasalexman.sresult.common.extensions.toSuccessResult
 import com.rasalexman.sresult.common.extensions.unsafeLazy
 import com.rasalexman.sresult.common.typealiases.ResultList
@@ -22,6 +23,7 @@ abstract class BaseItemsViewModel : BaseViewModel() {
     override val eventLiveData: MutableLiveData<ISEvent> = MutableLiveData(SEvent.Refresh)
 
     override val resultLiveData = onEvent<SEvent.Refresh, ResultList<UserItem>>(Dispatchers.Default, isDistincted = true) {
+        emit(loadingResult())
         val random = Random.nextInt(100, 8000)
         val users: MutableList<UserItem> = mutableListOf()
         repeat(random) {
@@ -36,7 +38,7 @@ abstract class BaseItemsViewModel : BaseViewModel() {
         emit(users.toSuccessResult())
     }
 
-    val items: LiveData<List<UserItem>> by unsafeLazy {
+   open val items: LiveData<List<UserItem>> by unsafeLazy {
         resultLiveData.switchMap { result ->
             asyncLiveData(Dispatchers.Default) {
                 emit(result.getList())

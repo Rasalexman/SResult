@@ -1,3 +1,4 @@
+@file:Suppress("unused")
 package com.rasalexman.sresultpresentation.extensions
 
 import com.rasalexman.sresult.data.dto.ISEvent

@@ -1,4 +1,4 @@
-@file:Suppress("UNCHECKED_CAST")
+@file:Suppress("UNCHECKED_CAST", "unused")
 
 package com.rasalexman.sresult.common.extensions
 
@@ -145,7 +145,7 @@ suspend inline fun <reified I : Any, reified O : Any> FlowResultList<*>.flatMapI
     crossinline block: suspend (List<I>) -> ResultList<O>
 ): FlowResultList<O> {
     return this.map {
-        it.flatMapIfListDataTypedSuspend<I, O>(block)
+        it.flatMapIfListDataTypedSuspend(block)
     }
 }
 
@@ -153,7 +153,7 @@ suspend inline fun <reified I : SResult<*>, reified O : SResult<*>> Flow<SResult
     crossinline block: suspend (I) -> O
 ): Flow<O> {
     return this.map {
-        it.flatMapIfTypeSuspend<I, O>(block)
+        it.flatMapIfTypeSuspend(block)
     }
 }
 
@@ -161,6 +161,6 @@ suspend inline fun <reified I : Any, reified O : Any> Flow<SResult<*>>.flatMapIf
     crossinline block: suspend (I) -> SResult<O>
 ): FlowResult<O> {
     return this.map {
-        it.flatMapIfDataTypedSuspend<I, O>(block)
+        it.flatMapIfDataTypedSuspend(block)
     }
 }

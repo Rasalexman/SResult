@@ -13,18 +13,20 @@
             type="com.rasalexman.easyrecyclerbinding.DataBindingRecyclerViewConfig" />
     </data>
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbarLayout"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="@dimen/size_56dp"
             android:background="@color/purple_500"
             app:titleTextColor="@color/white"
-            app:subtitleTextColor="@color/white" >
+            app:subtitleTextColor="@color/white"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
             <androidx.appcompat.widget.SearchView
                 android:id="@+id/searchView"
@@ -34,11 +36,25 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:paddingTop="@dimen/size_8dp"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             app:items="@{vm.items}"
             app:rv_config="@{rvConfig}"
-            tools:listitem="@layout/item_user"/>
+            tools:listitem="@layout/item_user"
+            app:layout_constraintTop_toBottomOf="@+id/toolbarLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
-    </LinearLayout>
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/loadingLayout"
+            android:layout_width="0dp"
+            android:indeterminate="true"
+            app:layout_constraintTop_toBottomOf="@+id/toolbarLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:visibility="gone"
+            android:layout_height="wrap_content"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

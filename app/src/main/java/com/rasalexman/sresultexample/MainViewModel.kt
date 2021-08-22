@@ -1,19 +1,18 @@
 package com.rasalexman.sresultexample
 
-import android.service.autofill.UserData
 import androidx.lifecycle.MutableLiveData
 import com.rasalexman.sresult.common.extensions.*
-import com.rasalexman.sresult.common.typealiases.AnyResult
-import com.rasalexman.sresultpresentation.extensions.AnyResultMutableLiveData
 import com.rasalexman.sresult.data.dto.ISEvent
 import com.rasalexman.sresult.data.dto.SEvent
 import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresult.models.IDropDownItem
+import com.rasalexman.sresultpresentation.extensions.AnyResultMutableLiveData
 import com.rasalexman.sresultpresentation.extensions.mutableMap
 import com.rasalexman.sresultpresentation.extensions.onEventFlowAnyResult
 import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.emitAll
 import java.util.*
 import kotlin.random.Random
 
@@ -57,7 +56,7 @@ class MainViewModel : BaseViewModel() {
     }
 
     override val resultLiveData = onEventFlowAnyResult<SEvent.Fetch>(Dispatchers.Default, isDistincted = true) {
-        logg { "-------> resultLiveData event is $it" }
+        logg { "resultLiveData event is $it" }
 
         emit(loadingResult())
 
@@ -75,14 +74,17 @@ class MainViewModel : BaseViewModel() {
 
         val result = getAnotherResult()
 
-        safeIoResultFlow<Int> {
-            emit( result)
-        }
+        emitAll(safeIoResultFlow<Int> {
+            emit(result)
+        })
+
+        emit(progressResult(90))
+        delay(PROGRESS_DELAY)
 
         emit(UserAuthState.Success(user))
     }
 
-    suspend fun getAnotherResult(): SResult<Int> {
+    private suspend fun getAnotherResult(): SResult<Int> {
         return getResult().flatMapIfDataTypedSuspend<UserModel, Int> {
             1.toSuccessResult()
         }.flatMapIfSuccessTyped<Int, Int> {
@@ -92,10 +94,9 @@ class MainViewModel : BaseViewModel() {
 
     override val supportLiveData = onEventFlowAnyResult<SEvent.Refresh>(
         dispatcher = Dispatchers.Default,
-        asMutable = true,
         isDistincted = true
     ) {
-        logg { "-------> supportLiveData event is $it" }
+        logg { "supportLiveData event is $it" }
         val rand = Random.nextInt(10, 54)
         emit(progressResult(rand))
     } as AnyResultMutableLiveData

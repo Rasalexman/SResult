@@ -1,7 +1,9 @@
 package com.rasalexman.sresultexample.users
 
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
 import com.rasalexman.easyrecyclerbinding.DiffCallback
 import com.rasalexman.easyrecyclerbinding.createRecyclerConfig
@@ -25,6 +27,12 @@ class UsersFragment : BaseBindingFragment<FragmentUsersBinding, UsersViewModel>(
 
     override val toolbarNavigationIconColor: Int
         get() = color(R.color.black)
+
+    override val toolbarView: Toolbar
+        get() = binding.toolbarLayout
+
+    override val loadingViewLayout: View
+        get() = binding.loadingLayout
 
     override val viewModel: UsersViewModel by viewModels()
 

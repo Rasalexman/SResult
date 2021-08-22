@@ -1,3 +1,4 @@
+@file:Suppress("unused")
 package com.rasalexman.sresultpresentation.extensions
 
 import android.content.res.Resources

@@ -1,3 +1,4 @@
+@file:Suppress("unused")
 package com.rasalexman.sresultpresentation.extensions
 
 import android.app.Dialog
@@ -11,8 +12,6 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import com.rasalexman.sresult.common.extensions.applyIf
 import com.rasalexman.sresult.common.typealiases.UnitHandler
 import com.rasalexman.sresultpresentation.R

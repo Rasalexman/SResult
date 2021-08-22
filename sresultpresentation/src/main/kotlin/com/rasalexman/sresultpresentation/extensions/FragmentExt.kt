@@ -1,3 +1,4 @@
+@file:Suppress("unused")
 package com.rasalexman.sresultpresentation.extensions
 
 import android.content.Context
@@ -16,7 +17,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavDirections
@@ -176,13 +176,13 @@ fun IBaseFragment<*>.observeStateViewModel(currentFlowableVM: IFlowableViewModel
 
 
 fun <T : SResult<*>> Fragment.onResultChange(data: LiveData<T>?, stateHandle: InHandler<T>) {
-    data?.observe(viewLifecycleOwner, Observer { result ->
+    data?.observe(viewLifecycleOwner, { result ->
         result.applyIf(!result.isHandled, stateHandle)
     })
 }
 
 fun <T : SResult<*>> DialogFragment.onResultChange(data: LiveData<T>?, stateHandle: InHandler<T>) {
-    data?.observe(this, Observer { result ->
+    data?.observe(this, { result ->
         result.applyIf(!result.isHandled, stateHandle)
     })
 }
@@ -191,13 +191,13 @@ fun <T : SResult<*>> LifecycleOwner.onResultChange(
     data: LiveData<T>?,
     stateHandle: InHandler<T>
 ) {
-    data?.observe(this, Observer { result ->
+    data?.observe(this, { result ->
         result.applyIf(!result.isHandled, stateHandle)
     })
 }
 
 fun <T : Any> BaseFragment<*>.onAnyChange(data: LiveData<T>?, stateHandle: InHandler<T>? = null) {
-    data?.observe(viewLifecycleOwner, Observer {
+    data?.observe(viewLifecycleOwner, {
         stateHandle?.invoke(it)
     })
 }
@@ -216,7 +216,7 @@ fun <B : ViewDataBinding, VM : BaseContextViewModel> IBaseBindingFragment<B, VM>
             attachToParent = false
         )
     }.or {
-        inflater.createBinding<B>(
+        inflater.createBinding(
             layoutId = layoutId,
             container = container,
             attachToParent = false,
@@ -235,7 +235,7 @@ fun <T : Any> LifecycleOwner.onAnyChange(
     data: LiveData<T>?,
     stateHandle: InHandler<T>? = null
 ) {
-    data?.observe(this, Observer {
+    data?.observe(this, {
         stateHandle?.invoke(it)
     })
 }
