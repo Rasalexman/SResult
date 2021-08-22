@@ -25,11 +25,13 @@ import com.rasalexman.sresult.data.dto.SEvent
 import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultpresentation.R
 import com.rasalexman.sresultpresentation.extensions.*
+import com.rasalexman.sresultpresentation.tools.OnSwipeTouchListener
 import com.rasalexman.sresultpresentation.viewModels.IBaseViewModel
 import com.rasalexman.sresultpresentation.viewModels.IEventableViewModel
 import java.lang.ref.WeakReference
 
-abstract class BaseFragment<VM : IEventableViewModel> : Fragment(), IBaseFragment<VM>, INavigationHandler {
+abstract class BaseFragment<VM : IEventableViewModel> : Fragment(),
+    IBaseFragment<VM>, INavigationHandler {
 
     override val contentView: View?
         get() = this.view
@@ -37,6 +39,8 @@ abstract class BaseFragment<VM : IEventableViewModel> : Fragment(), IBaseFragmen
     override var weakContentRef: WeakReference<View>? = null
     override var weakLoadingRef: WeakReference<View>? = null
     override var weakToolbarRef: WeakReference<Toolbar>? = null
+
+    private var onSwipeListener: OnSwipeTouchListener? = null
 
     /**
      * Fragment ViewModel instance
@@ -110,8 +114,20 @@ abstract class BaseFragment<VM : IEventableViewModel> : Fragment(), IBaseFragmen
             }
             initToolbarTitle(toolbar)
             initToolbarNavigationIcon(toolbar)
+            if(needBackButton) {
+                setupBackGesture()
+            }
         }
         setupOnBackPressCallback()
+    }
+
+    private fun setupBackGesture() {
+        onSwipeListener = object : OnSwipeTouchListener(requireContext()) {
+            override fun onSwipeRight() {
+                onBackPressed()
+            }
+        }
+        contentView?.setOnTouchListener(onSwipeListener)
     }
 
     protected open fun setupOnBackPressCallback() {
@@ -350,6 +366,8 @@ abstract class BaseFragment<VM : IEventableViewModel> : Fragment(), IBaseFragmen
      * When view destroy
      */
     override fun onDestroyView() {
+        contentView?.setOnTouchListener(null)
+        onSwipeListener = null
         onBackPressedCallback.isEnabled = false
         clearObservers()
         closeContextAlert()

@@ -14,6 +14,7 @@ class MainActivity : AppCompatActivity() {
 
         kodi {
             bind<Context>() with single { this@MainActivity.applicationContext }
+            import(com.kodi.generated.modules.kodi.kodiModule)
         }
     }
 

@@ -74,6 +74,7 @@ dependencies {
     implementation(kotlin("stdlib-jdk8", config.Versions.kotlin))
 
     implementation(project(":sresultpresentation"))
+    kapt(Libs.Common.kodigen)
 
     debugImplementation(Libs.Common.leakCanary)
     testImplementation(Libs.Tests.junit)
