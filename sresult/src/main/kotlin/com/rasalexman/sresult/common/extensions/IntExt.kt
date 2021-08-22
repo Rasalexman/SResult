@@ -1,12 +1,5 @@
 package com.rasalexman.sresult.common.extensions
 
-import android.content.res.Resources
-
-val Int.dp: Float
-    get() = this / Resources.getSystem().displayMetrics.density
-val Int.px: Float
-    get() = this * Resources.getSystem().displayMetrics.density
-
 fun Int?.orZero(): Int {
     return this ?: 0
 }

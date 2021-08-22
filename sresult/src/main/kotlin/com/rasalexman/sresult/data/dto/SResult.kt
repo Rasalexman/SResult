@@ -1,6 +1,5 @@
 package com.rasalexman.sresult.data.dto
 
-import android.os.Bundle
 import com.rasalexman.sresult.common.typealiases.UnitHandler
 
 /**
@@ -87,7 +86,7 @@ sealed class SResult<out T : Any> {
         override var isNeedHandle = true
         open val navDirection: Any? = null
         open val navigateResourceId: Int? = null
-        open var args: Bundle? = null
+        open var args: Map<String, Any>? = null
 
         abstract class BaseNavigationResult : NavigateResult()
 

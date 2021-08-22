@@ -2,6 +2,7 @@ package com.rasalexman.sresultpresentation.extensions
 
 import android.app.Dialog
 import android.content.Context
+import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.widget.Toast
 import androidx.annotation.ColorRes
@@ -15,6 +16,7 @@ import androidx.fragment.app.FragmentActivity
 import com.rasalexman.sresult.common.extensions.applyIf
 import com.rasalexman.sresult.common.typealiases.UnitHandler
 import com.rasalexman.sresultpresentation.R
+import kotlin.system.exitProcess
 
 
 private var alertDialog: Dialog? = null
@@ -119,4 +121,14 @@ fun Context.drawableWithParams(
     val itemDrawable: Drawable? = ContextCompat.getDrawable(this, drawableResId)
     paramsInitializer(itemDrawable)
     return itemDrawable
+}
+
+fun Context.restartApp() {
+    val packageManager = packageManager
+    packageManager.getLaunchIntentForPackage(packageName)?.let { intent ->
+        val componentName = intent.component
+        val mainIntent = Intent.makeRestartActivityTask(componentName)
+        this.startActivity(mainIntent)
+        exitProcess(0)
+    }
 }

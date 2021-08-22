@@ -7,7 +7,6 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import com.rasalexman.easyrecyclerbinding.DiffCallback
 import com.rasalexman.easyrecyclerbinding.createRecyclerConfig
-import com.rasalexman.sresult.common.extensions.navigatePopTo
 import com.rasalexman.sresultexample.BR
 import com.rasalexman.sresultexample.R
 import com.rasalexman.sresultexample.databinding.FragmentBottomRecyclerBinding
@@ -40,7 +39,7 @@ class BottomRecyclerFragment :
             itemId = BR.item
             layoutId = R.layout.item_user
             onItemClick = { item, _ ->
-                onResultHandler(navigatePopTo(backArgs = bundleOf(KEY_SELECTED to item.fullName)))
+                navigatePopTo(backArgs = bundleOf(KEY_SELECTED to item.fullName))
             }
 
             diffUtilCallback = object : DiffCallback<UserItem>() {
