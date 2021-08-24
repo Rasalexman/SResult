@@ -67,22 +67,31 @@ android {
     }
 }
 
-java {
+/*java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
+
+    withJavadocJar()
+    withSourcesJar()
 }
 
+sourceSets {
+    getByName("main") {
+        java.setSrcDirs(Builds.codeDirs)
+    }
+}*/
+
 dependencies {
-    implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
+    //implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
     implementation(kotlin("stdlib-jdk8", config.Versions.kotlin))
 
     api(Libs.Common.timber)
     api(Libs.Common.kodi)
     api(Libs.Common.coroutinesmanager)
 
-    testImplementation(Libs.Tests.junit)
-    androidTestImplementation(Libs.Tests.runner)
-    androidTestImplementation(Libs.Tests.espresso)
+    //testImplementation(Libs.Tests.junit)
+    //androidTestImplementation(Libs.Tests.runner)
+    //androidTestImplementation(Libs.Tests.espresso)
 }
 
 group = "com.rasalexman.sresult"

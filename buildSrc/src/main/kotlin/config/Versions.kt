@@ -11,10 +11,13 @@ object Versions {
     const val lifecycle: String = "2.3.1"
     const val fragment: String = "1.3.6"
     const val paging3: String = "3.0.1"
+    const val viewPager2 = "1.0.0"
+    const val coroutinesAndroid = "1.5.1"
 
-    const val timber = "4.7.1"
+    const val timber = "5.0.1"
+    const val timber_jdk = "5.0.0-SNAPSHOT"
     const val coroutinesManager: String = "1.3.2"
-    const val easyBinding: String = "1.0.1"
+    const val easyBinding: String = "1.0.3"
     const val kodi = "1.5.17"
     const val leakcanary: String = "2.7"
 

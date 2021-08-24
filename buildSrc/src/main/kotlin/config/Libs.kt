@@ -9,6 +9,8 @@ object Libs {
         const val material = "com.google.android.material:material:${Versions.material}"
         const val fragment_ktx = "androidx.fragment:fragment-ktx:${Versions.fragment}"
         const val paging3 = "androidx.paging:paging-runtime:${Versions.paging3}"
+        const val viewPager2 = "androidx.viewpager2:viewpager2:${Versions.viewPager2}"
+        const val coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutinesAndroid}"
     }
 
     object Lifecycle {
@@ -31,10 +33,11 @@ object Libs {
 
         //----- DI
         const val kodi = "com.github.Rasalexman.KODI:kodi:${Versions.kodi}"
-        const val kodigen = "com.github.Rasalexman.KODI:kodigen:${Versions.kodi}"
+        //const val kodigen = "com.github.Rasalexman.KODI:kodigen:${Versions.kodi}"
 
         //---- LOGGING TIMER =)
         const val timber = "com.jakewharton.timber:timber:${Versions.timber}"
+        //const val timber_jdk = "com.jakewharton.timber:timber-jdk:${Versions.timber_jdk}"
 
         //--- LEAK DETECTOR
         const val leakCanary = "com.squareup.leakcanary:leakcanary-android:${Versions.leakcanary}"

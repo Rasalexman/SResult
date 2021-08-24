@@ -433,6 +433,7 @@ fun IBaseFragment<*>.navigateTo(
     }
 }
 
+@Suppress("DEPRECATION")
 inline val Fragment.windowHeight: Int
     get() {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -441,11 +442,16 @@ inline val Fragment.windowHeight: Int
             metrics.bounds.height() - insets.bottom - insets.top
         } else {
             val displayMetrics = DisplayMetrics()
-            requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
+            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+                requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
+            } else {
+                displayMetrics.setToDefaults()
+            }
             displayMetrics.heightPixels
         }
     }
 
+@Suppress("DEPRECATION")
 inline val Fragment.windowWidth: Int
     get() {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -454,7 +460,11 @@ inline val Fragment.windowWidth: Int
             metrics.bounds.width() - insets.left - insets.right
         } else {
             val displayMetrics = DisplayMetrics()
-            requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
+            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+                requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
+            } else {
+                displayMetrics.setToDefaults()
+            }
             displayMetrics.widthPixels
         }
     }

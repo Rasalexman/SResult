@@ -1,3 +1,4 @@
+@file:Suppress("unused")
 package com.rasalexman.sresult.common.extensions
 
 import com.rasalexman.sresult.common.typealiases.InHandler

@@ -4,10 +4,10 @@ package com.rasalexman.sresultpresentation.extensions
 
 import androidx.lifecycle.*
 import com.rasalexman.sresult.common.extensions.errorResult
+import com.rasalexman.sresult.common.extensions.loggE
 import com.rasalexman.sresult.common.extensions.toErrorResult
 import com.rasalexman.sresult.common.typealiases.AnyResult
 import com.rasalexman.sresult.data.dto.ISEvent
-import com.rasalexman.sresult.data.dto.SEvent
 import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultpresentation.viewModels.BaseContextViewModel
 import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
@@ -67,23 +67,21 @@ inline fun <reified T> BaseContextViewModel.asyncMutableLiveData(
 
 @Suppress("UNCHECKED_CAST")
 suspend inline fun <reified E : ISEvent, reified T : Any?> LiveDataScope<T>.processEventsCollect(
-    isDistincted: Boolean = false,
-    viewModelScope: CoroutineScope,
     eventDelay: Long = 0L,
-    eventLiveData: MutableLiveData<ISEvent>,
+    eventFlow: Flow<ISEvent>,
     crossinline block: suspend LiveDataScope<T>.(E) -> Unit
 ) {
-    val eld = if (isDistincted) eventLiveData.asFlow().distinctUntilChanged() else eventLiveData.asFlow()
-    eld.stateIn(viewModelScope).collect { event ->
-        if(event !is SEvent.Empty && event is E) {
+    eventFlow.collect { event ->
+        val currentEvent = (event as? E)
+        currentEvent?.let {
             try {
                 if (eventDelay > 0) {
                     delay(eventDelay)
                 }
-                block(event)
-                eventLiveData.postValue(SEvent.Empty)
+                block(it)
+                //eventLiveData.postValue(SEvent.Empty)
             } catch (e: Exception) {
-                //loggE(e, "There is an exception in ${this@onEvent}")
+                loggE(e, "There is an exception in ${this@processEventsCollect}")
                 (this as? LiveDataScope<SResult<*>>)?.apply {
                     emit(SResult.AbstractFailure.Error(exception = e))
                 }
@@ -100,15 +98,15 @@ inline fun <reified E : ISEvent, reified T : Any?> BaseViewModel.onEvent(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
     isDistincted: Boolean = false,
     autoObserved: Boolean = false,
+    dropLastEvent: Boolean = false,
     eventDelay: Long = 0L,
     crossinline block: suspend LiveDataScope<T>.(E) -> Unit
 ): LiveData<T> {
+    val eld = if (isDistincted) eventLiveData.asFlow().distinctUntilChanged() else eventLiveData.asFlow()
     val eventLV: LiveData<T> = asyncLiveData(dispatcher = dispatcher) {
-        processEventsCollect(
-            isDistincted = isDistincted,
-            viewModelScope = this@onEvent.viewModelScope,
+        this.processEventsCollect(
             eventDelay = eventDelay,
-            eventLiveData = eventLiveData,
+            eventFlow = eld,
             block = block
         )
     }
@@ -129,12 +127,11 @@ inline fun <reified E : ISEvent> BaseViewModel.onEventResult(
     eventDelay: Long = 0L,
     crossinline block: suspend LiveDataScope<SResult<*>>.(E) -> Unit
 ): LiveData<SResult<*>> {
+    val eld = if (isDistincted) eventLiveData.asFlow().distinctUntilChanged() else eventLiveData.asFlow()
     val eventLV: LiveData<SResult<*>> = asyncLiveData(dispatcher = dispatcher) {
         processEventsCollect(
-            isDistincted = isDistincted,
-            viewModelScope = this@onEventResult.viewModelScope,
             eventDelay = eventDelay,
-            eventLiveData = eventLiveData,
+            eventFlow = eld,
             block = block
         )
     }
@@ -153,12 +150,11 @@ inline fun <reified E : ISEvent, reified T : Any?> BaseViewModel.onEventMutable(
     eventDelay: Long = 0L,
     crossinline block: suspend LiveDataScope<T>.(E) -> Unit
 ): MutableLiveData<T> {
+    val eld = if (isDistincted) eventLiveData.asFlow().distinctUntilChanged() else eventLiveData.asFlow()
     return asyncMutableLiveData(dispatcher = dispatcher) {
         processEventsCollect(
-            isDistincted = isDistincted,
-            viewModelScope = this@onEventMutable.viewModelScope,
             eventDelay = eventDelay,
-            eventLiveData = eventLiveData,
+            eventFlow = eld,
             block = block
         )
     }

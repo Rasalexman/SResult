@@ -20,6 +20,7 @@ import androidx.navigation.NavDirections
 import androidx.navigation.findNavController
 import com.rasalexman.easyrecyclerbinding.findPrimaryFragment
 import com.rasalexman.easyrecyclerbinding.getOwner
+import com.rasalexman.sresult.common.extensions.getMessage
 import com.rasalexman.sresult.common.extensions.loggE
 import com.rasalexman.sresult.common.extensions.or
 import com.rasalexman.sresult.data.dto.SResult
@@ -70,11 +71,7 @@ abstract class BaseLayout<VM : BaseContextViewModel> : FrameLayout,
 
     val parentFragment: Fragment
         get() = parentWeakFragment?.get().or {
-            try {
-                this.findFragment<Fragment>()
-            } catch (e: Exception) {
-                this.context.findPrimaryFragment()!!
-            }
+            findParentFragment()
         }.also {
             parentWeakFragment = WeakReference(it)
         }
@@ -85,11 +82,7 @@ abstract class BaseLayout<VM : BaseContextViewModel> : FrameLayout,
                 try {
                     parentFragment.viewLifecycleOwner.lifecycle
                 } catch (e: Exception) {
-                    try {
-                        this.context.findPrimaryFragment()!!.lifecycle
-                    } catch (e: Exception) {
-                        context.getOwner<LifecycleOwner>()!!.lifecycle
-                    }
+                    findParentLifecycle()
                 }.also {
                     parentWeakLifecycle = WeakReference(it)
                 }
@@ -183,7 +176,6 @@ abstract class BaseLayout<VM : BaseContextViewModel> : FrameLayout,
 
     override fun showSuccess(result: SResult.Success<*>) = Unit
     override fun showAlert(alert: SResult.AbstractFailure.Alert) = Unit
-    override fun showFailure(error: SResult.AbstractFailure.Failure) = Unit
 
     /**
      * Base Result handler function
@@ -251,4 +243,26 @@ abstract class BaseLayout<VM : BaseContextViewModel> : FrameLayout,
     override fun onAnyDataHandler(data: Any?) = Unit
     override fun toolbarTitleHandler(title: String) = Unit
     override fun toolbarSubTitleHandler(subtitle: String) = Unit
+
+    override fun showFailure(error: SResult.AbstractFailure.Failure) {
+        this.toast(error.getMessage(), error.interval)
+    }
+
+    private fun findParentFragment(): Fragment {
+        return try {
+            this.findFragment()
+        } catch (e: Exception) {
+            loggE(e, "findParentFragment exception")
+            this.context.findPrimaryFragment()!!
+        }
+    }
+
+    private fun findParentLifecycle(): Lifecycle {
+        return try {
+            this.context.findPrimaryFragment()!!.lifecycle
+        } catch (e: Exception) {
+            loggE(e, "findParentLifecycle exception")
+            this.context.getOwner<LifecycleOwner>()!!.lifecycle
+        }
+    }
 }
