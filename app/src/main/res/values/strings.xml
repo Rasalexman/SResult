@@ -19,11 +19,9 @@
     <string name="title_profile">User Profile</string>
     <string name="title_bottom_recycler">Bottom Recycler</string>
     <string name="title_empty_vm">Empty ViewModel Screen</string>
-    <string name="title_users">Users list screen</string>
     <string name="title_state_flow">State Flow Screen</string>
     <string name="title_sustom_dialog">CUSTOM DIALOG</string>
     <string name="title_loading_progress">Progress: %s</string>
     <string name="hint_select">Selected Item Name</string>
-    <string name="hint_loading">Loading…</string>
     <string name="toast_state">This is flow toast result</string>
 </resources>

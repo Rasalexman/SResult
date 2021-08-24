@@ -60,7 +60,7 @@ abstract class BasePagerBindingFragment<B : ViewDataBinding, VM : BaseContextVie
      *
      */
     protected open fun setupTab(tab: TabLayout.Tab, position: Int) {
-        tab.setText(pageTitles.getOrNull(position).orEmpty())
+        tab.text = pageTitles.getOrNull(position).orEmpty()
     }
 
     /**
