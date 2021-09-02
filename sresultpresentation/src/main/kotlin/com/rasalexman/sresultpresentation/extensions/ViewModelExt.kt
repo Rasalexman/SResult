@@ -79,7 +79,6 @@ suspend inline fun <reified E : ISEvent, reified T : Any?> LiveDataScope<T>.proc
                     delay(eventDelay)
                 }
                 block(it)
-                //eventLiveData.postValue(SEvent.Empty)
             } catch (e: Exception) {
                 loggE(e, "There is an exception in ${this@processEventsCollect}")
                 (this as? LiveDataScope<SResult<*>>)?.apply {
@@ -98,7 +97,6 @@ inline fun <reified E : ISEvent, reified T : Any?> BaseViewModel.onEvent(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
     isDistincted: Boolean = false,
     autoObserved: Boolean = false,
-    dropLastEvent: Boolean = false,
     eventDelay: Long = 0L,
     crossinline block: suspend LiveDataScope<T>.(E) -> Unit
 ): LiveData<T> {
