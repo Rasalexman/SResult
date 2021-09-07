@@ -118,7 +118,7 @@ group = "com.rasalexman.sresultpresentation"
 version = config.Builds.SResult.VERSION_NAME
 
 tasks.create(name = "sourceJar", type = Jar::class) {
-    archiveName = "sources"
+    archiveClassifier.set("sources")
 }
 
 afterEvaluate {
