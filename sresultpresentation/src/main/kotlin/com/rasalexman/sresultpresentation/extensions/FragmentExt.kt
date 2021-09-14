@@ -81,6 +81,7 @@ fun IEventableViewModel.clearViewModel(lifecycleOwner: LifecycleOwner) {
             resultLiveData?.removeObservers(lifecycleOwner)
             supportLiveData.removeObservers(lifecycleOwner)
             navigationLiveData.removeObservers(lifecycleOwner)
+            eventLiveData.removeObservers(lifecycleOwner)
             anyLiveData?.removeObservers(lifecycleOwner)
             toolbarTitle?.removeObservers(lifecycleOwner)
             toolbarSubTitle?.removeObservers(lifecycleOwner)
