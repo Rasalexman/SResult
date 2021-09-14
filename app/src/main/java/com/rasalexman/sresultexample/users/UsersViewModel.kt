@@ -6,9 +6,13 @@ import androidx.lifecycle.asFlow
 import androidx.lifecycle.switchMap
 import com.rasalexman.sresult.common.extensions.toNavigateResult
 import com.rasalexman.sresult.common.extensions.unsafeLazy
+import com.rasalexman.sresult.common.typealiases.AnyResult
+import com.rasalexman.sresult.data.dto.ISEvent
 import com.rasalexman.sresultexample.MainFragmentDirections
 import com.rasalexman.sresultexample.base.BaseItemsViewModel
+import com.rasalexman.sresultpresentation.extensions.AnyResultMutableLiveData
 import com.rasalexman.sresultpresentation.extensions.asyncLiveData
+import com.rasalexman.sresultpresentation.extensions.onEventMutable
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.debounce
@@ -36,8 +40,16 @@ class UsersViewModel : BaseItemsViewModel() {
         }
     }
 
+    override val supportLiveData: AnyResultMutableLiveData by unsafeLazy {
+        onEventMutable<UserClickEvent, AnyResult> {
+            val navResult = MainFragmentDirections.showProfileFragment(itemId = it.id, userItem = it.item).toNavigateResult()
+            emit(navResult)
+        }
+    }
+
+
     fun onItemClicked(item: UserItem) {
-        navigationLiveData.value = MainFragmentDirections.showProfileFragment(itemId = item.id, userItem = item).toNavigateResult()
+        processEvent(UserClickEvent(item.id, item))
     }
 
     fun onSearch(it: String) {
@@ -47,4 +59,6 @@ class UsersViewModel : BaseItemsViewModel() {
     fun cancelSearch() {
 
     }
+
+    class UserClickEvent(val id: String, val item: UserItem) : ISEvent
 }

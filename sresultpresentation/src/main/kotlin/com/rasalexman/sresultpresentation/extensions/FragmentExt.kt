@@ -86,6 +86,7 @@ fun IEventableViewModel.clearViewModel(lifecycleOwner: LifecycleOwner) {
             toolbarTitle?.removeObservers(lifecycleOwner)
             toolbarSubTitle?.removeObservers(lifecycleOwner)
             liveDataToObserve.forEach { it.removeObservers(lifecycleOwner) }
+            eventLiveData.postValue(null)
         }
         is IFlowableViewModel -> this.clear()
     }
