@@ -17,7 +17,7 @@ object Versions {
     const val timber = "5.0.1"
     //const val timber_jdk = "5.0.0-SNAPSHOT"
     const val coroutinesManager = "1.3.4"
-    const val easyBinding = "1.0.7"
+    const val easyBinding = "1.0.8"
     const val kodi = "1.5.17"
     const val leakcanary = "2.7"
 

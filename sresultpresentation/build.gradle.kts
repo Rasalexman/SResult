@@ -40,7 +40,7 @@ android {
     }
 
     // Declare the task that will monitor all configurations.
-    configurations.all {
+    /*configurations.all {
         // 2 Define the resolution strategy in case of conflicts.
         resolutionStrategy {
             // Fail eagerly on version conflict (includes transitive dependencies),
@@ -50,7 +50,7 @@ android {
             // Prefer modules that are part of this build (multi-project or composite build) over external modules.
             preferProjectModules()
         }
-    }
+    }*/
 
     sourceSets {
         getByName("main") {
