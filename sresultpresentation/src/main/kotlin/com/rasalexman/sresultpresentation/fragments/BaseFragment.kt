@@ -73,6 +73,11 @@ abstract class BaseFragment<VM : IEventableViewModel> : Fragment(), IBaseFragmen
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        addOnCreateViewModelObservers(viewModel)
+    }
+
     /**
      * when need to create view
      */
@@ -87,7 +92,7 @@ abstract class BaseFragment<VM : IEventableViewModel> : Fragment(), IBaseFragmen
         observeBackStackArguments()
         showToolbar()
         initLayout()
-        addViewModelObservers(viewModel)
+        addOnViewCreatedViewModelObservers(viewModel)
     }
 
     protected open fun observeBackStackArguments() {
@@ -351,7 +356,7 @@ abstract class BaseFragment<VM : IEventableViewModel> : Fragment(), IBaseFragmen
      */
     override fun onDestroyView() {
         onBackPressedCallback.isEnabled = false
-        clearObservers()
+        this.clearOnViewDestroy(this.viewLifecycleOwner)
         closeContextAlert()
         clearFragmentView()
         super.onDestroyView()
@@ -367,7 +372,12 @@ abstract class BaseFragment<VM : IEventableViewModel> : Fragment(), IBaseFragmen
     }
 
     protected open fun clearObservers() {
-        this.clear(this.viewLifecycleOwner)
+        this.clear(this)
+    }
+
+    override fun onDestroy() {
+        clearObservers()
+        super.onDestroy()
     }
 
     /**

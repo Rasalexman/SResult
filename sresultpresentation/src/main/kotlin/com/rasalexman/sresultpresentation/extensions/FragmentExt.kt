@@ -67,6 +67,10 @@ fun Fragment.drawable(@DrawableRes resource: Int): Drawable? = requireActivity()
 
 fun IBaseFragment<*>.clear(lifecycleOwner: LifecycleOwner) {
     viewModel?.clearViewModel(lifecycleOwner)
+}
+
+fun IBaseFragment<*>.clearOnViewDestroy(lifecycleOwner: LifecycleOwner) {
+    viewModel?.clearOnViewDestroyViewModel(lifecycleOwner)
     weakContentRef?.clear()
     weakLoadingRef?.clear()
     weakToolbarRef?.clear()
@@ -83,6 +87,14 @@ fun IEventableViewModel.clearViewModel(lifecycleOwner: LifecycleOwner) {
             navigationLiveData.removeObservers(lifecycleOwner)
             eventLiveData.removeObservers(lifecycleOwner)
             anyLiveData?.removeObservers(lifecycleOwner)
+        }
+        is IFlowableViewModel -> this.clear()
+    }
+}
+
+private fun IEventableViewModel.clearOnViewDestroyViewModel(lifecycleOwner: LifecycleOwner) {
+    when(this) {
+        is IBaseViewModel -> this.apply {
             toolbarTitle?.removeObservers(lifecycleOwner)
             toolbarSubTitle?.removeObservers(lifecycleOwner)
             liveDataToObserve.forEach { it.removeObservers(lifecycleOwner) }
@@ -92,21 +104,45 @@ fun IEventableViewModel.clearViewModel(lifecycleOwner: LifecycleOwner) {
     }
 }
 
-fun IBaseFragment<*>.addViewModelObservers(vm: IEventableViewModel?) {
+fun IBaseFragment<*>.addOnCreateViewModelObservers(vm: IEventableViewModel?) {
     when(vm) {
         is IBaseViewModel -> observeBaseViewModel(vm)
         is IFlowableViewModel -> observeStateViewModel(vm)
     }
 }
 
+fun IBaseFragment<*>.addOnViewCreatedViewModelObservers(vm: IEventableViewModel?) {
+    when(vm) {
+        is IBaseViewModel -> observeLifecycleBaseViewModel(vm)
+        is IFlowableViewModel -> observeLifecycleStateViewModel(vm)
+    }
+}
+
 @Suppress("UNCHECKED_CAST")
-fun IBaseFragment<*>.observeBaseViewModel(currentBaseVm: IBaseViewModel) {
-    (this as? LifecycleOwner)?.apply {
+private fun IBaseFragment<*>.observeBaseViewModel(currentBaseVm: IBaseViewModel) {
+    val lifecycleOwner = when(this) {
+        is BaseFragment<*> -> this
+        is BaseDialogFragment<*> -> this
+        is BaseLayout<*> -> this
+        else -> null
+    }
+    lifecycleOwner?.apply {
         onResultChange(currentBaseVm.navigationLiveData, ::onResultHandler)
         onResultChange(currentBaseVm.supportLiveData, ::onResultHandler)
         onResultChange((currentBaseVm.resultLiveData as? AnyResultLiveData), ::onResultHandler)
         onAnyChange(currentBaseVm.anyLiveData, ::onAnyDataHandler)
+        onAnyChange(currentBaseVm.eventLiveData)
+    }
+}
 
+private fun IBaseFragment<*>.observeLifecycleBaseViewModel(currentBaseVm: IBaseViewModel) {
+    val lifecycleOwner = when(this) {
+        is BaseFragment<*> -> this.viewLifecycleOwner
+        is BaseDialogFragment<*> -> this.viewLifecycleOwner
+        is BaseLayout<*> -> this
+        else -> null
+    }
+    lifecycleOwner?.apply {
         onAnyChange(currentBaseVm.toolbarTitle, ::toolbarTitleHandler)
         onAnyChange(currentBaseVm.toolbarSubTitle, ::toolbarSubTitleHandler)
 
@@ -116,47 +152,14 @@ fun IBaseFragment<*>.observeBaseViewModel(currentBaseVm: IBaseViewModel) {
     }
 }
 
-fun IBaseFragment<*>.observeStateViewModel(currentFlowableVM: IFlowableViewModel) {
+private fun IBaseFragment<*>.observeLifecycleStateViewModel(currentFlowableVM: IFlowableViewModel) {
     val lifecycleOwner = when(this) {
-        is BaseFragment<*> -> viewLifecycleOwner
-        is BaseDialogFragment<*> -> viewLifecycleOwner
+        is BaseFragment<*> -> this.viewLifecycleOwner
+        is BaseDialogFragment<*> -> this.viewLifecycleOwner
         is BaseLayout<*> -> this
         else -> null
     }
-
-    //(currentFlowableVM as? BaseContextViewModel)?.statesScope?.let { vmScope ->
     lifecycleOwner?.lifecycleScope?.let { vmScope ->
-
-        currentFlowableVM.resultFlow?.let {
-            vmScope.launchWhenStarted {
-                it.collect { result ->
-                    if(result is SResult<*>) {
-                        result.applyIf(!result.isHandled, ::onResultHandler)
-                    } else {
-                        onAnyDataHandler(result)
-                    }
-                }
-            }
-        }
-
-        vmScope.launchWhenStarted {
-            currentFlowableVM.navigationFlow.collect { result ->
-                result.applyIf(!result.isHandled, ::onResultHandler)
-            }
-        }
-
-        vmScope.launchWhenStarted {
-            currentFlowableVM.supportFlow.collect { result ->
-                result.applyIf(!result.isHandled, ::onResultHandler)
-            }
-        }
-
-        currentFlowableVM.anyDataFlow?.let {
-            vmScope.launchWhenStarted {
-                it.collect { onAnyDataHandler(it) }
-            }
-        }
-
         currentFlowableVM.toolbarTitle?.let {
             vmScope.launchWhenStarted {
                 it.collect {
@@ -175,27 +178,81 @@ fun IBaseFragment<*>.observeStateViewModel(currentFlowableVM: IFlowableViewModel
     }
 }
 
+private fun IBaseFragment<*>.observeStateViewModel(currentFlowableVM: IFlowableViewModel) {
+    val lifecycleOwner = when(this) {
+        is BaseFragment<*> -> this
+        is BaseDialogFragment<*> -> this
+        is BaseLayout<*> -> this
+        else -> null
+    }
+
+    //(currentFlowableVM as? BaseContextViewModel)?.statesScope?.let { vmScope ->
+    lifecycleOwner?.lifecycleScope?.let { vmScope ->
+
+        currentFlowableVM.resultFlow?.let {
+            vmScope.launchWhenCreated {
+                it.collect { result ->
+                    if(result is SResult<*>) {
+                        result.applyIf(!result.isHandled, ::onResultHandler)
+                    } else {
+                        onAnyDataHandler(result)
+                    }
+                }
+            }
+        }
+
+        vmScope.launchWhenCreated {
+            currentFlowableVM.navigationFlow.collect { result ->
+                result.applyIf(!result.isHandled, ::onResultHandler)
+            }
+        }
+
+        vmScope.launchWhenCreated {
+            currentFlowableVM.supportFlow.collect { result ->
+                result.applyIf(!result.isHandled, ::onResultHandler)
+            }
+        }
+
+        currentFlowableVM.anyDataFlow?.let {
+            vmScope.launchWhenCreated {
+                it.collect { onAnyDataHandler(it) }
+            }
+        }
+    }
+}
 
 
 fun <T : SResult<*>> Fragment.onResultChange(data: LiveData<T>?, stateHandle: InHandler<T>) {
-    data?.observe(viewLifecycleOwner, { result ->
-        result.applyIf(!result.isHandled, stateHandle)
-    })
+    data?.let {
+        if(!it.hasObservers()) {
+            it.observe(this.viewLifecycleOwner, { result ->
+                result.applyIf(!result.isHandled, stateHandle)
+            })
+        }
+    }
 }
 
 fun <T : SResult<*>> DialogFragment.onResultChange(data: LiveData<T>?, stateHandle: InHandler<T>) {
-    data?.observe(this, { result ->
-        result.applyIf(!result.isHandled, stateHandle)
-    })
+    data?.let {
+        if(!it.hasObservers()) {
+            it.observe(this, { result ->
+                result.applyIf(!result.isHandled, stateHandle)
+            })
+        }
+    }
 }
 
 fun <T : SResult<*>> LifecycleOwner.onResultChange(
     data: LiveData<T>?,
     stateHandle: InHandler<T>
 ) {
-    data?.observe(this, { result ->
-        result.applyIf(!result.isHandled, stateHandle)
-    })
+    data?.let {
+        if(!it.hasObservers()) {
+            it.observe(this, { result ->
+                result.applyIf(!result.isHandled, stateHandle)
+            })
+        }
+    }
 }
 
 fun <T : Any> BaseFragment<*>.onAnyChange(data: LiveData<T>?, stateHandle: InHandler<T>? = null) {
@@ -237,9 +294,13 @@ fun <T : Any> LifecycleOwner.onAnyChange(
     data: LiveData<T>?,
     stateHandle: InHandler<T>? = null
 ) {
-    data?.observe(this, {
-        stateHandle?.invoke(it)
-    })
+    data?.let { liveData ->
+        if(!liveData.hasObservers()) {
+            liveData.observe(this, {
+                stateHandle?.invoke(it)
+            })
+        }
+    }
 }
 
 fun Fragment.setSoftInputMode(mode: Int = -1) {

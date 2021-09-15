@@ -6,7 +6,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.rasalexman.sresult.common.extensions.unsafeLazy
-import com.rasalexman.sresultpresentation.extensions.addViewModelObservers
+import com.rasalexman.sresultpresentation.extensions.addOnCreateViewModelObservers
 import com.rasalexman.sresultpresentation.extensions.clearViewModel
 import com.rasalexman.sresultpresentation.extensions.stringArr
 import com.rasalexman.sresultpresentation.viewModels.BaseContextViewModel
@@ -42,7 +42,7 @@ abstract class BasePagerBindingFragment<B : ViewDataBinding, VM : BaseContextVie
      */
     protected open fun addPagesViewModelsToObserve(vmList: List<IEventableViewModel>) {
         vmList.forEach {
-            addViewModelObservers(it)
+            addOnCreateViewModelObservers(it)
         }
     }
 

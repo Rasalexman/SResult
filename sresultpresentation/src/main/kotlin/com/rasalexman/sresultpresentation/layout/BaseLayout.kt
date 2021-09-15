@@ -122,7 +122,8 @@ abstract class BaseLayout<VM : BaseContextViewModel> : FrameLayout,
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         if (!isInEditMode) {
-            addViewModelObservers(viewModel)
+            addOnCreateViewModelObservers(viewModel)
+            addOnViewCreatedViewModelObservers(viewModel)
         }
     }
 
@@ -130,6 +131,7 @@ abstract class BaseLayout<VM : BaseContextViewModel> : FrameLayout,
         if (!isInEditMode) {
             val lifecycleOwner = this
             this.clear(lifecycleOwner)
+            this.clearOnViewDestroy(lifecycleOwner)
             if (needToClearView) {
                 clearView()
             }

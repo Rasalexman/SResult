@@ -31,6 +31,11 @@ abstract class BaseDialogFragment<VM : IEventableViewModel> : AppCompatDialogFra
      */
     override val viewModel: VM? = null
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        addOnCreateViewModelObservers(this.viewModel)
+    }
+
     /**
      *
      */
@@ -46,7 +51,7 @@ abstract class BaseDialogFragment<VM : IEventableViewModel> : AppCompatDialogFra
         super.onViewCreated(view, savedInstanceState)
         showToolbar()
         initLayout()
-        addViewModelObservers(viewModel)
+        addOnViewCreatedViewModelObservers(this.viewModel)
     }
 
     /**
@@ -174,10 +179,15 @@ abstract class BaseDialogFragment<VM : IEventableViewModel> : AppCompatDialogFra
     }
 
     override fun onDestroyView() {
-        clearObservers()
+        this.clearOnViewDestroy(this)
         closeContextAlert()
         clearFragmentView()
         super.onDestroyView()
+    }
+
+    override fun onDestroy() {
+        clearObservers()
+        super.onDestroy()
     }
 
     protected open fun closeContextAlert() {

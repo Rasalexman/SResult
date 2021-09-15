@@ -3,11 +3,16 @@ package com.rasalexman.sresultexample.viewpager.pages
 import androidx.lifecycle.LiveData
 import com.rasalexman.easyrecyclerbinding.IBindingModel
 import com.rasalexman.easyrecyclerbinding.recyclerConfig
+import com.rasalexman.sresult.common.extensions.toNavigateResult
 import com.rasalexman.sresult.common.extensions.unsafeLazy
+import com.rasalexman.sresult.common.typealiases.AnyResult
+import com.rasalexman.sresult.data.dto.ISEvent
 import com.rasalexman.sresultexample.BR
+import com.rasalexman.sresultexample.MainFragmentDirections
 import com.rasalexman.sresultexample.R
 import com.rasalexman.sresultexample.databinding.ItemRecyclerBinding
 import com.rasalexman.sresultpresentation.extensions.asyncLiveData
+import com.rasalexman.sresultpresentation.extensions.onEvent
 import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
 import java.util.*
 import kotlin.random.Random
@@ -29,9 +34,22 @@ class SecondPageViewModel : BaseViewModel(), IBindingModel {
         }
     }
 
+    override val resultLiveData = onEvent<OnShowUserEvent, AnyResult>() {
+        emit( MainFragmentDirections.showUsersFragment(
+            itemId = "HELLO WORLD"
+        ).toNavigateResult())
+    }
+
     fun createRvConfig() = recyclerConfig<SimpleRecyclerItemUI, ItemRecyclerBinding> {
         itemId = BR.item
         layoutId = R.layout.item_recycler
+        onItemClick = { _, _ ->
+            showProfileUsersFragment()
+        }
+    }
+
+    private fun showProfileUsersFragment() {
+        processEvent(OnShowUserEvent())
     }
 
     private fun itemsCreator(position: Int): IRecyclerItem {
@@ -40,5 +58,7 @@ class SecondPageViewModel : BaseViewModel(), IBindingModel {
             id = Random.nextInt(100, 100000).toString()
         )
     }
+
+    class OnShowUserEvent : ISEvent
 
 }
