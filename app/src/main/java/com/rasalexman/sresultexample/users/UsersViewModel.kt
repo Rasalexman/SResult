@@ -13,7 +13,6 @@ import com.rasalexman.sresultexample.base.BaseItemsViewModel
 import com.rasalexman.sresultpresentation.extensions.AnyResultMutableLiveData
 import com.rasalexman.sresultpresentation.extensions.asyncLiveData
 import com.rasalexman.sresultpresentation.extensions.onEventMutable
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -24,7 +23,6 @@ class UsersViewModel : BaseItemsViewModel() {
         MutableLiveData("")
     }
 
-    @FlowPreview
     override val items: LiveData<List<UserItem>> by unsafeLazy {
         super.items.switchMap { items ->
             asyncLiveData {
