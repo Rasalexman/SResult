@@ -1,10 +1,9 @@
 package config
 
 object Builds {
-    const val MIN_VERSION = 21
-    const val COMPILE_VERSION = 30
-    const val TARGET_VERSION = 30
-    const val BUILD_TOOLS = "30.0.2"
+    const val MIN_VERSION = 19
+    const val COMPILE_VERSION = 31
+    const val TARGET_VERSION = 31
     const val APP_ID = "com.rasalexman.sresultexample"
 
     val codeDirs = mutableListOf(

@@ -7,12 +7,11 @@ plugins {
 
 android {
     compileSdk = config.Builds.COMPILE_VERSION
-    buildToolsVersion = config.Builds.BUILD_TOOLS
     defaultConfig {
         minSdk = config.Builds.MIN_VERSION
         targetSdk = config.Builds.TARGET_VERSION
-        versionCode = config.Builds.SResult.VERSION_CODE
-        versionName = config.Builds.SResult.VERSION_NAME
+        //versionCode = config.Builds.SResult.VERSION_CODE
+        version = config.Builds.SResult.VERSION_NAME
         multiDexEnabled = true
         //testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
 
@@ -22,7 +21,7 @@ android {
     buildTypes {
         getByName("debug") {
             isMinifyEnabled = false
-            isDebuggable = true
+            //isDebuggable = true
         }
 
         getByName("release") {
@@ -31,8 +30,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     packagingOptions {
@@ -58,9 +57,9 @@ android {
         }
     }
 
-    dexOptions {
+    /*dexOptions {
         javaMaxHeapSize = "4g"
-    }
+    }*/
 
     buildFeatures {
         dataBinding = true
@@ -68,7 +67,7 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
         languageVersion = "1.5"
         apiVersion = "1.5"
     }
@@ -80,18 +79,18 @@ kapt {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 dependencies {
     implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
-    implementation(kotlin("stdlib-jdk8", config.Versions.kotlin))
+    //implementation(kotlin("stdlib-jdk8", config.Versions.kotlin))
     api(config.Libs.Core.coroutines)
 
     //api(config.Libs.Core.coreKtx)
     api(config.Libs.Core.material)
-    api(config.Libs.Core.constraintlayout)
+    api(config.Libs.Core.constraintLayout)
     api(config.Libs.Core.fragment_ktx)
     api(config.Libs.Core.navigationFragmentKtx)
     api(config.Libs.Core.paging3)
@@ -132,6 +131,8 @@ afterEvaluate {
                 groupId = "com.rasalexman.sresultpresentation"
                 artifactId = "sresultpresentation"
                 version = config.Builds.SResult.VERSION_NAME
+
+                artifact(tasks["sourceJar"])
             }
             create<MavenPublication>("debug") {
                 //println("Component ${components.asMap}")
@@ -141,6 +142,8 @@ afterEvaluate {
                 groupId = "com.rasalexman.sresultpresentation"
                 artifactId = "sresultpresentation-debug"
                 version = config.Builds.SResult.VERSION_NAME
+
+                artifact(tasks["sourceJar"])
             }
         }
 

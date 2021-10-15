@@ -9,12 +9,11 @@ plugins {
 
 android {
     compileSdk = Builds.COMPILE_VERSION
-    buildToolsVersion = Builds.BUILD_TOOLS
     defaultConfig {
         minSdk = Builds.MIN_VERSION
         targetSdk = Builds.TARGET_VERSION
-        versionCode = Builds.SResult.VERSION_CODE
-        versionName = Builds.SResult.VERSION_NAME
+        //versionCode = Builds.SResult.VERSION_CODE
+        version = Builds.SResult.VERSION_NAME
         multiDexEnabled = true
         //testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
 
@@ -33,8 +32,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     packagingOptions {
@@ -61,29 +60,24 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
         languageVersion = "1.5"
         apiVersion = "1.5"
     }
 }
 
-/*java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-
-    withJavadocJar()
-    withSourcesJar()
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
-sourceSets {
-    getByName("main") {
-        java.setSrcDirs(Builds.codeDirs)
-    }
-}*/
+tasks.register<Jar>(name = "sourceJar") {
+    from(android.sourceSets["main"].java.srcDirs)
+    archiveClassifier.set("sources")
+}
 
 dependencies {
     //implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
-    implementation(kotlin("stdlib-jdk8", config.Versions.kotlin))
 
     api(Libs.Common.timber)
     api(Libs.Common.kodi)
@@ -107,6 +101,8 @@ afterEvaluate {
                 groupId = "com.rasalexman.sresult"
                 artifactId = "sresult"
                 version = Builds.SResult.VERSION_NAME
+
+                artifact(tasks["sourceJar"])
             }
             /*create<MavenPublication>("debug") {
                 from(components["debug"])

@@ -3,21 +3,20 @@ import config.Libs
 
 plugins {
     id("com.android.application")
-    id("kotlin-android")
-    id("kotlin-parcelize")
+    kotlin("android")
     id("androidx.navigation.safeargs.kotlin")
-    id("kotlin-kapt")
+    id("kotlin-parcelize")
+    kotlin("kapt")
 }
 
 android {
     compileSdk = Builds.COMPILE_VERSION
-    buildToolsVersion = Builds.BUILD_TOOLS
     defaultConfig {
         applicationId = Builds.APP_ID
         minSdk = Builds.MIN_VERSION
         targetSdk = Builds.TARGET_VERSION
-        versionCode = Builds.App.VERSION_CODE
-        versionName = Builds.App.VERSION_NAME
+        //versionCode = Builds.App.VERSION_CODE
+        version = Builds.App.VERSION_NAME
         multiDexEnabled = true
         //testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
 
@@ -27,7 +26,6 @@ android {
     buildTypes {
         getByName("debug") {
             isMinifyEnabled = false
-            isDebuggable = true
         }
 
         getByName("release") {
@@ -37,12 +35,12 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     packagingOptions {
-        exclude("META-INF/notice.txt")
+        resources.excludes.add("META-INF/notice.txt")
     }
 
     // Declare the task that will monitor all configurations.
@@ -63,7 +61,7 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
         languageVersion = "1.5"
         apiVersion = "1.5"
     }
@@ -71,7 +69,6 @@ android {
 
 dependencies {
     implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
-    implementation(kotlin("stdlib-jdk8", config.Versions.kotlin))
 
     implementation(project(":sresultpresentation"))
 

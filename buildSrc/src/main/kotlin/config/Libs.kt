@@ -2,9 +2,8 @@ package config
 
 object Libs {
     object Core {
-        //const val appcompat = "androidx.appcompat:appcompat:$appCompatX"
         const val coreKtx = "androidx.core:core-ktx:${Versions.appCoreX}"
-        const val constraintlayout = "androidx.constraintlayout:constraintlayout:${Versions.constraintLayout}"
+        const val constraintLayout = "androidx.constraintlayout:constraintlayout:${Versions.constraintLayout}"
         const val navigationFragmentKtx = "androidx.navigation:navigation-fragment-ktx:${Versions.navigation}"
         const val material = "com.google.android.material:material:${Versions.material}"
         const val fragment_ktx = "androidx.fragment:fragment-ktx:${Versions.fragment}"
@@ -20,8 +19,6 @@ object Libs {
         const val savedStateViewModel = "androidx.lifecycle:lifecycle-viewmodel-savedstate:${Versions.lifecycle}"
         // kotlin live data extensions
         const val livedataKtx = "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.lifecycle}"
-        // alternately - if using Java8, use the following instead of lifecycle-compiler
-        // const val common = "androidx.lifecycle:lifecycle-common-java8:${Versions.lifecycle}"
     }
 
     object Common {
