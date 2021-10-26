@@ -22,6 +22,15 @@
             app:layout_constraintTop_toTopOf="parent"
             />
 
+        <com.rasalexman.sresultexample.emptyvm.topitems.TopItemsLayout
+            android:id="@+id/topLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/size_16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbarLayout"/>
+
 
         <TextView
             android:id="@+id/selectedTV"
@@ -34,7 +43,7 @@
             android:layout_margin="@dimen/text_size_16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbarLayout"/>
+            app:layout_constraintTop_toBottomOf="@+id/topLayout"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/recyclerBottomButton"

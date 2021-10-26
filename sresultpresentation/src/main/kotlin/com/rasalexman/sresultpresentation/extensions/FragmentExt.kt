@@ -225,7 +225,7 @@ private fun IBaseFragment<*>.observeStateViewModel(currentFlowableVM: IFlowableV
 fun <T : SResult<*>> Fragment.onResultChange(data: LiveData<T>?, stateHandle: InHandler<T>) {
     data?.let {
         if(!it.hasObservers()) {
-            it.observe(this.viewLifecycleOwner, { result ->
+            it.observe(this, { result ->
                 result.applyIf(!result.isHandled, stateHandle)
             })
         }
