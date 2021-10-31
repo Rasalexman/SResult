@@ -207,6 +207,12 @@ inline fun <reified I : Any> SResult<I>.doIfError(block: InHandler<Throwable?>):
 }
 
 ///--- Inline Applying functions
+inline fun <reified I : Any> SResult<I>.doIfEmpty(block: UnitHandler): SResult<I> {
+    if (this is SResult.Empty) block()
+    return this
+}
+
+///--- Inline Applying functions
 inline fun <reified I : Any> SResult<I>.logIfError(textToLog: String): SResult<I> {
     if (this is SResult.AbstractFailure) logg { textToLog }
     return this
