@@ -224,6 +224,12 @@ suspend inline fun <reified I : Any> SResult<I>.doIfSuccessSuspend(crossinline b
     else this
 }
 
+@Suppress("UNCHECKED_CAST")
+suspend inline fun <reified I : Any> SResult<I>.doIfEmptySuspend(crossinline block: suspend () -> SResult<I>): SResult<I> {
+    return if (this is SResult.Empty) block()
+    else this
+}
+
 val <T : Any> SResult<T>.isSuccess: Boolean
     get() = this is SResult.Success<T>
 
