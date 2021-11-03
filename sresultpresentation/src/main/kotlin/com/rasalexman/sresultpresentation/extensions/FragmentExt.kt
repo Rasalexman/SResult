@@ -104,6 +104,9 @@ private fun IEventableViewModel.clearOnViewDestroyViewModel(lifecycleOwner: Life
     }
 }
 
+/**
+ * Add Data observers to IBaseFragment viewModel
+ */
 fun IBaseFragment<*>.addOnCreateViewModelObservers(vm: IEventableViewModel?) {
     when(vm) {
         is IBaseViewModel -> observeBaseViewModel(vm)
@@ -186,14 +189,13 @@ private fun IBaseFragment<*>.observeStateViewModel(currentFlowableVM: IFlowableV
         else -> null
     }
 
-    //(currentFlowableVM as? BaseContextViewModel)?.statesScope?.let { vmScope ->
     lifecycleOwner?.lifecycleScope?.let { vmScope ->
 
         currentFlowableVM.resultFlow?.let {
             vmScope.launchWhenCreated {
                 it.collect { result ->
                     if(result is SResult<*>) {
-                        result.applyIf(!result.isHandled, ::onResultHandler)
+                        result.handleResult(::onResultHandler)
                     } else {
                         onAnyDataHandler(result)
                     }
@@ -203,13 +205,13 @@ private fun IBaseFragment<*>.observeStateViewModel(currentFlowableVM: IFlowableV
 
         vmScope.launchWhenCreated {
             currentFlowableVM.navigationFlow.collect { result ->
-                result.applyIf(!result.isHandled, ::onResultHandler)
+                result.handleResult(::onResultHandler)
             }
         }
 
         vmScope.launchWhenCreated {
             currentFlowableVM.supportFlow.collect { result ->
-                result.applyIf(!result.isHandled, ::onResultHandler)
+                result.handleResult(::onResultHandler)
             }
         }
 
@@ -223,20 +225,20 @@ private fun IBaseFragment<*>.observeStateViewModel(currentFlowableVM: IFlowableV
 
 
 fun <T : SResult<*>> Fragment.onResultChange(data: LiveData<T>?, stateHandle: InHandler<T>) {
-    data?.let {
-        if(!it.hasObservers()) {
-            it.observe(this, { result ->
-                result.applyIf(!result.isHandled, stateHandle)
+    data?.let { currentLiveData ->
+        if(!currentLiveData.hasObservers()) {
+            currentLiveData.observe(this, { result ->
+                result.handleResult(stateHandle)
             })
         }
     }
 }
 
 fun <T : SResult<*>> DialogFragment.onResultChange(data: LiveData<T>?, stateHandle: InHandler<T>) {
-    data?.let {
-        if(!it.hasObservers()) {
-            it.observe(this, { result ->
-                result.applyIf(!result.isHandled, stateHandle)
+    data?.let { currentLiveData ->
+        if(!currentLiveData.hasObservers()) {
+            currentLiveData.observe(this, { result ->
+                result.handleResult(stateHandle)
             })
         }
     }
@@ -246,10 +248,10 @@ fun <T : SResult<*>> LifecycleOwner.onResultChange(
     data: LiveData<T>?,
     stateHandle: InHandler<T>
 ) {
-    data?.let {
-        if(!it.hasObservers()) {
-            it.observe(this, { result ->
-                result.applyIf(!result.isHandled, stateHandle)
+    data?.let { currentLiveData ->
+        if(!currentLiveData.hasObservers()) {
+            currentLiveData.observe(this, { result ->
+                result.handleResult(stateHandle)
             })
         }
     }
@@ -261,10 +263,23 @@ fun <T : Any> BaseFragment<*>.onAnyChange(data: LiveData<T>?, stateHandle: InHan
     })
 }
 
+/**
+ * Handle SResult optionally
+ */
+private fun<T : SResult<*>> T?.handleResult(stateHandle: InHandler<T>) {
+    this?.let { currentResult ->
+        val isAlreadyHandled = !currentResult.isHandled
+        currentResult.applyIf(isAlreadyHandled, stateHandle)
+    }
+}
+
+/**
+ * Create DataBinding with or without view model
+ */
 fun <B : ViewDataBinding, VM : BaseContextViewModel> IBaseBindingFragment<B, VM>.setupBinding(
     inflater: LayoutInflater,
     container: ViewGroup?,
-    needPending: Boolean = false
+    needPending: Boolean = true
 ): View {
     return viewModel?.let { vm ->
         (this as Fragment).createBindingWithViewModel<B, VM>(
@@ -290,6 +305,9 @@ fun <B : ViewDataBinding, VM : BaseContextViewModel> IBaseBindingFragment<B, VM>
     }.root
 }
 
+/**
+ * Handler for any data change liveData
+ */
 fun <T : Any> LifecycleOwner.onAnyChange(
     data: LiveData<T>?,
     stateHandle: InHandler<T>? = null

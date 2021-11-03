@@ -6,7 +6,7 @@ object Versions {
 
     const val appCoreX = "1.7.0"
     const val constraintLayout = "2.1.1"
-    const val material = "1.5.0-alpha04"
+    const val material = "1.5.0-alpha05"
     const val navigation = "2.4.0-beta01"
     const val lifecycle = "2.4.0"
     const val fragment = "1.4.0-beta01"

@@ -1,7 +1,7 @@
 @file:Suppress("unused")
 package com.rasalexman.sresult.common.extensions
 
-import kotlinx.coroutines.Dispatchers
+import com.rasalexman.coroutinesmanager.CoroutinesProvider
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.*
@@ -35,11 +35,15 @@ suspend inline fun <T> T?.sor(noinline handler: suspend () -> T): T {
     return this ?: handler.invoke()
 }
 
-suspend fun <T> doAsync(block: suspend () -> T): T = withContext(Dispatchers.IO) {
+suspend fun <T> doAsync(block: suspend () -> T): T = withContext(CoroutinesProvider.IO) {
     block()
 }
 
-suspend fun <T> doOnDefault(block: suspend () -> T): T = withContext(Dispatchers.Default) {
+suspend fun <T> doOnDefault(block: suspend () -> T): T = withContext(CoroutinesProvider.COMMON) {
+    block()
+}
+
+suspend fun <T> doOnMain(block: suspend () -> T): T = withContext(CoroutinesProvider.UI) {
     block()
 }
 
