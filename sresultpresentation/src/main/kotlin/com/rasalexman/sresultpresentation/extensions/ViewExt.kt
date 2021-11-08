@@ -12,6 +12,7 @@ import android.view.ViewTreeObserver
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.annotation.ColorInt
+import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.core.graphics.drawable.DrawableCompat
@@ -364,6 +365,7 @@ fun ISResultHandler.onBaseResultHandler(result: SResult<*>) {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.LOLLIPOP)
 fun Toolbar.setNavigationIconColor(@ColorInt color: Int) = navigationIcon?.mutate()?.let {
     it.setTint(color)
     this.navigationIcon = it
