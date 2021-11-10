@@ -149,7 +149,7 @@ inline fun <reified O : Any, reified I : IConvertable> SResult<I>.convertTo(): S
 }
 
 @Suppress("UNCHECKED_CAST")
-inline fun <reified O : Any, reified I : IConvertableWithParams<O, I>> SResult<I>.convertTo(param: I): SResult<O> {
+inline fun <reified O : Any, reified S: Any, reified I : IConvertableWithParams<O, S>> SResult<I>.convertTo(param: S): SResult<O> {
     return when (this) {
         is SResult.Success -> {
             this.data.convert(param).toSuccessResult()
