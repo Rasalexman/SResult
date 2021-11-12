@@ -220,8 +220,8 @@ inline fun <reified I : Any> SResult<I>.logIfError(textToLog: String): SResult<I
 
 @Suppress("UNCHECKED_CAST")
 suspend inline fun <reified I : Any> SResult<I>.doIfSuccessSuspend(crossinline block: suspend (I) -> SResult<I>): SResult<I> {
-    return if (this is SResult.Success) block(this.data)
-    else this
+    if (this is SResult.Success) block(this.data)
+    return this
 }
 
 @Suppress("UNCHECKED_CAST")
