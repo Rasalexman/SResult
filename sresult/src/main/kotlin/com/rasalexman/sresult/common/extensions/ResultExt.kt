@@ -219,15 +219,21 @@ inline fun <reified I : Any> SResult<I>.logIfError(textToLog: String): SResult<I
 }
 
 @Suppress("UNCHECKED_CAST")
-suspend inline fun <reified I : Any> SResult<I>.doIfSuccessSuspend(crossinline block: suspend (I) -> SResult<I>): SResult<I> {
+suspend inline fun <reified I : Any> SResult<I>.doIfSuccessSuspend(crossinline block: SInHandler<I>): SResult<I> {
     if (this is SResult.Success) block(this.data)
     return this
 }
 
 @Suppress("UNCHECKED_CAST")
-suspend inline fun <reified I : Any> SResult<I>.doIfEmptySuspend(crossinline block: suspend () -> SResult<I>): SResult<I> {
-    return if (this is SResult.Empty) block()
-    else this
+suspend inline fun <reified I : Any> SResult<I>.doIfEmptySuspend(crossinline block: SUnitHandler): SResult<I> {
+    if (this is SResult.Empty) block()
+    return this
+}
+
+@Suppress("UNCHECKED_CAST")
+suspend inline fun <reified I : Any> SResult<I>.doIfErrorSuspend(crossinline block: SInHandler<Throwable?>): SResult<I> {
+    if (this is SResult.AbstractFailure) block(this.exception)
+    return this
 }
 
 val <T : Any> SResult<T>.isSuccess: Boolean
