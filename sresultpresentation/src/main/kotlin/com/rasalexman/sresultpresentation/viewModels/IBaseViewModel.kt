@@ -15,6 +15,7 @@ interface IBaseViewModel : IEventableViewModel {
 
     val toolbarTitle: MutableLiveData<String>?
     val toolbarSubTitle: MutableLiveData<String>?
+    val toolbarMenu: MutableLiveData<Int>?
 
     val liveDataToObserve: MutableList<LiveData<*>>
 }

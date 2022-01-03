@@ -51,6 +51,7 @@ open class FlowableViewModel : BaseContextViewModel(), IFlowableViewModel {
     override val selectedPage: MutableStateFlow<Int> by unsafeLazy { MutableStateFlow(0) }
     override val toolbarSubTitle: MutableStateFlow<String>? = null
     override val toolbarTitle: MutableStateFlow<String>? = null
+    override val toolbarMenu: MutableStateFlow<Int>? = null
 
     override fun processEventAsync(viewEvent: ISEvent) {
         processEvent(viewEvent)

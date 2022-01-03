@@ -18,6 +18,7 @@ interface IFlowableViewModel : IEventableViewModel {
 
     val toolbarTitle: MutableStateFlow<String>?
     val toolbarSubTitle: MutableStateFlow<String>?
+    val toolbarMenu: MutableStateFlow<Int>?
 
     fun clear()
 }

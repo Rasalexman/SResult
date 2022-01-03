@@ -41,6 +41,7 @@ class TopItemsViewModel : BaseViewModel() {
     }
 
     fun onItemClicked(item: TopItemUI) {
+        logg { "SELECTED ITEM ID = ${item.itemId}" }
         navigationLiveData.value = MainFragmentDirections.showStateFlowFragment().toNavigateResult()
     }
 }

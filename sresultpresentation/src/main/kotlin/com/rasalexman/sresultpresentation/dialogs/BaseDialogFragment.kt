@@ -178,6 +178,12 @@ abstract class BaseDialogFragment<VM : IEventableViewModel> : AppCompatDialogFra
         toolbarView?.setupToolbarSubtitle(subtitle, centerToolbarTitle)
     }
 
+    override fun toolbarMenuHandler(menuResId: Int) {
+        toolbarView?.let {
+            inflateToolBarMenu(it, menuResId)
+        }
+    }
+
     override fun onDestroyView() {
         this.clearOnViewDestroy(this)
         closeContextAlert()

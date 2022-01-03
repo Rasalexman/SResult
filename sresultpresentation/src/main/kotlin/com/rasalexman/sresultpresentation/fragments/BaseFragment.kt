@@ -186,6 +186,7 @@ abstract class BaseFragment<VM : IEventableViewModel> : Fragment(), IBaseFragmen
      * Show loading state for [SResult.Loading]
      */
     override fun showLoading() {
+        hideLoading()
         showLayoutLoading()
     }
 
@@ -225,6 +226,7 @@ abstract class BaseFragment<VM : IEventableViewModel> : Fragment(), IBaseFragmen
      * Show toast error from error result data
      */
     override fun showFailure(error: SResult.AbstractFailure.Failure) {
+        hideLoading()
         this.toast(error.getMessage(), error.interval)
     }
 
@@ -232,6 +234,7 @@ abstract class BaseFragment<VM : IEventableViewModel> : Fragment(), IBaseFragmen
      * Show simple alert dialog from result data
      */
     override fun showAlert(alert: SResult.AbstractFailure.Alert) {
+        hideLoading()
         this.alert(
             message = alert.getMessage(),
             dialogTitle = alert.dialogTitle,
@@ -253,8 +256,15 @@ abstract class BaseFragment<VM : IEventableViewModel> : Fragment(), IBaseFragmen
     override fun toolbarTitleHandler(title: String) {
         toolbarView?.setupToolbarTitle(title, toolbarTitleResId, centerToolbarTitle)
     }
+
     override fun toolbarSubTitleHandler(subtitle: String) {
         toolbarView?.setupToolbarSubtitle(subtitle, centerToolbarTitle)
+    }
+
+    override fun toolbarMenuHandler(menuResId: Int) {
+        toolbarView?.let { toolbar ->
+            inflateToolBarMenu(toolbar, menuResId)
+        }
     }
 
     /**
@@ -384,7 +394,7 @@ abstract class BaseFragment<VM : IEventableViewModel> : Fragment(), IBaseFragmen
      * Проверка, есть ли запрошенное разрешение
      * @param permission необходимое разрешение
      */
-    protected fun hasPermission(permission: String): Boolean {
+    protected open fun hasPermission(permission: String): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             context?.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED
         } else {

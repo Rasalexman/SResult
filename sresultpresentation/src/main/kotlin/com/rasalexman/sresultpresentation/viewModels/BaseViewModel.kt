@@ -25,6 +25,8 @@ open class BaseViewModel : BaseContextViewModel(), IBaseViewModel {
     override val toolbarTitle: MutableLiveData<String>? = null
     // toolbar subtitle live data
     override val toolbarSubTitle: MutableLiveData<String>? = null
+    // toolbar menu res id
+    override val toolbarMenu: MutableLiveData<Int>? = null
 
     /**
      * Handle Some error states with [SResult.AbstractFailure]

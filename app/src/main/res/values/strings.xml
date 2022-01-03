@@ -16,6 +16,7 @@
     <string name="button_success">Emit Success</string>
     <string name="button_do_action">Do Action</string>
     <string name="button_state">Show State Flow</string>
+    <string name="button_menu">Change Menu</string>
     <string name="title_profile">User Profile</string>
     <string name="title_bottom_recycler">Bottom Recycler</string>
     <string name="title_empty_vm">Empty ViewModel Screen</string>

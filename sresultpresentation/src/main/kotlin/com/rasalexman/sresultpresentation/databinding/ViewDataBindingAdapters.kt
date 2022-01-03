@@ -4,7 +4,9 @@ import android.view.View
 import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseBindingAdapter
 import androidx.databinding.InverseBindingListener
-import com.rasalexman.sresultpresentation.extensions.*
+import com.rasalexman.sresultpresentation.extensions.hide
+import com.rasalexman.sresultpresentation.extensions.setOnDebounceClickListener
+import com.rasalexman.sresultpresentation.extensions.show
 
 @BindingAdapter("isGone")
 fun setIsGone(view: View, isGone: Boolean?) {

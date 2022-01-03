@@ -3,6 +3,7 @@ package com.rasalexman.sresultpresentation.tools
 import android.os.SystemClock
 import android.view.View
 import java.util.*
+import kotlin.math.abs
 
 abstract class DebouncedOnClickListener(private val minimumIntervalMillis: Long) : View.OnClickListener {
     private val lastClickMap: MutableMap<View, Long>
@@ -17,7 +18,7 @@ abstract class DebouncedOnClickListener(private val minimumIntervalMillis: Long)
         val previousClickTimestamp = lastClickMap[clickedView]
         val currentTimestamp = SystemClock.uptimeMillis()
         lastClickMap[clickedView] = currentTimestamp
-        if (previousClickTimestamp == null || Math.abs(currentTimestamp - previousClickTimestamp) > minimumIntervalMillis) {
+        if (previousClickTimestamp == null || abs(currentTimestamp - previousClickTimestamp) > minimumIntervalMillis) {
             onDebouncedClick(clickedView)
         }
     }

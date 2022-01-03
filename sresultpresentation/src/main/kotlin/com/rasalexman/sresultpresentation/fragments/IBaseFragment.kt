@@ -98,4 +98,5 @@ interface IBaseFragment<out VM : IEventableViewModel> : IComplexHandler, Toolbar
     fun onAnyDataHandler(data: Any?)
     fun toolbarTitleHandler(title: String)
     fun toolbarSubTitleHandler(subtitle: String)
+    fun toolbarMenuHandler(menuResId: Int)
 }

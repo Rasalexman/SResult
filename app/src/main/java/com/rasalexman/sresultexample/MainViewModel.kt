@@ -55,6 +55,8 @@ class MainViewModel : BaseViewModel() {
         }
     }
 
+    override val toolbarMenu: MutableLiveData<Int> = MutableLiveData(R.menu.menu_add)
+
     override val resultLiveData = onEventFlowAnyResult<SEvent.Fetch>(Dispatchers.Default, isDistincted = true) {
         logg { "resultLiveData event is $it" }
 
@@ -123,5 +125,14 @@ class MainViewModel : BaseViewModel() {
 
     fun onStateButtonClicked() {
         navigationLiveData.value = MainFragmentDirections.showStateFlowFragment().toNavigateResult()
+    }
+
+    fun onMenuChangeClicked() {
+        val menuResId = if(toolbarMenu.value == R.menu.menu_add) {
+            R.menu.menu_add_disabled
+        } else {
+            R.menu.menu_add
+        }
+        toolbarMenu.value = menuResId
     }
 }

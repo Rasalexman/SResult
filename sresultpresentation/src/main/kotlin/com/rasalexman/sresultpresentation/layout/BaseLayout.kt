@@ -245,6 +245,7 @@ abstract class BaseLayout<VM : BaseContextViewModel> : FrameLayout,
     override fun onAnyDataHandler(data: Any?) = Unit
     override fun toolbarTitleHandler(title: String) = Unit
     override fun toolbarSubTitleHandler(subtitle: String) = Unit
+    override fun toolbarMenuHandler(menuResId: Int) = Unit
 
     override fun showFailure(error: SResult.AbstractFailure.Failure) {
         this.toast(error.getMessage(), error.interval)

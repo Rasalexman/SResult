@@ -39,7 +39,6 @@ import com.rasalexman.sresultpresentation.viewModels.BaseContextViewModel
 import com.rasalexman.sresultpresentation.viewModels.IBaseViewModel
 import com.rasalexman.sresultpresentation.viewModels.IEventableViewModel
 import com.rasalexman.sresultpresentation.viewModels.flowable.IFlowableViewModel
-import kotlinx.coroutines.flow.collect
 
 private var lastSoftInput = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN
 
@@ -97,6 +96,7 @@ private fun IEventableViewModel.clearOnViewDestroyViewModel(lifecycleOwner: Life
         is IBaseViewModel -> this.apply {
             toolbarTitle?.removeObservers(lifecycleOwner)
             toolbarSubTitle?.removeObservers(lifecycleOwner)
+            toolbarMenu?.removeObservers(lifecycleOwner)
             liveDataToObserve.forEach { it.removeObservers(lifecycleOwner) }
             eventLiveData.postValue(null)
         }
@@ -148,6 +148,7 @@ private fun IBaseFragment<*>.observeLifecycleBaseViewModel(currentBaseVm: IBaseV
     lifecycleOwner?.apply {
         onAnyChange(currentBaseVm.toolbarTitle, ::toolbarTitleHandler)
         onAnyChange(currentBaseVm.toolbarSubTitle, ::toolbarSubTitleHandler)
+        onAnyChange(currentBaseVm.toolbarMenu, ::toolbarMenuHandler)
 
         currentBaseVm.liveDataToObserve.forEach {
             onAnyChange(it)
@@ -355,7 +356,9 @@ fun IBaseFragment<*>.initToolbarNavigationIcon(
             toolbarView.setNavigationIcon(it)
         }
         toolbarNavigationIconColor?.let {
-            toolbarView.setNavigationIconColor(it)
+           if(Build.VERSION.SDK_INT >= 21) {
+               toolbarView.setNavigationIconColor(it)
+           }
         }
         toolbarView.setNavigationOnClickListener {
             onToolbarBackPressed()

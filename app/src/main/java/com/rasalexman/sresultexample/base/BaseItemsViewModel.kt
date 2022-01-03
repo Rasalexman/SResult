@@ -1,23 +1,21 @@
 package com.rasalexman.sresultexample.base
 
 import androidx.lifecycle.*
-import com.rasalexman.sresult.common.extensions.*
+import com.rasalexman.sresult.common.extensions.emptyResult
+import com.rasalexman.sresult.common.extensions.getList
+import com.rasalexman.sresult.common.extensions.unsafeLazy
 import com.rasalexman.sresult.common.typealiases.FlowResultList
 import com.rasalexman.sresult.common.typealiases.ResultList
 import com.rasalexman.sresult.data.dto.ISEvent
 import com.rasalexman.sresult.data.dto.SEvent
 import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultexample.users.UserItem
-import com.rasalexman.sresultpresentation.extensions.asyncLiveData
 import com.rasalexman.sresultpresentation.extensions.onEvent
 import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
-import java.util.*
-import kotlin.random.Random
 
 abstract class BaseItemsViewModel : BaseViewModel() {
 
