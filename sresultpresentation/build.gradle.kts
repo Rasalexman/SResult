@@ -81,11 +81,16 @@ tasks.create(name = "sourceJar", type = Jar::class) {
 }
 
 java {
+    sourceSets {
+        create("main") {
+            java.setSrcDirs(config.Builds.codeDirs)
+        }
+    }
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
 
     //withJavadocJar()
-    //withSourcesJar()
+    withSourcesJar()
 }
 
 dependencies {

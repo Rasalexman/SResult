@@ -69,17 +69,22 @@ android {
     }
 }
 
+tasks.register<Jar>(name = "sourceJar") {
+    from(android.sourceSets["main"].java.srcDirs)
+    archiveClassifier.set("sources")
+}
+
 java {
+    sourceSets {
+        create("main") {
+            java.setSrcDirs(Builds.codeDirs)
+        }
+    }
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
 
     //withJavadocJar()
-    //withSourcesJar()
-}
-
-tasks.register<Jar>(name = "sourceJar") {
-    from(android.sourceSets["main"].java.srcDirs)
-    archiveClassifier.set("sources")
+    withSourcesJar()
 }
 
 dependencies {
