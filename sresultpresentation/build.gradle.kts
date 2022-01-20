@@ -130,7 +130,7 @@ afterEvaluate {
                 artifactId = "sresultpresentation"
                 version = config.Builds.SResult.VERSION_NAME
 
-                artifact("$buildDir/outputs/aar/sresult-release.aar")
+                //artifact("$buildDir/outputs/aar/sresult-release.aar")
                 artifact(tasks["sourceJar"])
             }
             create<MavenPublication>("debug") {
@@ -142,7 +142,7 @@ afterEvaluate {
                 artifactId = "sresultpresentation-debug"
                 version = config.Builds.SResult.VERSION_NAME
 
-                artifact("$buildDir/outputs/aar/sresult-debug.aar")
+                //artifact("$buildDir/outputs/aar/sresult-debug.aar")
                 artifact(tasks["sourceJar"])
             }
         }

@@ -105,7 +105,7 @@ afterEvaluate {
                 artifactId = "sresult"
                 version = Builds.SResult.VERSION_NAME
 
-                artifact("$buildDir/outputs/aar/sresult-release.aar")
+                //artifact("$buildDir/outputs/aar/sresult-release.aar")
                 artifact(tasks["sourceJar"])
             }
             /*create<MavenPublication>("debug") {
