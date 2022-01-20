@@ -3,9 +3,12 @@ import config.Libs
 
 plugins {
     id("com.android.library")
-    id("kotlin-android")
+    kotlin("android")
     id("maven-publish")
 }
+
+group = "com.rasalexman.sresult"
+version = Builds.SResult.VERSION_NAME
 
 android {
     compileSdk = Builds.COMPILE_VERSION
@@ -69,6 +72,9 @@ android {
 java {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
+
+    //withJavadocJar()
+    //withSourcesJar()
 }
 
 tasks.register<Jar>(name = "sourceJar") {
@@ -83,13 +89,10 @@ dependencies {
     api(Libs.Common.kodi)
     api(Libs.Common.coroutinesmanager)
 
-    //testImplementation(Libs.Tests.junit)
-    //androidTestImplementation(Libs.Tests.runner)
-    //androidTestImplementation(Libs.Tests.espresso)
+    testImplementation(Libs.Tests.junit)
+    androidTestImplementation(Libs.Tests.runner)
+    androidTestImplementation(Libs.Tests.espresso)
 }
-
-group = "com.rasalexman.sresult"
-version = Builds.SResult.VERSION_NAME
 
 afterEvaluate {
     publishing {
@@ -102,6 +105,7 @@ afterEvaluate {
                 artifactId = "sresult"
                 version = Builds.SResult.VERSION_NAME
 
+                artifact("$buildDir/outputs/aar/sresult-release.aar")
                 artifact(tasks["sourceJar"])
             }
             /*create<MavenPublication>("debug") {

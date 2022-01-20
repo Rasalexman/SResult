@@ -64,6 +64,10 @@ android {
         jvmTarget = "11"
         languageVersion = "1.6"
         apiVersion = "1.6"
+        freeCompilerArgs = listOf(
+            "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi",
+            "-opt-in=kotlin.RequiresOptIn"
+        )
     }
 }
 

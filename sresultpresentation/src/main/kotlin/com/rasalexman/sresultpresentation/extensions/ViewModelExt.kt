@@ -71,7 +71,7 @@ suspend inline fun <reified E : ISEvent, reified T : Any?> LiveDataScope<T>.proc
     eventFlow: Flow<ISEvent>,
     crossinline block: suspend LiveDataScope<T>.(E) -> Unit
 ) {
-    eventFlow.collect { event ->
+    eventFlow.collectLatest { event ->
         val currentEvent = (event as? E)
         currentEvent?.let {
             try {
@@ -92,15 +92,14 @@ suspend inline fun <reified E : ISEvent, reified T : Any?> LiveDataScope<T>.proc
 /**
  *
  */
-@Suppress("UNCHECKED_CAST")
 inline fun <reified E : ISEvent, reified T : Any?> BaseViewModel.onEvent(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
-    isDistincted: Boolean = false,
+    isDistinct: Boolean = false,
     autoObserved: Boolean = false,
     eventDelay: Long = 0L,
     crossinline block: suspend LiveDataScope<T>.(E) -> Unit
 ): LiveData<T> {
-    val eld = if (isDistincted) eventLiveData.asFlow().distinctUntilChanged() else eventLiveData.asFlow()
+    val eld = if (isDistinct) eventLiveData.asFlow().distinctUntilChanged() else eventLiveData.asFlow()
     val eventLV: LiveData<T> = asyncLiveData(dispatcher = dispatcher) {
         this.processEventsCollect(
             eventDelay = eventDelay,
@@ -120,12 +119,12 @@ inline fun <reified E : ISEvent, reified T : Any?> BaseViewModel.onEvent(
  */
 inline fun <reified E : ISEvent> BaseViewModel.onEventResult(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
-    isDistincted: Boolean = false,
+    isDistinct: Boolean = false,
     autoObserved: Boolean = false,
     eventDelay: Long = 0L,
     crossinline block: suspend LiveDataScope<SResult<*>>.(E) -> Unit
 ): LiveData<SResult<*>> {
-    val eld = if (isDistincted) eventLiveData.asFlow().distinctUntilChanged() else eventLiveData.asFlow()
+    val eld = if (isDistinct) eventLiveData.asFlow().distinctUntilChanged() else eventLiveData.asFlow()
     val eventLV: LiveData<SResult<*>> = asyncLiveData(dispatcher = dispatcher) {
         processEventsCollect(
             eventDelay = eventDelay,
@@ -139,16 +138,14 @@ inline fun <reified E : ISEvent> BaseViewModel.onEventResult(
     return eventLV
 }
 
-
-
 @Suppress("UNCHECKED_CAST")
 inline fun <reified E : ISEvent, reified T : Any?> BaseViewModel.onEventMutable(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
-    isDistincted: Boolean = false,
+    isDistinct: Boolean = false,
     eventDelay: Long = 0L,
     crossinline block: suspend LiveDataScope<T>.(E) -> Unit
 ): MutableLiveData<T> {
-    val eld = if (isDistincted) eventLiveData.asFlow().distinctUntilChanged() else eventLiveData.asFlow()
+    val eld = if (isDistinct) eventLiveData.asFlow().distinctUntilChanged() else eventLiveData.asFlow()
     return asyncMutableLiveData(dispatcher = dispatcher) {
         processEventsCollect(
             eventDelay = eventDelay,
@@ -188,13 +185,13 @@ inline fun <reified E : ISEvent, reified T : Any> IEventableViewModel.createEven
 
 inline fun <reified E : ISEvent, reified T : Any> BaseViewModel.onEventFlow(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
-    isDistincted: Boolean = false,
+    isDistinct: Boolean = false,
     eventDelay: Long = 0,
     noinline emitOnStart: (() -> T)? = null,
     crossinline block: suspend FlowCollector<T>.(E) -> Unit
-): LiveData<T> {
+): Flow<T> {
     val eventFlow = eventLiveData.asFlow()
-    val currentEventFlow = if (isDistincted) eventFlow.distinctUntilChanged() else eventFlow
+    val currentEventFlow = if (isDistinct) eventFlow.distinctUntilChanged() else eventFlow
 
     return createEventFlow(
         eventFlow = currentEventFlow,
@@ -204,27 +201,43 @@ inline fun <reified E : ISEvent, reified T : Any> BaseViewModel.onEventFlow(
         block = block
     ) {
         supportLiveData.postValue(errorResult(exception = it))
-    }.asLiveData(dispatcher)
+    }
 }
 
-inline fun <reified E : ISEvent, reified T : Any> BaseViewModel.onEventMutableFlow(
+inline fun <reified E : ISEvent, reified T : Any> BaseViewModel.onEventLiveData(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
-    isDistincted: Boolean = false,
+    isDistinct: Boolean = false,
     eventDelay: Long = 0,
     noinline emitOnStart: (() -> T)? = null,
     crossinline block: suspend FlowCollector<T>.(E) -> Unit
 ): LiveData<T> {
-    return onEventFlow(dispatcher, isDistincted, eventDelay, emitOnStart, block) as MutableLiveData<T>
+    return onEventFlow(
+        dispatcher = dispatcher,
+        isDistinct = isDistinct,
+        eventDelay = eventDelay,
+        emitOnStart = emitOnStart,
+        block = block
+    ).asLiveData(dispatcher)
+}
+
+inline fun <reified E : ISEvent, reified T : Any> BaseViewModel.onEventMutableLiveData(
+    dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    isDistinct: Boolean = false,
+    eventDelay: Long = 0,
+    noinline emitOnStart: (() -> T)? = null,
+    crossinline block: suspend FlowCollector<T>.(E) -> Unit
+): LiveData<T> {
+    return onEventLiveData(dispatcher, isDistinct, eventDelay, emitOnStart, block) as MutableLiveData<T>
 }
 
 inline fun <reified E : ISEvent, reified T : Any> FlowableViewModel.onEventFlow(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
-    isDistincted: Boolean = false,
+    isDistinct: Boolean = false,
     eventDelay: Long = 0,
     noinline emitOnStart: (() -> T)? = null,
     crossinline block: suspend FlowCollector<T>.(E) -> Unit
 ): Flow<T> {
-    val currentEventFlow = if (isDistincted) eventsFlow.distinctUntilChanged()
+    val currentEventFlow = if (isDistinct) eventsFlow.distinctUntilChanged()
     else eventsFlow
 
     return createEventFlow(
@@ -238,44 +251,44 @@ inline fun <reified E : ISEvent, reified T : Any> FlowableViewModel.onEventFlow(
     }
 }
 
-inline fun <reified T : Any> BaseViewModel.onAnyEventFlow(
+inline fun <reified T : Any> BaseViewModel.onAnyEventLiveData(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
-    isDistincted: Boolean = false,
+    isDistinct: Boolean = false,
     eventDelay: Long = 0,
     noinline emitOnStart: (() -> T)? = null,
     crossinline block: suspend FlowCollector<T>.(ISEvent) -> Unit
-): LiveData<T> = onEventFlow(dispatcher, isDistincted, eventDelay, emitOnStart, block)
+): LiveData<T> = onEventLiveData(dispatcher, isDistinct, eventDelay, emitOnStart, block)
 
 
-inline fun <reified E : ISEvent, reified T : Any> BaseViewModel.onEventFlowResult(
+inline fun <reified E : ISEvent, reified T : Any> BaseViewModel.onEventLiveDataResult(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
-    isDistincted: Boolean = false,
+    isDistinct: Boolean = false,
     eventDelay: Long = 0,
     noinline emitOnStart: (() -> SResult<T>)? = null,
     crossinline block: suspend FlowCollector<SResult<T>>.(E) -> Unit
-): LiveData<SResult<T>> = onEventFlow(dispatcher, isDistincted, eventDelay, emitOnStart, block)
+): LiveData<SResult<T>> = onEventLiveData(dispatcher, isDistinct, eventDelay, emitOnStart, block)
 
-inline fun <reified T : Any> BaseViewModel.onAnyEventFlowResult(
+inline fun <reified T : Any> BaseViewModel.onAnyEventLiveDataResult(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
-    isDistincted: Boolean = false,
+    isDistinct: Boolean = false,
     eventDelay: Long = 0,
     noinline emitOnStart: (() -> SResult<T>)? = null,
     crossinline block: suspend FlowCollector<SResult<T>>.(ISEvent) -> Unit
-): LiveData<SResult<T>> = onEventFlow(dispatcher, isDistincted, eventDelay, emitOnStart, block)
+): LiveData<SResult<T>> = onEventLiveData(dispatcher, isDistinct, eventDelay, emitOnStart, block)
 
-inline fun <reified E : ISEvent> BaseViewModel.onEventFlowAnyResult(
+inline fun <reified E : ISEvent> BaseViewModel.onEventLiveDataAnyResult(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
-    isDistincted: Boolean = false,
+    isDistinct: Boolean = false,
     eventDelay: Long = 0,
     noinline emitOnStart: (() -> AnyResult)? = null,
     crossinline block: suspend FlowCollector<AnyResult>.(E) -> Unit
-): LiveData<AnyResult> = onEventFlow(dispatcher, isDistincted, eventDelay, emitOnStart, block)
+): LiveData<AnyResult> = onEventLiveData(dispatcher, isDistinct, eventDelay, emitOnStart, block)
 
-fun BaseViewModel.onAnyEventFlowAnyResult(
+fun BaseViewModel.onAnyEventLiveDataAnyResult(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
-    isDistincted: Boolean = false,
+    isDistinct: Boolean = false,
     eventDelay: Long = 0,
     emitOnStart: (() -> AnyResult)? = null,
     block: suspend FlowCollector<AnyResult>.(ISEvent) -> Unit
-): LiveData<AnyResult> = onEventFlow(dispatcher, isDistincted, eventDelay, emitOnStart, block)
+): LiveData<AnyResult> = onEventLiveData(dispatcher, isDistinct, eventDelay, emitOnStart, block)
 

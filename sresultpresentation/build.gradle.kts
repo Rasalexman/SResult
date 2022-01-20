@@ -1,8 +1,8 @@
 plugins {
     id("com.android.library")
-    id("kotlin-android")
+    kotlin("android")
     id("maven-publish")
-    id("kotlin-kapt")
+    kotlin("kapt")
 }
 
 android {
@@ -73,14 +73,19 @@ android {
     }
 }
 
-kapt {
-    useBuildCache = true
-    generateStubs = false
+group = "com.rasalexman.sresultpresentation"
+version = config.Builds.SResult.VERSION_NAME
+
+tasks.create(name = "sourceJar", type = Jar::class) {
+    archiveClassifier.set("sources")
 }
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
+
+    //withJavadocJar()
+    //withSourcesJar()
 }
 
 dependencies {
@@ -113,13 +118,6 @@ dependencies {
     androidTestImplementation(config.Libs.Tests.espresso)
 }
 
-group = "com.rasalexman.sresultpresentation"
-version = config.Builds.SResult.VERSION_NAME
-
-tasks.create(name = "sourceJar", type = Jar::class) {
-    archiveClassifier.set("sources")
-}
-
 afterEvaluate {
     publishing {
         publications {
@@ -132,6 +130,7 @@ afterEvaluate {
                 artifactId = "sresultpresentation"
                 version = config.Builds.SResult.VERSION_NAME
 
+                artifact("$buildDir/outputs/aar/sresult-release.aar")
                 artifact(tasks["sourceJar"])
             }
             create<MavenPublication>("debug") {
@@ -143,6 +142,7 @@ afterEvaluate {
                 artifactId = "sresultpresentation-debug"
                 version = config.Builds.SResult.VERSION_NAME
 
+                artifact("$buildDir/outputs/aar/sresult-debug.aar")
                 artifact(tasks["sourceJar"])
             }
         }

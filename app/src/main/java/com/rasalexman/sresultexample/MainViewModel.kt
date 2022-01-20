@@ -8,7 +8,7 @@ import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresult.models.IDropDownItem
 import com.rasalexman.sresultpresentation.extensions.AnyResultMutableLiveData
 import com.rasalexman.sresultpresentation.extensions.mutableMap
-import com.rasalexman.sresultpresentation.extensions.onEventFlowAnyResult
+import com.rasalexman.sresultpresentation.extensions.onEventLiveDataAnyResult
 import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -57,7 +57,7 @@ class MainViewModel : BaseViewModel() {
 
     override val toolbarMenu: MutableLiveData<Int> = MutableLiveData(R.menu.menu_add)
 
-    override val resultLiveData = onEventFlowAnyResult<SEvent.Fetch>(Dispatchers.Default, isDistincted = true) {
+    override val resultLiveData = onEventLiveDataAnyResult<SEvent.Fetch>(Dispatchers.Default, isDistinct = true) {
         logg { "resultLiveData event is $it" }
 
         emit(loadingResult())
@@ -94,9 +94,9 @@ class MainViewModel : BaseViewModel() {
         }
     }
 
-    override val supportLiveData = onEventFlowAnyResult<SEvent.Refresh>(
+    override val supportLiveData = onEventLiveDataAnyResult<SEvent.Refresh>(
         dispatcher = Dispatchers.Default,
-        isDistincted = true
+        isDistinct = true
     ) {
         logg { "supportLiveData event is $it" }
         val rand = Random.nextInt(10, 54)

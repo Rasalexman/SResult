@@ -12,6 +12,7 @@ import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultexample.users.UserItem
 import com.rasalexman.sresultpresentation.extensions.onEvent
 import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -24,6 +25,7 @@ abstract class BaseItemsViewModel : BaseViewModel() {
     }
     override val eventLiveData: MutableLiveData<ISEvent> = MutableLiveData<ISEvent>(SEvent.Refresh)
 
+    @OptIn(FlowPreview::class)
     private val searchQuery by unsafeLazy {
         searchLD.asFlow().debounce(200L).distinctUntilChanged()
     }
