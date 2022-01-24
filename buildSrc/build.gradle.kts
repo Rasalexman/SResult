@@ -14,7 +14,7 @@ java {
     targetCompatibility = JavaVersion.VERSION_11
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+tasks.getByName(name = "compileKotlin", type = org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class) {
     kotlinOptions {
         apiVersion = "1.6"
         languageVersion = "1.6"

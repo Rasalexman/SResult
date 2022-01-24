@@ -5,6 +5,9 @@ plugins {
     kotlin("kapt")
 }
 
+group = "com.rasalexman.sresultpresentation"
+version = config.Builds.SResult.VERSION_NAME
+
 android {
     compileSdk = config.Builds.COMPILE_VERSION
     defaultConfig {
@@ -39,7 +42,7 @@ android {
     }
 
     // Declare the task that will monitor all configurations.
-    /*configurations.all {
+    configurations.all {
         // 2 Define the resolution strategy in case of conflicts.
         resolutionStrategy {
             // Fail eagerly on version conflict (includes transitive dependencies),
@@ -49,11 +52,17 @@ android {
             // Prefer modules that are part of this build (multi-project or composite build) over external modules.
             preferProjectModules()
         }
-    }*/
+    }
 
     sourceSets {
         getByName("main") {
-            java.setSrcDirs(config.Builds.codeDirs)
+            java.srcDir(config.Builds.kotlinSrcDir)
+        }
+        getByName("release") {
+            java.srcDir(config.Builds.kotlinSrcDir)
+        }
+        getByName("debug") {
+            java.srcDir(config.Builds.kotlinSrcDir)
         }
     }
 
@@ -63,7 +72,7 @@ android {
 
     buildFeatures {
         dataBinding = true
-        androidResources = true
+        //androidResources = true
     }
 
     kotlinOptions {
@@ -73,19 +82,12 @@ android {
     }
 }
 
-group = "com.rasalexman.sresultpresentation"
-version = config.Builds.SResult.VERSION_NAME
-
-tasks.create(name = "sourceJar", type = Jar::class) {
-    archiveClassifier.set("sources")
-}
-
 java {
-    sourceSets {
-        create("main") {
-            java.setSrcDirs(config.Builds.codeDirs)
-        }
+
+    this.sourceSets.create("main").java {
+        setSrcDirs(android.sourceSets.getByName("main").java.srcDirs.toList())
     }
+    //println("-----> sources: ${this.sourceSets.getByName("main").allSource}")
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
 
@@ -93,8 +95,15 @@ java {
     withSourcesJar()
 }
 
+tasks.create(name = "sourceJar", type = Jar::class) {
+    val dirs = android.sourceSets.getByName("main").java.srcDirs
+    //println("-----> dirs: $dirs")
+    from(dirs)
+    archiveClassifier.set("sources")
+}
+
 dependencies {
-    implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
+    //implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
     //implementation(kotlin("stdlib-jdk8", config.Versions.kotlin))
     api(config.Libs.Core.coroutines)
 
@@ -126,8 +135,8 @@ dependencies {
 afterEvaluate {
     publishing {
         publications {
-            create<MavenPublication>("release") {
-                //println("Component ${components.asMap}")
+            create<MavenPublication>("main") {
+                //println("-----> Components ${components["release"]}")
                 from(components["release"])
 
                 // You can then customize attributes of the publication as shown below.
@@ -138,7 +147,7 @@ afterEvaluate {
                 //artifact("$buildDir/outputs/aar/sresult-release.aar")
                 artifact(tasks["sourceJar"])
             }
-            create<MavenPublication>("debug") {
+            /*create<MavenPublication>("debug") {
                 //println("Component ${components.asMap}")
                 from(components["debug"])
 
@@ -149,7 +158,7 @@ afterEvaluate {
 
                 //artifact("$buildDir/outputs/aar/sresult-debug.aar")
                 artifact(tasks["sourceJar"])
-            }
+            }*/
         }
 
         repositories {

@@ -351,7 +351,6 @@ abstract class BaseFragment<VM : IEventableViewModel> : Fragment(), IBaseFragmen
             e,
             "There is no navigation direction from ${this::class.java.simpleName} with contentViewLayout id = $navResId"
         )
-        showToast(R.string.error_internal, Toast.LENGTH_LONG)
     }
 
     /**

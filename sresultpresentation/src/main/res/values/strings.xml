@@ -3,8 +3,4 @@
     <string name="title_ok">OK</string>
     <string name="title_cancel">Отмена</string>
     <string name="title_warning">Внимание</string>
-
-    <string name="error_internal_exception">Простите. Что-то пошло не так. Наши специалисты уже разбираются с этим. Попробуйте позже.</string>
-    <string name="error_internal">Внутренняя ошибка. Наши специалисты уже разбираются с этим. Попробуйте позже.</string>
-    <string name="error_internal_server">Серверная ошибка. Наши специалисты уже разбираются с этим. Попробуйте позже.</string>
 </resources>

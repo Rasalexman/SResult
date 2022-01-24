@@ -5,6 +5,7 @@ package com.rasalexman.sresultpresentation.extensions
 import androidx.lifecycle.*
 import com.rasalexman.sresult.common.extensions.errorResult
 import com.rasalexman.sresult.common.extensions.loggE
+import com.rasalexman.sresult.common.extensions.orIfNull
 import com.rasalexman.sresult.common.extensions.toErrorResult
 import com.rasalexman.sresult.common.typealiases.AnyResult
 import com.rasalexman.sresult.data.dto.ISEvent
@@ -71,7 +72,7 @@ suspend inline fun <reified E : ISEvent, reified T : Any?> LiveDataScope<T>.proc
     eventFlow: Flow<ISEvent>,
     crossinline block: suspend LiveDataScope<T>.(E) -> Unit
 ) {
-    eventFlow.collectLatest { event ->
+    eventFlow.collect { event ->
         val currentEvent = (event as? E)
         currentEvent?.let {
             try {
@@ -79,11 +80,11 @@ suspend inline fun <reified E : ISEvent, reified T : Any?> LiveDataScope<T>.proc
                     delay(eventDelay)
                 }
                 block(it)
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 loggE(e, "There is an exception in ${this@processEventsCollect}")
-                (this as? LiveDataScope<SResult<*>>)?.apply {
+               /* (this as? LiveDataScope<SResult<*>>)?.apply {
                     emit(SResult.AbstractFailure.Error(exception = e))
-                }
+                }*/
             }
         }
     }
@@ -101,7 +102,7 @@ inline fun <reified E : ISEvent, reified T : Any?> BaseViewModel.onEvent(
 ): LiveData<T> {
     val eld = if (isDistinct) eventLiveData.asFlow().distinctUntilChanged() else eventLiveData.asFlow()
     val eventLV: LiveData<T> = asyncLiveData(dispatcher = dispatcher) {
-        this.processEventsCollect(
+        processEventsCollect(
             eventDelay = eventDelay,
             eventFlow = eld,
             block = block
@@ -188,7 +189,8 @@ inline fun <reified E : ISEvent, reified T : Any> BaseViewModel.onEventFlow(
     isDistinct: Boolean = false,
     eventDelay: Long = 0,
     noinline emitOnStart: (() -> T)? = null,
-    crossinline block: suspend FlowCollector<T>.(E) -> Unit
+    crossinline block: suspend FlowCollector<T>.(E) -> Unit,
+    noinline catchBlock: ((Throwable) -> Unit)? = null
 ): Flow<T> {
     val eventFlow = eventLiveData.asFlow()
     val currentEventFlow = if (isDistinct) eventFlow.distinctUntilChanged() else eventFlow
@@ -200,7 +202,10 @@ inline fun <reified E : ISEvent, reified T : Any> BaseViewModel.onEventFlow(
         emitOnStart = emitOnStart,
         block = block
     ) {
-        supportLiveData.postValue(errorResult(exception = it))
+        catchBlock?.invoke(it).orIfNull {
+            loggE(it)
+            supportLiveData.postValue(errorResult(exception = it))
+        }
     }
 }
 
