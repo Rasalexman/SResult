@@ -86,12 +86,22 @@ inline fun <reified I : Any> FlowResult<I>.applyIfFlowError(crossinline block: I
 }
 
 inline fun <reified I : SResult<*>> SResult<*>.applyIfType(block: I.() -> Unit): SResult<*> {
-    if (this::class == I::class) block(this as I)
+    if (this is I) block(this)
     return this
 }
 
 
 suspend inline fun <reified I : SResult<*>> SResult<*>.applyIfTypeSuspend(crossinline block: suspend I.() -> Unit): SResult<*> {
-    if (this::class == I::class) block(this as I)
+    if (this is I) block(this)
+    return this
+}
+
+inline fun <reified I : SResult<*>> SResult<*>.applyIfNotType(block: SResult<*>.() -> Unit): SResult<*> {
+    if (this !is I) block(this)
+    return this
+}
+
+suspend inline fun <reified I : SResult<*>> SResult<*>.applyIfNotTypeSuspend(crossinline block: suspend SResult<*>.() -> Unit): SResult<*> {
+    if (this !is I) block(this)
     return this
 }

@@ -5,7 +5,7 @@ import com.rasalexman.sresult.data.dto.SResult
 
 
 
-inline fun <reified I : Any> SResult<I>.collectDataIfSuccess(default: I? = null): I? {
+inline fun <reified I : Any> SResult<I>.getDataIfSuccess(default: I? = null): I? {
     return if (this is SResult.Success) this.data
     else default
 }

@@ -5,6 +5,7 @@ import com.rasalexman.sresult.data.dto.ISEvent
 import com.rasalexman.sresult.data.dto.SEvent
 import com.rasalexman.sresultpresentation.fragments.IBaseFragment
 import com.rasalexman.sresultpresentation.viewModels.IBaseViewModel
+import com.rasalexman.sresultpresentation.viewModels.IEventableViewModel
 
 
 ///------ INLINE SECTION ----///
@@ -22,3 +23,13 @@ fun IBaseFragment<IBaseViewModel>.validateData() =
 
 inline fun <reified T : IBaseViewModel> IBaseFragment<T>.postEvent(event: ISEvent) =
     this.viewModel?.processEvent(event)
+
+////-------- GLOBAL VM SECTION ----///
+fun IEventableViewModel.fetch() =
+    this.processEvent(SEvent.Fetch)
+
+fun <R : Any> IEventableViewModel.fetchWith(data: R) =
+    this.processEvent(SEvent.FetchWith(data))
+
+fun IEventableViewModel.refresh() =
+    this.processEvent(SEvent.Refresh)

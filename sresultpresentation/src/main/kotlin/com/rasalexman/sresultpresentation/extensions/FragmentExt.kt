@@ -1,6 +1,8 @@
 @file:Suppress("unused")
 package com.rasalexman.sresultpresentation.extensions
 
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Build
@@ -38,7 +40,9 @@ import com.rasalexman.sresultpresentation.layout.BaseLayout
 import com.rasalexman.sresultpresentation.viewModels.BaseContextViewModel
 import com.rasalexman.sresultpresentation.viewModels.IBaseViewModel
 import com.rasalexman.sresultpresentation.viewModels.IEventableViewModel
+import com.rasalexman.sresultpresentation.viewModels.ISelectDateViewModel
 import com.rasalexman.sresultpresentation.viewModels.flowable.IFlowableViewModel
+import java.util.*
 
 private var lastSoftInput = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN
 
@@ -228,9 +232,9 @@ private fun IBaseFragment<*>.observeStateViewModel(currentFlowableVM: IFlowableV
 fun <T : SResult<*>> Fragment.onResultChange(data: LiveData<T>?, stateHandle: InHandler<T>) {
     data?.let { currentLiveData ->
         if(!currentLiveData.hasObservers()) {
-            currentLiveData.observe(this, { result ->
+            currentLiveData.observe(this) { result ->
                 result.handleResult(stateHandle)
-            })
+            }
         }
     }
 }
@@ -238,9 +242,9 @@ fun <T : SResult<*>> Fragment.onResultChange(data: LiveData<T>?, stateHandle: In
 fun <T : SResult<*>> DialogFragment.onResultChange(data: LiveData<T>?, stateHandle: InHandler<T>) {
     data?.let { currentLiveData ->
         if(!currentLiveData.hasObservers()) {
-            currentLiveData.observe(this, { result ->
+            currentLiveData.observe(this) { result ->
                 result.handleResult(stateHandle)
-            })
+            }
         }
     }
 }
@@ -251,17 +255,17 @@ fun <T : SResult<*>> LifecycleOwner.onResultChange(
 ) {
     data?.let { currentLiveData ->
         if(!currentLiveData.hasObservers()) {
-            currentLiveData.observe(this, { result ->
+            currentLiveData.observe(this) { result ->
                 result.handleResult(stateHandle)
-            })
+            }
         }
     }
 }
 
 fun <T : Any> BaseFragment<*>.onAnyChange(data: LiveData<T>?, stateHandle: InHandler<T>? = null) {
-    data?.observe(viewLifecycleOwner, {
+    data?.observe(viewLifecycleOwner) {
         stateHandle?.invoke(it)
-    })
+    }
 }
 
 /**
@@ -315,9 +319,9 @@ fun <T : Any> LifecycleOwner.onAnyChange(
 ) {
     data?.let { liveData ->
         if(!liveData.hasObservers()) {
-            liveData.observe(this, {
+            liveData.observe(this) {
                 stateHandle?.invoke(it)
-            })
+            }
         }
     }
 }
@@ -515,6 +519,47 @@ fun IBaseFragment<*>.navigateTo(
             }
         }
     }
+}
+
+fun <VM : ISelectDateViewModel> IBaseFragment<VM>.showDateTimePickDialog(
+    type: DateType = DateType.NONE,
+    dialogTitle: String = ""
+) {
+    val currentDateTime = Calendar.getInstance()
+    val startYear = currentDateTime.get(Calendar.YEAR)
+    val startMonth = currentDateTime.get(Calendar.MONTH)
+    val startDay = currentDateTime.get(Calendar.DAY_OF_MONTH)
+    val startHour = currentDateTime.get(Calendar.HOUR_OF_DAY)
+    val startMinute = currentDateTime.get(Calendar.MINUTE)
+
+    (this as? Fragment)?.let {
+        val fragmentContext = context
+        if (fragmentContext != null) {
+            val datePickerDialog = DatePickerDialog(fragmentContext, { _, year, month, day ->
+                TimePickerDialog(fragmentContext, { _, hour, minute ->
+                    val pickedDateTime = Calendar.getInstance(Locale.getDefault())
+                    pickedDateTime.set(year, month, day, hour, minute)
+                    viewModel?.onDateSelected(pickedDateTime.timeInMillis)
+                }, startHour, startMinute, true).show()
+            }, startYear, startMonth, startDay)
+
+            datePickerDialog.apply {
+                if (dialogTitle.isNotEmpty()) {
+                    setTitle(dialogTitle)
+                }
+                when (type) {
+                    DateType.MAX_DATE -> datePicker.maxDate = Date().time
+                    DateType.MIN_DATE -> datePicker.minDate = Date().time
+                    DateType.NONE -> Unit
+                }
+            }
+            datePickerDialog.show()
+        }
+    }
+}
+
+enum class DateType {
+    MAX_DATE, MIN_DATE, NONE
 }
 
 @Suppress("DEPRECATION")

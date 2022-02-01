@@ -5,6 +5,8 @@ import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.Drawable
+import android.os.Handler
+import android.os.Process
 import android.widget.Toast
 import androidx.annotation.ColorRes
 import androidx.annotation.DimenRes
@@ -130,4 +132,10 @@ fun Context.restartApp() {
         this.startActivity(mainIntent)
         exitProcess(0)
     }
+}
+
+fun Context.exitApp(postDelayMs: Long = 100L) {
+    Handler(mainLooper).postDelayed({
+        Process.killProcess(Process.myPid())
+    }, postDelayMs)
 }

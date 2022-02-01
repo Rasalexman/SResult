@@ -1,22 +1,17 @@
 package com.rasalexman.sresultexample.users
 
-import androidx.lifecycle.*
-import com.rasalexman.kodi.core.immutableInstance
-import com.rasalexman.sresult.common.extensions.toNavigateResult
-import com.rasalexman.sresult.common.extensions.unsafeLazy
+import androidx.lifecycle.LiveDataScope
+import com.rasalexman.sresult.common.extensions.*
 import com.rasalexman.sresult.common.typealiases.AnyResult
 import com.rasalexman.sresult.common.typealiases.FlowResultList
 import com.rasalexman.sresult.common.typealiases.ResultList
 import com.rasalexman.sresult.data.dto.ISEvent
+import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultexample.MainFragmentDirections
 import com.rasalexman.sresultexample.base.BaseItemsViewModel
 import com.rasalexman.sresultpresentation.extensions.AnyResultMutableLiveData
-import com.rasalexman.sresultpresentation.extensions.asyncLiveData
 import com.rasalexman.sresultpresentation.extensions.onEventMutable
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
 
 class UsersViewModel : BaseItemsViewModel() {
 
@@ -39,12 +34,18 @@ class UsersViewModel : BaseItemsViewModel() {
 
     override val supportLiveData: AnyResultMutableLiveData by unsafeLazy {
         onEventMutable<UserClickEvent, AnyResult> {
+            val sresult = anySuccess()
+            val flattedResult = sresult.flatMapIfNotType<SResult.AbstractResult<Any>> {
+                toastResult("Hello Im not this type")
+            }
+            supportLiveData.postValue(flattedResult)
+
             val navResult = MainFragmentDirections.showProfileFragment(itemId = it.id, userItem = it.item).toNavigateResult()
             emit(navResult)
         }
     }
 
-    override suspend fun LiveDataScope<ResultList<UserItem>>.processResultFlow(searchFlow: Flow<String>): FlowResultList<UserItem>? {
+    override suspend fun LiveDataScope<ResultList<UserItem>>.processResultFlow(searchFlow: Flow<String>): FlowResultList<UserItem> {
         return getUsersListUseCase(searchFlow)
     }
 

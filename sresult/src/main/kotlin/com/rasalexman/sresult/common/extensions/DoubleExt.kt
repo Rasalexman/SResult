@@ -64,8 +64,8 @@ fun Double.divideRoubleWithKop(): Pair<String, String> {
     }
 }
 
-fun Double?.toNullIfEmpty(): Double? {
-    return if (this == null || this == 0.0) null else this
+fun Double?.toNullIfEmpty(defaultEmpty: Double = 0.0): Double? {
+    return if (this == null || this == defaultEmpty) null else this
 }
 
 fun Double?.orZero(): Double {

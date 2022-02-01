@@ -1,15 +1,41 @@
 package com.rasalexman.sresult.common.extensions
 
+import android.text.SpannedString
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.random.Random
 
 fun Iterable<String>.toSQliteSet(): String {
     return this.joinToString(prefix = "(", separator = ",", postfix = ")") { "'$it'" }
 }
 
+val randomUUID: String
+    get() = UUID.randomUUID().toString().take(Random.nextInt(20, 50))
+
+fun String?.toSpannable(): SpannedString {
+    return SpannedString.valueOf(this.orEmpty())
+}
+
 fun String?.isSapTrue(): Boolean {
     return this == "X"
+}
+
+fun String?.orUUID(): String {
+    return this.takeIf { !it.isNullOrEmpty() } ?: randomUUID
+}
+
+fun String?.orEmptyValue(default: String? = null): String {
+    return this.takeIf { !it.isNullOrEmpty() } ?: default.orEmpty()
+}
+
+fun String.isUUID(): Boolean {
+    return try {
+        UUID.fromString(this)
+        true
+    } catch (e: IllegalArgumentException) {
+        false
+    }
 }
 
 fun String.splitByLines(oneLineMaxLength: Int): List<String> {

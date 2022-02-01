@@ -26,3 +26,26 @@ fun <K, V> Iterable<Pair<K, V>>.toMutableMap(): MutableMap<K, V> {
     }
     return toMap(LinkedHashMap())
 }
+
+/**
+ * Filtered first list by list predicate. Example:
+ *
+ * val list1 = listOf(User(1, "Alice"), User(2, "Mikhail"), User(3, "Sasha"))
+ * val list2 = listOf(User(5, "Alice"), User(3, "Mikhail"))
+ *
+ * val result = list1.subtract(list2) { a, b ->
+ *     a.name != b.name
+ * }
+ * result == listOf(User(3, "Sasha"))
+ *
+ * list1.removeAll(list2) not suitable because data classes may differ in other fields,
+ * and we need to compare only for certain fields
+ * */
+fun <T, U> List<T>.subtract(
+    secondList: Collection<U>,
+    filterPredicate: (T, U) -> Boolean,
+): List<T> {
+    return if (secondList.isNotEmpty()) {
+        this.filter { item -> secondList.all { filterPredicate(item, it) } }
+    } else this.toList()
+}

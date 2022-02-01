@@ -109,8 +109,8 @@ inline fun <reified I : SResult<*>> SResult<*>.flatMapIfType(block: (I) -> SResu
     else this
 }
 
-inline fun <reified I : SResult<*>> SResult<*>.flatMapIfNotType(block: (I?) -> SResult<*>): SResult<*> {
-    return if (this::class != I::class) block(this as? I)
+inline fun <reified I : SResult<*>> SResult<*>.flatMapIfNotType(block: (SResult<*>) -> SResult<*>): SResult<*> {
+    return if (this !is I) block(this)
     else this
 }
 
@@ -129,11 +129,11 @@ suspend inline fun <reified I : SResult<*>, reified O : SResult<*>> SResult<*>.f
     else this as O
 }
 
-suspend inline fun <reified I : SResult<*>, reified O : SResult<*>> SResult<*>.flatMapIfNotTypeSuspend(
-    crossinline block: suspend (I?) -> O
-): O {
-    return if (this::class != I::class) block(this as? I)
-    else this as O
+suspend inline fun <reified I : SResult<*>> SResult<*>.flatMapIfNotTypeSuspend(
+    crossinline block: suspend (SResult<*>) -> SResult<*>
+): SResult<*> {
+    return if (this !is I) block(this)
+    else this
 }
 
 

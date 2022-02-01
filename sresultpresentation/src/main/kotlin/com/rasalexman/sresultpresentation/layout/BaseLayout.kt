@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.FrameLayout
-import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.findFragment
@@ -24,7 +23,6 @@ import com.rasalexman.sresult.common.extensions.getMessage
 import com.rasalexman.sresult.common.extensions.loggE
 import com.rasalexman.sresult.common.extensions.or
 import com.rasalexman.sresult.data.dto.SResult
-import com.rasalexman.sresultpresentation.R
 import com.rasalexman.sresultpresentation.extensions.*
 import com.rasalexman.sresultpresentation.fragments.IBaseFragment
 import com.rasalexman.sresultpresentation.viewModels.BaseContextViewModel

@@ -22,16 +22,16 @@ fun <T : Any> ioFlow(flowBlock: suspend FlowCollector<T>.() -> Unit) = flow(flow
 fun <T : Any> safeIoFlow(defaultValue: T? = null, flowBlock: suspend FlowCollector<T>.() -> Unit) =
     ioFlow(flowBlock)
         .catch { throwable ->
-            logg { throwable.message }
+            loggE(throwable)
             defaultValue?.let { emit(it) }
         }
 
 /**
- *
+ * Запускает flow на IO потоке как [ioFlow]
  */
 fun<T : Any> safeIoResultFlow(flowBlock: suspend FlowCollector<SResult<T>>.() -> Unit) =
     ioFlow(flowBlock).catch { throwable ->
-        logg { throwable.message }
+        loggE(throwable)
         emit(errorResult(exception = throwable))
     }
 
@@ -44,4 +44,18 @@ fun <T : Any> Flow<T>.asState(
     started: SharingStarted = SharingStarted.WhileSubscribed()
 ): StateFlow<T> {
     return this.stateIn(scope, started, initialValue)
+}
+
+/**
+ * Taken from the kotlin coroutine library
+ * Stops further execution of the coroutine while [predicate] == false
+ * */
+suspend fun <T> Flow<T>.collectWhile(predicate: (T) -> Boolean) {
+    try {
+        collect {
+            if (predicate(it)) {
+                throw InterruptedException()
+            }
+        }
+    } catch (e : Exception) {}
 }

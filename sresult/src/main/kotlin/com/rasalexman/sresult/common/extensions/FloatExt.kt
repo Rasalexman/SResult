@@ -8,6 +8,6 @@ fun Float?.toStringOrEmpty(): String {
     return this?.toString().orEmpty()
 }
 
-fun Float.takeIfNotZero(): Float? {
-    return this.takeIf { it != 0f }
+fun Float?.takeIfNotZero(): Float? {
+    return this.takeIf { it != null && it != 0f }
 }

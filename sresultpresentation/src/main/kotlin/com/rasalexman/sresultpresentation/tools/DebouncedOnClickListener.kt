@@ -5,8 +5,17 @@ import android.view.View
 import java.util.*
 import kotlin.math.abs
 
+/**
+ * The one and only constructor
+ *
+ * @param minimumIntervalMillis The minimum allowed time between clicks - any click sooner than this after a previous click will be rejected
+ */
 abstract class DebouncedOnClickListener(private val minimumIntervalMillis: Long) : View.OnClickListener {
-    private val lastClickMap: MutableMap<View, Long>
+
+    /**
+     * View callbacks timestamps holder
+     */
+    private val lastClickMap: MutableMap<View, Long> = WeakHashMap()
 
     /**
      * Implement this in your subclass instead of onClick
@@ -21,14 +30,5 @@ abstract class DebouncedOnClickListener(private val minimumIntervalMillis: Long)
         if (previousClickTimestamp == null || abs(currentTimestamp - previousClickTimestamp) > minimumIntervalMillis) {
             onDebouncedClick(clickedView)
         }
-    }
-
-    /**
-     * The one and only constructor
-     *
-     * @param minimumIntervalMillis The minimum allowed time between clicks - any click sooner than this after a previous click will be rejected
-     */
-    init {
-        lastClickMap = WeakHashMap()
     }
 }
