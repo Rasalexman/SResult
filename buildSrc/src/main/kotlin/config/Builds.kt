@@ -6,7 +6,7 @@ object Builds {
     const val TARGET_VERSION = 31
     const val APP_ID = "com.rasalexman.sresultexample"
 
-    private const val kotlinSrcDir = "src/main/kotlin"
+    const val kotlinSrcDir = "src/main/kotlin"
     val codeDirs = listOf(kotlinSrcDir)
 
     object App {
