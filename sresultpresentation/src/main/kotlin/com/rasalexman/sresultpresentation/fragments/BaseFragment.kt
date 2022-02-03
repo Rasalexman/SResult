@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
@@ -23,7 +22,6 @@ import com.rasalexman.sresult.common.extensions.unsafeLazy
 import com.rasalexman.sresult.data.dto.ISEvent
 import com.rasalexman.sresult.data.dto.SEvent
 import com.rasalexman.sresult.data.dto.SResult
-import com.rasalexman.sresultpresentation.R
 import com.rasalexman.sresultpresentation.extensions.*
 import com.rasalexman.sresultpresentation.viewModels.IBaseViewModel
 import com.rasalexman.sresultpresentation.viewModels.IEventableViewModel

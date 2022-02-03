@@ -13,6 +13,7 @@ import com.rasalexman.sresultexample.databinding.FragmentBottomRecyclerBinding
 import com.rasalexman.sresultexample.databinding.ItemUserBinding
 import com.rasalexman.sresultexample.users.UserItem
 import com.rasalexman.sresultpresentation.databinding.BaseBindingBottomDialogFragment
+import com.rasalexman.sresultpresentation.extensions.refresh
 import com.rasalexman.sresultpresentation.extensions.string
 import com.rasalexman.sresultpresentation.extensions.windowHeight
 
@@ -21,6 +22,15 @@ class BottomRecyclerFragment :
     BaseBindingBottomDialogFragment<FragmentBottomRecyclerBinding, BottomRecyclerViewModel>() {
     override val layoutId: Int
         get() = R.layout.fragment_bottom_recycler
+
+    private val diffCallback = object : DiffCallback<UserItem>() {
+        override fun areItemsTheSame(
+            oldItem: UserItem,
+            newItem: UserItem
+        ): Boolean {
+            return oldItem.id == newItem.id
+        }
+    }
 
     override fun getTheme(): Int {
         return R.style.ModalBottomSheetDialog
@@ -38,18 +48,12 @@ class BottomRecyclerFragment :
         binding.rvConfig = createRecyclerConfig<UserItem, ItemUserBinding> {
             itemId = BR.item
             layoutId = R.layout.item_user
+            hasFixedSize = false
             onItemClick = { item, _ ->
                 navigatePopTo(backArgs = bundleOf(KEY_SELECTED to item.fullName))
             }
 
-            diffUtilCallback = object : DiffCallback<UserItem>() {
-                override fun areItemsTheSame(
-                    oldItem: UserItem,
-                    newItem: UserItem
-                ): Boolean {
-                    return oldItem.id == newItem.id
-                }
-            }
+            diffUtilCallback = diffCallback
         }
     }
 
@@ -60,8 +64,7 @@ class BottomRecyclerFragment :
 
     override fun onMenuItemClick(item: MenuItem): Boolean {
         if (item.itemId == R.id.actionRefresh) {
-            //dismiss()
-            viewModel.onShowEmpty()
+            refresh()
         }
         return super.onMenuItemClick(item)
     }
