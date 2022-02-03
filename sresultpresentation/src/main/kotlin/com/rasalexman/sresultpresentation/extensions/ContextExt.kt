@@ -1,6 +1,7 @@
 @file:Suppress("unused")
 package com.rasalexman.sresultpresentation.extensions
 
+import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
@@ -23,6 +24,10 @@ import kotlin.system.exitProcess
 private var alertDialog: Dialog? = null
 
 fun Context.toast(message: Any?, duration: Int = Toast.LENGTH_SHORT) {
+    //
+    if(this is Activity && this.isDestroyed) {
+        return
+    }
     when (message) {
         is String -> {
             if (message.isNotEmpty())

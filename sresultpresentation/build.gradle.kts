@@ -5,18 +5,23 @@ plugins {
     kotlin("kapt")
 }
 
-group = "com.rasalexman.sresultpresentation"
-version = config.Builds.SResult.VERSION_NAME
+val appVersion: String by rootProject.extra
+val codePath: String by rootProject.extra
+val supportGroupName: String by rootProject.extra
+val apiVersion: String by rootProject.extra
+val jvmVersion: String by rootProject.extra
+group = supportGroupName
+version = appVersion
 
 android {
-    compileSdk = config.Builds.COMPILE_VERSION
+    val buildSdkVersion: Int by extra
+    val minSdkVersion: Int by extra
+
+    compileSdk = buildSdkVersion
     defaultConfig {
-        minSdk = config.Builds.MIN_VERSION
-        targetSdk = config.Builds.TARGET_VERSION
-        //versionCode = config.Builds.SResult.VERSION_CODE
-        version = config.Builds.SResult.VERSION_NAME
-        multiDexEnabled = true
-        //testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
+        minSdk = minSdkVersion
+        targetSdk = buildSdkVersion
+        version = appVersion
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -56,19 +61,15 @@ android {
 
     sourceSets {
         getByName("main") {
-            java.srcDir(config.Builds.kotlinSrcDir)
+            java.srcDir(codePath)
         }
         getByName("release") {
-            java.srcDir(config.Builds.kotlinSrcDir)
+            java.srcDir(codePath)
         }
         getByName("debug") {
-            java.srcDir(config.Builds.kotlinSrcDir)
+            java.srcDir(codePath)
         }
     }
-
-    /*dexOptions {
-        javaMaxHeapSize = "4g"
-    }*/
 
     buildFeatures {
         dataBinding = true
@@ -76,10 +77,16 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = "11"
-        languageVersion = "1.6"
-        apiVersion = "1.6"
+        jvmTarget = jvmVersion
+        languageVersion = apiVersion
+        apiVersion = apiVersion
     }
+}
+
+tasks.create(name = "sourceJar", type = Jar::class) {
+    val dirs = android.sourceSets.getByName("main").java.srcDirs
+    from(dirs)
+    archiveClassifier.set("sources")
 }
 
 java {
@@ -95,41 +102,38 @@ java {
     withSourcesJar()
 }
 
-tasks.create(name = "sourceJar", type = Jar::class) {
-    val dirs = android.sourceSets.getByName("main").java.srcDirs
-    //println("-----> dirs: $dirs")
-    from(dirs)
-    archiveClassifier.set("sources")
-}
-
 dependencies {
-    //implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
-    //implementation(kotlin("stdlib-jdk8", config.Versions.kotlin))
-    api(config.Libs.Core.coroutines)
 
-    //api(config.Libs.Core.coreKtx)
-    api(config.Libs.Core.material)
-    api(config.Libs.Core.constraintLayout)
-    api(config.Libs.Core.fragment_ktx)
-    api(config.Libs.Core.navigationFragmentKtx)
-    api(config.Libs.Core.paging3)
-    //api(config.Libs.Core.viewPager2)
-    //api(config.Libs.Common.timber)
+    val viewpager2: String by rootProject.extra
+    val recyclerview: String by rootProject.extra
+    val coroutines: String by rootProject.extra
+    val fragmentKtx: String by rootProject.extra
+    val paging: String by rootProject.extra
+    val constraintlayout: String by rootProject.extra
+    val navigationFragment: String by rootProject.extra
+    val material: String by rootProject.extra
+    val livedataKtx: String by rootProject.extra
+    val viewmodelKtx: String by rootProject.extra
+    val easyrecyclerbinding: String by rootProject.extra
 
-    api(config.Libs.Lifecycle.livedataKtx)
-    api(config.Libs.Lifecycle.viewmodelKtx)
+    api(coroutines)
+    api(material)
+    api(constraintlayout)
+    api(fragmentKtx)
+    api(navigationFragment)
+    api(paging)
+    api(viewpager2)
+    api(recyclerview)
+    api(livedataKtx)
+    api(viewmodelKtx)
 
-
-    //api(config.Libs.Lifecycle.savedStateViewModel)
-    //api(config.Libs.Lifecycle.common)
-
-    api(config.Libs.Common.easyRecyclerBinding)
+    api(easyrecyclerbinding)
 
     api(project(":sresult"))
 
-    testImplementation(config.Libs.Tests.junit)
-    androidTestImplementation(config.Libs.Tests.runner)
-    androidTestImplementation(config.Libs.Tests.espresso)
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test:runner:1.4.0")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
 }
 
 afterEvaluate {
@@ -140,9 +144,9 @@ afterEvaluate {
                 from(components["release"])
 
                 // You can then customize attributes of the publication as shown below.
-                groupId = "com.rasalexman.sresultpresentation"
+                groupId = supportGroupName
                 artifactId = "sresultpresentation"
-                version = config.Builds.SResult.VERSION_NAME
+                version = appVersion
 
                 //artifact("$buildDir/outputs/aar/sresult-release.aar")
                 artifact(tasks["sourceJar"])
@@ -154,7 +158,7 @@ afterEvaluate {
                 // You can then customize attributes of the publication as shown below.
                 groupId = "com.rasalexman.sresultpresentation"
                 artifactId = "sresultpresentation-debug"
-                version = config.Builds.SResult.VERSION_NAME
+                version = appVersion
 
                 //artifact("$buildDir/outputs/aar/sresult-debug.aar")
                 artifact(tasks["sourceJar"])

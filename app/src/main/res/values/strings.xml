@@ -13,6 +13,7 @@
     <string name="button_back">Back</string>
     <string name="button_close">Close</string>
     <string name="button_profile">Show Users</string>
+    <string name="button_show_horizontal">Show Horizontal</string>
     <string name="button_success">Emit Success</string>
     <string name="button_do_action">Do Action</string>
     <string name="button_state">Show State Flow</string>

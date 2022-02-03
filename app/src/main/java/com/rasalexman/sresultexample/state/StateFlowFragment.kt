@@ -1,6 +1,5 @@
 package com.rasalexman.sresultexample.state
 
-import android.view.View
 import androidx.fragment.app.viewModels
 import com.rasalexman.sresultexample.R
 import com.rasalexman.sresultexample.databinding.FragmentStateFlowBinding
@@ -13,9 +12,6 @@ class StateFlowFragment : BaseBindingFragment<FragmentStateFlowBinding, StateFlo
 
     override val needBackButton: Boolean
         get() = true
-
-    override val loadingViewLayout: View
-        get() = binding.loadingLayout
 
     override val viewModel: StateFlowViewModel by viewModels()
 

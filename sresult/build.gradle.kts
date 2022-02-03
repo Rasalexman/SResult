@@ -1,24 +1,26 @@
-import config.Builds
-import config.Libs
-
 plugins {
     id("com.android.library")
     kotlin("android")
     id("maven-publish")
 }
 
-group = "com.rasalexman.sresult"
-version = Builds.SResult.VERSION_NAME
+val appVersion: String by rootProject.extra
+val codePath: String by rootProject.extra
+val mainGroupName: String by rootProject.extra
+val apiVersion: String by rootProject.extra
+val jvmVersion: String by rootProject.extra
+group = mainGroupName
+version = appVersion
 
 android {
-    compileSdk = Builds.COMPILE_VERSION
+    val buildSdkVersion: Int by extra
+    val minSdkVersion: Int by extra
+
+    compileSdk = buildSdkVersion
     defaultConfig {
-        minSdk = Builds.MIN_VERSION
-        targetSdk = Builds.TARGET_VERSION
-        //versionCode = Builds.SResult.VERSION_CODE
-        version = Builds.SResult.VERSION_NAME
-        multiDexEnabled = true
-        //testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
+        minSdk = minSdkVersion
+        targetSdk = buildSdkVersion
+        version = appVersion
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -58,14 +60,14 @@ android {
 
     sourceSets {
         getByName("main") {
-            java.setSrcDirs(Builds.codeDirs)
+            java.setSrcDirs(listOf(codePath))
         }
     }
 
     kotlinOptions {
-        jvmTarget = "11"
-        languageVersion = "1.6"
-        apiVersion = "1.6"
+        jvmTarget = jvmVersion
+        languageVersion = apiVersion
+        apiVersion = apiVersion
     }
 }
 
@@ -77,7 +79,7 @@ tasks.register<Jar>(name = "sourceJar") {
 java {
     sourceSets {
         create("main") {
-            java.setSrcDirs(Builds.codeDirs)
+            java.setSrcDirs(listOf(codePath))
         }
     }
     sourceCompatibility = JavaVersion.VERSION_11
@@ -89,14 +91,17 @@ java {
 
 dependencies {
     //implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
+    val timber: String by rootProject.extra
+    val kodi: String by rootProject.extra
+    val coroutinesmanager: String by rootProject.extra
 
-    api(Libs.Common.timber)
-    api(Libs.Common.kodi)
-    api(Libs.Common.coroutinesmanager)
+    api(timber)
+    api(kodi)
+    api(coroutinesmanager)
 
-    testImplementation(Libs.Tests.junit)
-    androidTestImplementation(Libs.Tests.runner)
-    androidTestImplementation(Libs.Tests.espresso)
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test:runner:1.4.0")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
 }
 
 afterEvaluate {
@@ -106,9 +111,9 @@ afterEvaluate {
                 from(components["release"])
 
                 // You can then customize attributes of the publication as shown below.
-                groupId = "com.rasalexman.sresult"
+                groupId = mainGroupName
                 artifactId = "sresult"
-                version = Builds.SResult.VERSION_NAME
+                version = appVersion
 
                 //artifact("$buildDir/outputs/aar/sresult-release.aar")
                 artifact(tasks["sourceJar"])

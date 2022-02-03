@@ -40,8 +40,8 @@ abstract class BaseBindingFragment<B : ViewDataBinding, VM : BaseContextViewMode
     override fun initBinding(binding: B) = Unit
 
     override fun onDestroyView() {
+        super.onDestroyView()
         currentBinding?.unbind()
         currentBinding = null
-        super.onDestroyView()
     }
 }

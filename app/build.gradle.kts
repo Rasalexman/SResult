@@ -1,6 +1,3 @@
-import config.Builds
-import config.Libs
-
 plugins {
     id("com.android.application")
     kotlin("android")
@@ -9,16 +6,19 @@ plugins {
     kotlin("kapt")
 }
 
+val apiVersion: String by rootProject.extra
+val jvmVersion: String by rootProject.extra
 android {
-    compileSdk = Builds.COMPILE_VERSION
+    val buildSdkVersion: Int by extra
+    val minSdkVersion: Int by extra
+
+    compileSdk = buildSdkVersion
     defaultConfig {
-        applicationId = Builds.APP_ID
-        minSdk = Builds.MIN_VERSION
-        targetSdk = Builds.TARGET_VERSION
-        //versionCode = Builds.App.VERSION_CODE
-        version = Builds.App.VERSION_NAME
+        applicationId = "com.rasalexman.sresultexample"
+        minSdk = minSdkVersion
+        targetSdk = buildSdkVersion
+        version = "1.0.2"
         multiDexEnabled = true
-        //testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -61,9 +61,9 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = "11"
-        languageVersion = "1.6"
-        apiVersion = "1.6"
+        jvmTarget = jvmVersion
+        languageVersion = apiVersion
+        apiVersion = apiVersion
         freeCompilerArgs = listOf(
             "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi",
             "-opt-in=kotlin.RequiresOptIn"
@@ -72,12 +72,12 @@ android {
 }
 
 dependencies {
-    implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
+    val leakCanary: String by rootProject.extra
 
     implementation(project(":sresultpresentation"))
 
-    debugImplementation(Libs.Common.leakCanary)
-    testImplementation(Libs.Tests.junit)
-    androidTestImplementation(Libs.Tests.runner)
-    androidTestImplementation(Libs.Tests.espresso)
+    debugImplementation(leakCanary)
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test:runner:1.4.0")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
 }

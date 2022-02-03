@@ -21,7 +21,7 @@ class StateFlowViewModel : FlowableViewModel() {
     override val resultFlow by unsafeLazy {
         onEventFlow<SEvent.Fetch, AnyResult> {
             emit(loadingResult())
-            delay(1000L)
+            delay(3000L)
             val toastText = stringSuspend(R.string.toast_state)
             val result = toastResult(toastText)
             emit(result)
@@ -33,7 +33,7 @@ class StateFlowViewModel : FlowableViewModel() {
             println("------> anyDataFlow combined = $r | $s")
             val text = r.takeIf { r.isToast }?.run {
                 "result is Toast | support = ${s.data}"
-            }.or { string(R.string.app_name) }
+            }.orIfEmpty { string(R.string.app_name) }
             text
         }.flowOn(Dispatchers.Default).filter { it.isNotEmpty() }
     }

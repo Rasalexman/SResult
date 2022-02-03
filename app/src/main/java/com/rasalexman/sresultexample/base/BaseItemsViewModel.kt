@@ -1,6 +1,7 @@
 package com.rasalexman.sresultexample.base
 
 import androidx.lifecycle.*
+import com.rasalexman.easyrecyclerbinding.ScrollPosition
 import com.rasalexman.sresult.common.extensions.emptyResult
 import com.rasalexman.sresult.common.extensions.getList
 import com.rasalexman.sresult.common.extensions.unsafeLazy
@@ -23,6 +24,7 @@ abstract class BaseItemsViewModel : BaseViewModel() {
     protected val searchLD: MutableLiveData<String> by unsafeLazy {
         MutableLiveData("")
     }
+    val scrollPosition: MutableLiveData<ScrollPosition> = MutableLiveData(ScrollPosition())
     override val eventLiveData: MutableLiveData<ISEvent> = MutableLiveData<ISEvent>(SEvent.Refresh)
 
     @OptIn(FlowPreview::class)

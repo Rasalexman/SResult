@@ -23,7 +23,6 @@ import androidx.viewpager.widget.ViewPager
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.tabs.TabLayout
-import com.rasalexman.easyrecyclerbinding.*
 import com.rasalexman.sresult.common.extensions.handle
 import com.rasalexman.sresult.common.extensions.loggE
 import com.rasalexman.sresult.common.extensions.or
@@ -176,13 +175,6 @@ fun ViewPager.clear() {
 fun ViewPager2.clear() {
     this.adapter = null
     this.tag = null
-
-    val callbackKey = this.hashCode().toString()
-    changeCallbackMap[callbackKey]?.let { pageCallback ->
-        pageCallback.onPageSelectedCallback = null
-        this.unregisterOnPageChangeCallback(pageCallback)
-        changeCallbackMap.remove(callbackKey)
-    }
 }
 
 fun TabLayout.clear() {
