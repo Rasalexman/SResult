@@ -1,14 +1,16 @@
 package com.rasalexman.sresultexample.viewpager.pages
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.rasalexman.easyrecyclerbinding.IBindingModel
+import com.rasalexman.easyrecyclerbinding.ScrollPosition
 import com.rasalexman.easyrecyclerbinding.recyclerConfig
 import com.rasalexman.sresult.common.extensions.toNavigateResult
 import com.rasalexman.sresult.common.extensions.unsafeLazy
 import com.rasalexman.sresult.common.typealiases.AnyResult
 import com.rasalexman.sresult.data.dto.ISEvent
 import com.rasalexman.sresultexample.BR
-import com.rasalexman.sresultexample.MainFragmentDirections
+import com.rasalexman.sresultexample.NavigationMainDirections
 import com.rasalexman.sresultexample.R
 import com.rasalexman.sresultexample.databinding.ItemRecyclerBinding
 import com.rasalexman.sresultpresentation.extensions.asyncLiveData
@@ -20,6 +22,8 @@ import kotlin.random.Random
 class SecondPageViewModel : BaseViewModel(), IBindingModel {
     override val layoutResId: Int
         get() = R.layout.item_vp2_second_page
+
+    val scrollPosition = MutableLiveData(ScrollPosition())
 
     val items: LiveData<MutableList<IRecyclerItem>> by unsafeLazy {
         asyncLiveData {
@@ -35,7 +39,7 @@ class SecondPageViewModel : BaseViewModel(), IBindingModel {
     }
 
     override val resultLiveData = onEvent<OnShowUserEvent, AnyResult>() {
-        emit( MainFragmentDirections.showUsersFragment(
+        emit( NavigationMainDirections.showUsersFragment(
             itemId = "HELLO WORLD"
         ).toNavigateResult())
     }

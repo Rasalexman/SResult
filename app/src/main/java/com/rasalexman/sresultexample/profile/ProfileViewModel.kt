@@ -7,7 +7,7 @@ import com.rasalexman.sresult.common.extensions.errorResult
 import com.rasalexman.sresult.common.extensions.logg
 import com.rasalexman.sresult.common.extensions.toNavigateResult
 import com.rasalexman.sresult.common.extensions.unsafeLazy
-import com.rasalexman.sresultexample.MainFragmentDirections
+import com.rasalexman.sresultexample.NavigationMainDirections
 import com.rasalexman.sresultexample.R
 import com.rasalexman.sresultpresentation.extensions.mutableSwitchMap
 import com.rasalexman.sresultpresentation.viewModels.SharedSavedStateViewModel
@@ -34,14 +34,14 @@ class ProfileViewModel(
     }
 
     fun onVPScreenClicked() {
-        navigationLiveData.value = MainFragmentDirections.showUsersPagerFragment().toNavigateResult()
+        navigationLiveData.value = NavigationMainDirections.showUsersPagerFragment().toNavigateResult()
     }
 
     fun onShowBottomScreenClicked() {
-        navigationLiveData.value = MainFragmentDirections.showUsersBottomFragment().toNavigateResult()
+        navigationLiveData.value = NavigationMainDirections.showUsersBottomFragment().toNavigateResult()
     }
 
     fun onShowEmptyClicked() {
-        navigationLiveData.value = MainFragmentDirections.showEmptyFragment().toNavigateResult()
+        navigationLiveData.value = NavigationMainDirections.showEmptyFragment().toNavigateResult()
     }
 }

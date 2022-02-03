@@ -118,13 +118,13 @@ class MainViewModel : BaseViewModel() {
     }
 
     fun onUsersClicked() {
-        navigationLiveData.value = MainFragmentDirections.showUsersFragment(
+        navigationLiveData.value = NavigationMainDirections.showUsersFragment(
             itemId = "HELLO WORLD"
         ).toNavigateResult()
     }
 
     fun onStateButtonClicked() {
-        navigationLiveData.value = MainFragmentDirections.showStateFlowFragment().toNavigateResult()
+        navigationLiveData.value = NavigationMainDirections.showStateFlowFragment().toNavigateResult()
     }
 
     fun onMenuChangeClicked() {

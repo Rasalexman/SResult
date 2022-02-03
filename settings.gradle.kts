@@ -39,7 +39,6 @@ dependencyResolutionManagement {
         maven { url = uri("https://plugins.gradle.org/m2/") }
     }
 }
-rootProject.buildFileName = "build.gradle.kts"
 rootProject.name = "SResultExample"
 include(":app")
 include(":sresult")

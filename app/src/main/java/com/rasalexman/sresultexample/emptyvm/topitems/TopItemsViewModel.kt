@@ -5,7 +5,7 @@ import com.rasalexman.easyrecyclerbinding.ScrollPosition
 import com.rasalexman.sresult.common.extensions.*
 import com.rasalexman.sresult.common.typealiases.ResultList
 import com.rasalexman.sresult.data.dto.SResult
-import com.rasalexman.sresultexample.MainFragmentDirections
+import com.rasalexman.sresultexample.NavigationMainDirections
 import com.rasalexman.sresultpresentation.extensions.asyncLiveData
 import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
 import kotlinx.coroutines.flow.filter
@@ -42,6 +42,6 @@ class TopItemsViewModel : BaseViewModel() {
 
     fun onItemClicked(item: TopItemUI) {
         logg { "SELECTED ITEM ID = ${item.itemId}" }
-        navigationLiveData.value = MainFragmentDirections.showStateFlowFragment().toNavigateResult()
+        navigationLiveData.value = NavigationMainDirections.showStateFlowFragment().toNavigateResult()
     }
 }

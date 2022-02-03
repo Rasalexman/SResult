@@ -101,9 +101,9 @@ abstract class BaseBindingLayout<VB : ViewDataBinding, VM : BaseContextViewModel
     }
 
     override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
         currentBinding?.unbind()
         currentBinding = null
-        super.onDetachedFromWindow()
     }
 
     override fun initBinding(binding: VB) = Unit

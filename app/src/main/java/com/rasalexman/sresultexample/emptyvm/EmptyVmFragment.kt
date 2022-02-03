@@ -2,7 +2,7 @@ package com.rasalexman.sresultexample.emptyvm
 
 import android.os.Bundle
 import com.rasalexman.sresult.common.extensions.toNavigateResult
-import com.rasalexman.sresultexample.MainFragmentDirections
+import com.rasalexman.sresultexample.NavigationMainDirections
 import com.rasalexman.sresultexample.R
 import com.rasalexman.sresultexample.bottomrecycler.BottomRecyclerFragment
 import com.rasalexman.sresultexample.databinding.FragmentEmptyVmBinding
@@ -22,10 +22,10 @@ class EmptyVmFragment : BaseBindingFragment<FragmentEmptyVmBinding, BaseViewMode
 
     override fun initBinding(binding: FragmentEmptyVmBinding) {
         binding.recyclerBottomButton.setOnClickListener {
-            onResultHandler(MainFragmentDirections.showBottomRecyclerFragment().toNavigateResult())
+            onResultHandler(NavigationMainDirections.showBottomRecyclerFragment().toNavigateResult())
         }
         binding.customDialogButton.setOnClickListener {
-            onResultHandler(MainFragmentDirections.showCustomDialogFragment().toNavigateResult())
+            onResultHandler(NavigationMainDirections.showCustomDialogFragment().toNavigateResult())
         }
     }
 

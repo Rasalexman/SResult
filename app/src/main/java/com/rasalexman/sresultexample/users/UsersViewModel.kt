@@ -7,7 +7,7 @@ import com.rasalexman.sresult.common.typealiases.FlowResultList
 import com.rasalexman.sresult.common.typealiases.ResultList
 import com.rasalexman.sresult.data.dto.ISEvent
 import com.rasalexman.sresult.data.dto.SResult
-import com.rasalexman.sresultexample.MainFragmentDirections
+import com.rasalexman.sresultexample.NavigationMainDirections
 import com.rasalexman.sresultexample.base.BaseItemsViewModel
 import com.rasalexman.sresultpresentation.extensions.AnyResultMutableLiveData
 import com.rasalexman.sresultpresentation.extensions.onEventMutable
@@ -17,21 +17,6 @@ class UsersViewModel : BaseItemsViewModel() {
 
     private val getUsersListUseCase: ISearchUserItemsUseCase = SearchUserItemsUseCase()
 
-   /* override val items: LiveData<List<UserItem>> by unsafeLazy {
-        super.items.switchMap { items ->
-            asyncLiveData {
-                searchLD.asFlow().debounce(200L).distinctUntilChanged().collect { query ->
-                    val result = if(query.isNotEmpty() && items.isNotEmpty()) {
-                        items.filter { it.fullName.contains(query , true) }
-                    } else {
-                        items
-                    }
-                    emit(result)
-                }
-            }
-        }
-    }*/
-
     override val supportLiveData: AnyResultMutableLiveData by unsafeLazy {
         onEventMutable<UserClickEvent, AnyResult> {
             val sresult = anySuccess()
@@ -40,7 +25,7 @@ class UsersViewModel : BaseItemsViewModel() {
             }
             supportLiveData.postValue(flattedResult)
 
-            val navResult = MainFragmentDirections.showProfileFragment(itemId = it.id, userItem = it.item).toNavigateResult()
+            val navResult = NavigationMainDirections.showProfileFragment(itemId = it.id, userItem = it.item).toNavigateResult()
             emit(navResult)
         }
     }

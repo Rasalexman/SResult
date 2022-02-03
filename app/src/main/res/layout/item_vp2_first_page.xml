@@ -26,14 +26,12 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:layout_marginBottom="12dp"
+                android:layout_marginVertical="@dimen/size_12dp"
                 android:gravity="center_vertical|start"
                 android:hint="@string/title_profile"
                 android:maxLines="1"
                 android:text="@={vm.login}"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
+                android:paddingHorizontal="@dimen/size_16dp"
                 android:textColor="@color/gray"
                 android:textColorHint="@color/gray"
                 android:textSize="14sp" />
@@ -49,26 +47,23 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:layout_marginBottom="12dp"
+                android:layout_marginVertical="@dimen/size_12dp"
                 android:gravity="center_vertical|start"
                 android:hint="@string/app_name"
                 android:maxLines="1"
                 android:inputType="textPassword"
                 android:text="@={vm.password}"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
+                android:paddingHorizontal="@dimen/size_16dp"
                 android:textColor="@color/gray"
                 android:textColorHint="@color/gray"
                 android:textSize="14sp" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:layout_width="160dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginVertical="@dimen/size_16dp"
             android:text="@string/title_ok"
             android:onClick="@{() -> vm.onSingInButtonClicked()}"
             />

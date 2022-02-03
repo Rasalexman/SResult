@@ -4,7 +4,7 @@ import androidx.lifecycle.asLiveData
 import com.rasalexman.sresult.common.extensions.*
 import com.rasalexman.sresult.common.typealiases.AnyResult
 import com.rasalexman.sresult.data.dto.SEvent
-import com.rasalexman.sresultexample.MainFragmentDirections
+import com.rasalexman.sresultexample.NavigationMainDirections
 import com.rasalexman.sresultexample.R
 import com.rasalexman.sresultpresentation.extensions.launchUITryCatch
 import com.rasalexman.sresultpresentation.extensions.onEventFlow
@@ -48,13 +48,13 @@ class StateFlowViewModel : FlowableViewModel() {
 
     fun onSuccessClicked() = launchUITryCatch {
         supportFlow.tryEmit(loadingResult())
-        delay(1000L)
+        delay(2000L)
         supportFlow.tryEmit(successResult(UUID.randomUUID().toString().take(5)))
     }
 
     fun onShowAnotherFragment() = launchUITryCatch {
         supportFlow.tryEmit(loadingResult())
         delay(2000L)
-        navigationFlow.tryEmit(MainFragmentDirections.showEmptyFragment().toNavigateResult())
+        navigationFlow.tryEmit(NavigationMainDirections.showEmptyFragment().toNavigateResult())
     }
 }

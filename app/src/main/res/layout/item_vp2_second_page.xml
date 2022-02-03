@@ -22,6 +22,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:position="@{vm.scrollPosition}"
             app:rv_config="@{vm.createRvConfig()}" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
