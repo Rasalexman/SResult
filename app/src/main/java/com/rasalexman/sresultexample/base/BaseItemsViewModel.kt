@@ -14,10 +14,7 @@ import com.rasalexman.sresultexample.users.UserItem
 import com.rasalexman.sresultpresentation.extensions.onEvent
 import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.*
 
 abstract class BaseItemsViewModel : BaseViewModel() {
 

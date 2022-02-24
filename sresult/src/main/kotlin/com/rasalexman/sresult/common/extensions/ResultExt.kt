@@ -48,12 +48,12 @@ fun Any.navigateBy(
 fun Any.navigatePopTo(
     navigateResourceId: Int? = null,
     isInclusive: Boolean = false,
-    backArgs: Map<String, Any>? = null
+    backArgs: Map<String, Any?>? = null
 ) = SResult.NavigateResult.NavigatePopTo(navigateResourceId, isInclusive).apply {
     this.args = backArgs
 }
 
-fun Any.navigatePop(backArgs: Map<String, Any>? = null) = SResult.NavigateResult.NavigatePop().apply {
+fun Any.navigatePop(backArgs: Map<String, Any?>? = null) = SResult.NavigateResult.NavigatePop().apply {
     this.args = backArgs
 }
 

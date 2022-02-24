@@ -86,7 +86,7 @@ sealed class SResult<out T : Any> {
         override var isNeedHandle = true
         open val navDirection: Any? = null
         open val navigateResourceId: Int? = null
-        open var args: Map<String, Any>? = null
+        open var args: Map<String, Any?>? = null
 
         abstract class BaseNavigationResult : NavigateResult()
 

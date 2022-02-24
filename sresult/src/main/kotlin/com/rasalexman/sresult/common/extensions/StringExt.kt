@@ -11,7 +11,7 @@ fun Iterable<String>.toSQliteSet(): String {
 }
 
 val randomUUID: String
-    get() = UUID.randomUUID().toString().take(Random.nextInt(20, 50))
+    get() = UUID.randomUUID().toString()
 
 fun String?.toSpannable(): SpannedString {
     return SpannedString.valueOf(this.orEmpty())

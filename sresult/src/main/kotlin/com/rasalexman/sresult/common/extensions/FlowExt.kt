@@ -1,6 +1,7 @@
 package com.rasalexman.sresult.common.extensions
 
 import com.rasalexman.sresult.data.dto.SResult
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -53,9 +54,13 @@ fun <T : Any> Flow<T>.asState(
 suspend fun <T> Flow<T>.collectWhile(predicate: (T) -> Boolean) {
     try {
         collect {
-            if (predicate(it)) {
+            if (!predicate(it)) {
                 throw InterruptedException()
             }
         }
-    } catch (e : Exception) {}
+    } catch (e : Exception) {
+        if(e is CancellationException) {
+            throw e
+        }
+    }
 }

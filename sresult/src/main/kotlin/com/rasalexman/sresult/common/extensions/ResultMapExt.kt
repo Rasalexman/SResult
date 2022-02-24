@@ -1,4 +1,4 @@
-@file:Suppress("UNCHECKED_CAST")
+@file:Suppress("UNCHECKED_CAST", "unused")
 package com.rasalexman.sresult.common.extensions
 
 import com.rasalexman.sresult.common.typealiases.FlowResultList
@@ -44,8 +44,8 @@ inline fun <reified O : Any, reified T : Any> FlowResultList<IConvertableWithPar
     }
 }
 
-inline fun <reified T : List<*>> T.mapToResult(): SResult<T> {
-    return this.takeIf { it.isNotEmpty() }.toSuccessResult()
+inline fun <reified T : List<*>> T.mapToResult(default: SResult<T> = emptyResult()): SResult<T> {
+    return this.takeIf { it.isNotEmpty() }.toSuccessResult(default)
 }
 
 inline fun <reified T : Any, reified O : Any> List<IConvertableWithParams<T, O>>.mapListToWithParams(param: O): List<T> {
