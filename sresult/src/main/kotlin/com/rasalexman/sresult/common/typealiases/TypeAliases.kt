@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.rasalexman.sresult.common.typealiases
 
 import com.rasalexman.sresult.data.dto.SResult

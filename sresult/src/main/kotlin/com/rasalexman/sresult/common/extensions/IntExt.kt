@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.rasalexman.sresult.common.extensions
 
 fun Int?.orZero(): Int {

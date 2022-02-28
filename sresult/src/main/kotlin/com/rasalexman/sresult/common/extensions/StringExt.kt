@@ -1,10 +1,11 @@
+@file:Suppress("unused")
+
 package com.rasalexman.sresult.common.extensions
 
 import android.text.SpannedString
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.random.Random
 
 fun Iterable<String>.toSQliteSet(): String {
     return this.joinToString(prefix = "(", separator = ",", postfix = ")") { "'$it'" }
