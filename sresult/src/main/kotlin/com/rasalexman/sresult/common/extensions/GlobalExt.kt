@@ -5,26 +5,41 @@ import com.rasalexman.sresult.common.typealiases.InHandler
 import com.rasalexman.sresult.common.typealiases.OutHandler
 import timber.log.Timber
 
-const val DEFAULT_TAG = "------> "
+const val DEFAULT_TAG = "------>"
 
 inline fun Any.logg(lambda: () -> String?) {
-    Timber.d("$DEFAULT_TAG[${this::class.simpleName}]: ${lambda().orEmpty()}")
+    Timber.d("$DEFAULT_TAG [${this::class.simpleName}]: ${lambda().orEmpty()}")
 }
 
 fun Any.logg(message: String?, tag: String = DEFAULT_TAG) {
-    Timber.d("$tag [${this::class.simpleName}]: ${message.orEmpty()}")
+    val realMessage = message.orEmpty()
+    val output = if(this is String) {
+        "$tag [$this]: $realMessage"
+    } else if(this is Throwable) {
+        "$tag [${this.toString()}]: $realMessage"
+    } else {
+        "$tag [${this::class.simpleName}]: $realMessage"
+    }
+    Timber.d(output)
 }
 
 fun Any.loggE(exception: Throwable? = null, message: String? = null) {
     if(this is Throwable) {
-        Timber.e(this::class.simpleName, message)
+        Timber.e("$DEFAULT_TAG [${this.toString()}]: ${message.orEmpty()}")
     } else {
         Timber.e(exception, message)
     }
 }
 
 fun Any.loggE(lambda: () -> String) {
-    Timber.e(this::class.simpleName, lambda())
+    val message = if(this is String) {
+        "$DEFAULT_TAG [$this]: ${lambda()}"
+    } else if(this is Throwable) {
+        "$DEFAULT_TAG [${this.toString()}]: ${lambda()}"
+    } else {
+        "$DEFAULT_TAG [${this::class.simpleName}]: ${lambda()}"
+    }
+    Timber.e(message)
 }
 
 fun <T, R> T?.doIfNull(input: OutHandler<R>): Any? {
