@@ -31,7 +31,7 @@ class TopItemsLayout : BaseBindingLayout<LayoutTopItemsBinding, TopItemsViewMode
             layoutId = R.layout.item_top
             hasFixedSize = false
             orientation = LinearLayout.HORIZONTAL
-            onItemClick = { item, _ ->
+            onItemClick = { item ->
                 viewModel.onItemClicked(item)
             }
 

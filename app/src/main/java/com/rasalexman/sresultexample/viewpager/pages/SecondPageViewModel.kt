@@ -47,7 +47,7 @@ class SecondPageViewModel : BaseViewModel(), IBindingModel {
     fun createRvConfig() = recyclerConfig<SimpleRecyclerItemUI, ItemRecyclerBinding> {
         itemId = BR.item
         layoutId = R.layout.item_recycler
-        onItemClick = { _, _ ->
+        onItemClick = { _ ->
             showProfileUsersFragment()
         }
     }

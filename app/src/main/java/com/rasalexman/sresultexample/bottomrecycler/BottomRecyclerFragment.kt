@@ -49,7 +49,7 @@ class BottomRecyclerFragment :
             itemId = BR.item
             layoutId = R.layout.item_user
             hasFixedSize = false
-            onItemClick = { item, _ ->
+            onItemClick = { item ->
                 navigatePopTo(backArgs = bundleOf(KEY_SELECTED to item.fullName))
             }
 

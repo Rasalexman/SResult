@@ -8,23 +8,23 @@ import timber.log.Timber
 const val DEFAULT_TAG = "------> "
 
 inline fun Any.logg(lambda: () -> String?) {
-    Timber.d("$DEFAULT_TAG[${this::class.java.simpleName}]: ${lambda().orEmpty()}")
+    Timber.d("$DEFAULT_TAG[${this::class.simpleName}]: ${lambda().orEmpty()}")
 }
 
 fun Any.logg(message: String?, tag: String = DEFAULT_TAG) {
-    Timber.d("$tag [${this::class.java.simpleName}]: ${message.orEmpty()}")
+    Timber.d("$tag [${this::class.simpleName}]: ${message.orEmpty()}")
 }
 
 fun Any.loggE(exception: Throwable? = null, message: String? = null) {
     if(this is Throwable) {
-        Timber.e(this, message)
+        Timber.e(this::class.simpleName, message)
     } else {
         Timber.e(exception, message)
     }
 }
 
 fun Any.loggE(lambda: () -> String) {
-    Timber.e(this.toString(), lambda())
+    Timber.e(this::class.simpleName, lambda())
 }
 
 fun <T, R> T?.doIfNull(input: OutHandler<R>): Any? {
