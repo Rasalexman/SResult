@@ -1,5 +1,5 @@
 //------ APP VERSION
-extra["appVersion"] = "1.3.45"
+extra["appVersion"] = "1.3.46"
 extra["mainGroupName"] = "com.rasalexman.sresult"
 extra["supportGroupName"] = "com.rasalexman.sresultpresentation"
 
@@ -17,8 +17,8 @@ extra["resPath"] = "src/main/res"
 
 //------- LIBS VERSIONS
 val navigation = "2.5.0-rc01"//"2.5.0-alpha01"
-val leakcanary = "2.8.1"
-val coroutines = "1.6.1"
+val leakcanary = "2.9.1"
+val coroutines = "1.6.2"
 val core: String = "1.8.0-rc02"
 val constraintLayout = "2.1.4"
 val material = "1.7.0-alpha02"
