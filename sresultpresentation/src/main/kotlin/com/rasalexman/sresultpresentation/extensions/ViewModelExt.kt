@@ -22,35 +22,38 @@ fun BaseContextViewModel.launchUITryCatch(
     start: CoroutineStart = CoroutineStart.DEFAULT,
     catchBlock: ((Throwable) -> Unit)? = null, tryBlock: suspend CoroutineScope.() -> Unit
 ) {
-    try {
-        viewModelScope.launch(
-            viewModelScope.coroutineContext + dispatcher + superVisorJob,
-            start,
-            tryBlock
-        )
-    } catch (e: Throwable) {
+    val exceptionHandler = CoroutineExceptionHandler { _, e ->
         catchBlock?.invoke(e) ?: handleErrorState(e.toErrorResult())
     }
+    viewModelScope.launch(
+        viewModelScope.coroutineContext + dispatcher + superVisorJob + exceptionHandler,
+        start,
+        tryBlock
+    )
 }
 
 fun BaseContextViewModel.launchAsyncTryCatch(
     catchBlock: ((Throwable) -> Unit)? = null,
     tryBlock: suspend CoroutineScope.() -> Unit
 ) {
-    try {
-        launchAsync(block = tryBlock)
-    } catch (e: Throwable) {
+    val exceptionHandler = CoroutineExceptionHandler { _, e ->
         catchBlock?.invoke(e) ?: handleErrorState(e.toErrorResult())
     }
+    launchAsync(exceptionHandler = exceptionHandler, block = tryBlock)
 }
 
 fun BaseContextViewModel.launchAsync(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
     start: CoroutineStart = CoroutineStart.DEFAULT,
+    exceptionHandler: CoroutineExceptionHandler? = null,
     block: suspend CoroutineScope.() -> Unit
 ) {
+    val context = (viewModelScope.coroutineContext + dispatcher + superVisorJob).let {
+        if (exceptionHandler != null) it + exceptionHandler else it
+    }
+
     viewModelScope.launch(
-        viewModelScope.coroutineContext + dispatcher + superVisorJob,
+        context,
         start,
         block
     )
