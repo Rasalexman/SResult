@@ -4,6 +4,8 @@ import androidx.lifecycle.asLiveData
 import com.rasalexman.sresult.common.extensions.loadingResult
 import com.rasalexman.sresult.common.extensions.toSuccessResult
 import com.rasalexman.sresult.common.extensions.unsafeLazy
+import com.rasalexman.sresult.data.dto.SEvent
+import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultexample.R
 import com.rasalexman.sresultpresentation.extensions.onEventFlow
 import com.rasalexman.sresultpresentation.viewModels.flowable.FlowableViewModel
@@ -18,7 +20,7 @@ class StateLayoutViewModel : FlowableViewModel() {
     override val toolbarTitle: MutableStateFlow<String> = MutableStateFlow(string(R.string.title_state_flow))
 
     override val resultFlow by unsafeLazy {
-        onEventFlow<com.rasalexman.sresult.data.dto.SEvent.Fetch, com.rasalexman.sresult.data.dto.SResult<String>> {
+        onEventFlow<SEvent.Fetch, SResult<String>> {
             emit(loadingResult())
             delay(1000L)
             val rnd = Random.nextInt(10, 40)
@@ -34,6 +36,6 @@ class StateLayoutViewModel : FlowableViewModel() {
     }
 
     fun onGenerateClicked() {
-        processEvent(com.rasalexman.sresult.data.dto.SEvent.Fetch)
+        processEvent(SEvent.Fetch)
     }
 }

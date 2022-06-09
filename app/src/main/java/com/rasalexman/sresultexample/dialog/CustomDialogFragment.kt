@@ -9,6 +9,7 @@ import androidx.navigation.fragment.findNavController
 import com.rasalexman.sresult.common.extensions.applyIfError
 import com.rasalexman.sresult.common.extensions.applyIfSuccess
 import com.rasalexman.sresult.common.extensions.applyIfType
+import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultexample.R
 import com.rasalexman.sresultexample.databinding.FragmentCustomDialogBinding
 import com.rasalexman.sresultpresentation.databinding.BaseBindingDialogFragment
@@ -33,9 +34,9 @@ class CustomDialogFragment : BaseBindingDialogFragment<FragmentCustomDialogBindi
         requireDialog().setCancelable(false)
     }
 
-    override fun onResultHandler(result: com.rasalexman.sresult.data.dto.SResult<*>) {
+    override fun onResultHandler(result: SResult<*>) {
         super.onResultHandler(result)
-        result.applyIfType<com.rasalexman.sresult.data.dto.SResult.NavigateResult.NavigateTo> {
+        result.applyIfType<SResult.NavigateResult.NavigateTo> {
             super.onBackPressed()
         }.applyIfSuccess {
             onBackPressed()
@@ -56,7 +57,7 @@ class CustomDialogFragment : BaseBindingDialogFragment<FragmentCustomDialogBindi
     }
 
     override fun showNavigationError(e: Exception?, navResId: Int?) = Unit
-    override fun showSuccess(result: com.rasalexman.sresult.data.dto.SResult.Success<*>) = Unit
+    override fun showSuccess(result: SResult.Success<*>) = Unit
 
     companion object {
         const val COMPLETE_RESULT = "LoadingDialogFragment_complete"

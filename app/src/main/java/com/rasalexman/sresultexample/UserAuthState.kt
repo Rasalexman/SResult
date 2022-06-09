@@ -1,6 +1,8 @@
 package com.rasalexman.sresultexample
 
-sealed class UserAuthState : com.rasalexman.sresult.data.dto.SResult.NothingResult(), IUserState {
+import com.rasalexman.sresult.data.dto.SResult
+
+sealed class UserAuthState : SResult.NothingResult(), IUserState {
 
     class UserState : UserAuthState(), IUserState
     object UserSuccessState : UserAuthState(), IUserSuccessState
@@ -9,11 +11,11 @@ sealed class UserAuthState : com.rasalexman.sresult.data.dto.SResult.NothingResu
     class Success(
         userData: UserModel,
         private val userState: UserState = UserState()
-    ) : com.rasalexman.sresult.data.dto.SResult.Success<UserModel>(userData),
+    ) : SResult.Success<UserModel>(userData),
         IUserSuccessState by UserSuccessState,
         IUserState by userState
 
-    object Failure : com.rasalexman.sresult.data.dto.SResult.AbstractFailure.Failure(),
+    object Failure : AbstractFailure.Failure(),
         IUserFailureState by UserFailureState,
         IUserSuccessState by UserSuccessState
 

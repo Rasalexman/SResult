@@ -7,6 +7,9 @@ import com.rasalexman.sresult.common.extensions.getList
 import com.rasalexman.sresult.common.extensions.unsafeLazy
 import com.rasalexman.sresult.common.typealiases.FlowResultList
 import com.rasalexman.sresult.common.typealiases.ResultList
+import com.rasalexman.sresult.data.dto.ISEvent
+import com.rasalexman.sresult.data.dto.SEvent
+import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultexample.users.UserItem
 import com.rasalexman.sresultpresentation.extensions.onEvent
 import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
@@ -22,8 +25,8 @@ abstract class BaseItemsViewModel : BaseViewModel() {
         MutableLiveData("")
     }
     val scrollPosition: MutableLiveData<ScrollPosition> = MutableLiveData(ScrollPosition())
-    override val eventLiveData: MutableLiveData<com.rasalexman.sresult.data.dto.ISEvent> = MutableLiveData<com.rasalexman.sresult.data.dto.ISEvent>(
-        com.rasalexman.sresult.data.dto.SEvent.Refresh)
+    override val eventLiveData: MutableLiveData<ISEvent> = MutableLiveData<ISEvent>(
+        SEvent.Refresh)
 
     @OptIn(FlowPreview::class)
     private val searchQuery by unsafeLazy {
@@ -31,7 +34,7 @@ abstract class BaseItemsViewModel : BaseViewModel() {
     }
 
     override val resultLiveData: LiveData<ResultList<UserItem>> by unsafeLazy {
-        onEvent<com.rasalexman.sresult.data.dto.SEvent.Refresh, ResultList<UserItem>> {
+        onEvent<SEvent.Refresh, ResultList<UserItem>> {
             applyResultLiveData()
         }
     }
@@ -47,7 +50,7 @@ abstract class BaseItemsViewModel : BaseViewModel() {
     }
 
    open val items: LiveData<List<UserItem>> by unsafeLazy {
-        resultLiveData.asFlow().filter { it is com.rasalexman.sresult.data.dto.SResult.Success }.asLiveData().distinctUntilChanged().map { result ->
+        resultLiveData.asFlow().filter { it is SResult.Success }.asLiveData().distinctUntilChanged().map { result ->
             result.getList()
         }
     }

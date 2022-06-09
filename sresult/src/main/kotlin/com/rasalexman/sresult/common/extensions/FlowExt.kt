@@ -30,7 +30,7 @@ fun <T : Any> safeIoFlow(defaultValue: T? = null, flowBlock: suspend FlowCollect
 /**
  * Запускает flow на IO потоке как [ioFlow]
  */
-fun<T : Any> safeIoResultFlow(flowBlock: suspend FlowCollector<com.rasalexman.sresult.data.dto.SResult<T>>.() -> Unit) =
+fun<T : Any> safeIoResultFlow(flowBlock: suspend FlowCollector<SResult<T>>.() -> Unit) =
     ioFlow(flowBlock).catch { throwable ->
         loggE(throwable)
         emit(errorResult(exception = throwable))

@@ -4,8 +4,8 @@ import com.rasalexman.sresult.data.dto.ISEvent
 import com.rasalexman.sresult.data.dto.SResult
 
 interface IEventableViewModel {
-    fun processEvent(viewEvent: com.rasalexman.sresult.data.dto.ISEvent)
-    fun processEventAsync(viewEvent: com.rasalexman.sresult.data.dto.ISEvent)
+    fun processEvent(viewEvent: ISEvent)
+    fun processEventAsync(viewEvent: ISEvent)
 
-    fun handleErrorState(errorResult: com.rasalexman.sresult.data.dto.SResult.AbstractFailure)
+    fun handleErrorState(errorResult: SResult.AbstractFailure)
 }

@@ -1,5 +1,7 @@
 package com.rasalexman.sresult.data.dto
 
+import kotlin.native.concurrent.ThreadLocal
+
 /**
  * States
  */
@@ -134,13 +136,14 @@ abstract class SResult<out T : Any> : ISResult {
     /**
      * Any empty State with no result
      */
+    @ThreadLocal
     object EmptyUnhandled : NothingResult() {
         override var isHandled: Boolean = false
         override var isNeedHandle: Boolean = false
     }
 
     //---- Error States
-    abstract class AbstractFailure : SResult.NothingResult() {
+    abstract class AbstractFailure : NothingResult() {
         open val message: Any? = null
         open val exception: Throwable? = null
         open val code: Int = 0
@@ -171,7 +174,7 @@ abstract class SResult<out T : Any> : ISResult {
     }
 
     //---- Navigation States
-    abstract class NavigateResult : SResult.NothingResult() {
+    abstract class NavigateResult : NothingResult() {
         override var isNeedHandle = true
         open val navDirection: Any? = null
         open val navigateResourceId: Int? = null

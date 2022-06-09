@@ -70,9 +70,9 @@ inline fun <reified T> BaseContextViewModel.asyncMutableLiveData(
 ): MutableLiveData<T> = asyncLiveData(dispatcher = dispatcher, block = block) as MutableLiveData<T>
 
 @Suppress("UNCHECKED_CAST")
-suspend inline fun <reified E : com.rasalexman.sresult.data.dto.ISEvent, reified T : Any?> LiveDataScope<T>.processEventsCollect(
+suspend inline fun <reified E : ISEvent, reified T : Any?> LiveDataScope<T>.processEventsCollect(
     eventDelay: Long = 0L,
-    eventFlow: Flow<com.rasalexman.sresult.data.dto.ISEvent>,
+    eventFlow: Flow<ISEvent>,
     crossinline block: suspend LiveDataScope<T>.(E) -> Unit
 ) {
     eventFlow.collect { event ->
@@ -96,7 +96,7 @@ suspend inline fun <reified E : com.rasalexman.sresult.data.dto.ISEvent, reified
 /**
  *
  */
-inline fun <reified E : com.rasalexman.sresult.data.dto.ISEvent, reified T : Any?> BaseViewModel.onEvent(
+inline fun <reified E : ISEvent, reified T : Any?> BaseViewModel.onEvent(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
     isDistinct: Boolean = false,
     autoObserved: Boolean = false,
@@ -121,15 +121,15 @@ inline fun <reified E : com.rasalexman.sresult.data.dto.ISEvent, reified T : Any
 /**
  *
  */
-inline fun <reified E : com.rasalexman.sresult.data.dto.ISEvent> BaseViewModel.onEventResult(
+inline fun <reified E : ISEvent> BaseViewModel.onEventResult(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
     isDistinct: Boolean = false,
     autoObserved: Boolean = false,
     eventDelay: Long = 0L,
-    crossinline block: suspend LiveDataScope<com.rasalexman.sresult.data.dto.SResult<*>>.(E) -> Unit
-): LiveData<com.rasalexman.sresult.data.dto.SResult<*>> {
+    crossinline block: suspend LiveDataScope<SResult<*>>.(E) -> Unit
+): LiveData<SResult<*>> {
     val eld = if (isDistinct) eventLiveData.asFlow().distinctUntilChanged() else eventLiveData.asFlow()
-    val eventLV: LiveData<com.rasalexman.sresult.data.dto.SResult<*>> = asyncLiveData(dispatcher = dispatcher) {
+    val eventLV: LiveData<SResult<*>> = asyncLiveData(dispatcher = dispatcher) {
         processEventsCollect(
             eventDelay = eventDelay,
             eventFlow = eld,
@@ -143,7 +143,7 @@ inline fun <reified E : com.rasalexman.sresult.data.dto.ISEvent> BaseViewModel.o
 }
 
 @Suppress("UNCHECKED_CAST")
-inline fun <reified E : com.rasalexman.sresult.data.dto.ISEvent, reified T : Any?> BaseViewModel.onEventMutable(
+inline fun <reified E : ISEvent, reified T : Any?> BaseViewModel.onEventMutable(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
     isDistinct: Boolean = false,
     eventDelay: Long = 0L,
@@ -159,8 +159,8 @@ inline fun <reified E : com.rasalexman.sresult.data.dto.ISEvent, reified T : Any
     }
 }
 
-inline fun <reified E : com.rasalexman.sresult.data.dto.ISEvent, reified T : Any> IEventableViewModel.createEventFlow(
-    eventFlow: Flow<com.rasalexman.sresult.data.dto.ISEvent>,
+inline fun <reified E : ISEvent, reified T : Any> IEventableViewModel.createEventFlow(
+    eventFlow: Flow<ISEvent>,
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
     eventDelay: Long = 0,
     noinline emitOnStart: (() -> T)? = null,
@@ -187,7 +187,7 @@ inline fun <reified E : com.rasalexman.sresult.data.dto.ISEvent, reified T : Any
     }
 }
 
-inline fun <reified E : com.rasalexman.sresult.data.dto.ISEvent, reified T : Any> BaseViewModel.onEventFlow(
+inline fun <reified E : ISEvent, reified T : Any> BaseViewModel.onEventFlow(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
     isDistinct: Boolean = false,
     eventDelay: Long = 0,
@@ -212,7 +212,7 @@ inline fun <reified E : com.rasalexman.sresult.data.dto.ISEvent, reified T : Any
     }
 }
 
-inline fun <reified E : com.rasalexman.sresult.data.dto.ISEvent, reified T : Any> BaseViewModel.onEventLiveData(
+inline fun <reified E : ISEvent, reified T : Any> BaseViewModel.onEventLiveData(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
     isDistinct: Boolean = false,
     eventDelay: Long = 0,
@@ -228,7 +228,7 @@ inline fun <reified E : com.rasalexman.sresult.data.dto.ISEvent, reified T : Any
     ).asLiveData(dispatcher)
 }
 
-inline fun <reified E : com.rasalexman.sresult.data.dto.ISEvent, reified T : Any> BaseViewModel.onEventMutableLiveData(
+inline fun <reified E : ISEvent, reified T : Any> BaseViewModel.onEventMutableLiveData(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
     isDistinct: Boolean = false,
     eventDelay: Long = 0,
@@ -238,7 +238,7 @@ inline fun <reified E : com.rasalexman.sresult.data.dto.ISEvent, reified T : Any
     return onEventLiveData(dispatcher, isDistinct, eventDelay, emitOnStart, block) as MutableLiveData<T>
 }
 
-inline fun <reified E : com.rasalexman.sresult.data.dto.ISEvent, reified T : Any> FlowableViewModel.onEventFlow(
+inline fun <reified E : ISEvent, reified T : Any> FlowableViewModel.onEventFlow(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
     isDistinct: Boolean = false,
     eventDelay: Long = 0,
@@ -264,27 +264,27 @@ inline fun <reified T : Any> BaseViewModel.onAnyEventLiveData(
     isDistinct: Boolean = false,
     eventDelay: Long = 0,
     noinline emitOnStart: (() -> T)? = null,
-    crossinline block: suspend FlowCollector<T>.(com.rasalexman.sresult.data.dto.ISEvent) -> Unit
+    crossinline block: suspend FlowCollector<T>.(ISEvent) -> Unit
 ): LiveData<T> = onEventLiveData(dispatcher, isDistinct, eventDelay, emitOnStart, block)
 
 
-inline fun <reified E : com.rasalexman.sresult.data.dto.ISEvent, reified T : Any> BaseViewModel.onEventLiveDataResult(
+inline fun <reified E : ISEvent, reified T : Any> BaseViewModel.onEventLiveDataResult(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
     isDistinct: Boolean = false,
     eventDelay: Long = 0,
-    noinline emitOnStart: (() -> com.rasalexman.sresult.data.dto.SResult<T>)? = null,
-    crossinline block: suspend FlowCollector<com.rasalexman.sresult.data.dto.SResult<T>>.(E) -> Unit
-): LiveData<com.rasalexman.sresult.data.dto.SResult<T>> = onEventLiveData(dispatcher, isDistinct, eventDelay, emitOnStart, block)
+    noinline emitOnStart: (() -> SResult<T>)? = null,
+    crossinline block: suspend FlowCollector<SResult<T>>.(E) -> Unit
+): LiveData<SResult<T>> = onEventLiveData(dispatcher, isDistinct, eventDelay, emitOnStart, block)
 
 inline fun <reified T : Any> BaseViewModel.onAnyEventLiveDataResult(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
     isDistinct: Boolean = false,
     eventDelay: Long = 0,
-    noinline emitOnStart: (() -> com.rasalexman.sresult.data.dto.SResult<T>)? = null,
-    crossinline block: suspend FlowCollector<com.rasalexman.sresult.data.dto.SResult<T>>.(com.rasalexman.sresult.data.dto.ISEvent) -> Unit
-): LiveData<com.rasalexman.sresult.data.dto.SResult<T>> = onEventLiveData(dispatcher, isDistinct, eventDelay, emitOnStart, block)
+    noinline emitOnStart: (() -> SResult<T>)? = null,
+    crossinline block: suspend FlowCollector<SResult<T>>.(ISEvent) -> Unit
+): LiveData<SResult<T>> = onEventLiveData(dispatcher, isDistinct, eventDelay, emitOnStart, block)
 
-inline fun <reified E : com.rasalexman.sresult.data.dto.ISEvent> BaseViewModel.onEventLiveDataAnyResult(
+inline fun <reified E : ISEvent> BaseViewModel.onEventLiveDataAnyResult(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
     isDistinct: Boolean = false,
     eventDelay: Long = 0,
@@ -297,6 +297,6 @@ fun BaseViewModel.onAnyEventLiveDataAnyResult(
     isDistinct: Boolean = false,
     eventDelay: Long = 0,
     emitOnStart: (() -> AnyResult)? = null,
-    block: suspend FlowCollector<AnyResult>.(com.rasalexman.sresult.data.dto.ISEvent) -> Unit
+    block: suspend FlowCollector<AnyResult>.(ISEvent) -> Unit
 ): LiveData<AnyResult> = onEventLiveData(dispatcher, isDistinct, eventDelay, emitOnStart, block)
 

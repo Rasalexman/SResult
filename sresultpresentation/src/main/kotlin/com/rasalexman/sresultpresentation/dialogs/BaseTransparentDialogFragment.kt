@@ -24,6 +24,6 @@ abstract class BaseTransparentDialogFragment<B : ViewDataBinding, VM : BaseViewM
     }
 
     override fun showNavigationError(e: Exception?, navResId: Int?) = Unit
-    override fun showSuccess(result: com.rasalexman.sresult.data.dto.SResult.Success<*>) = Unit
+    override fun showSuccess(result: SResult.Success<*>) = Unit
     override fun closeContextAlert() = Unit
 }

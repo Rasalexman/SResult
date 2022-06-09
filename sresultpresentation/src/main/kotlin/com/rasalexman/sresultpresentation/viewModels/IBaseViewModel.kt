@@ -7,11 +7,11 @@ import com.rasalexman.sresult.data.dto.SResult
 
 interface IBaseViewModel : IEventableViewModel {
     val selectedPage: MutableLiveData<Int>
-    val eventLiveData: MutableLiveData<com.rasalexman.sresult.data.dto.ISEvent>
-    val navigationLiveData: MutableLiveData<com.rasalexman.sresult.data.dto.SResult.NavigateResult>
+    val eventLiveData: MutableLiveData<ISEvent>
+    val navigationLiveData: MutableLiveData<SResult.NavigateResult>
     val anyLiveData: LiveData<*>?
     val resultLiveData: LiveData<*>?
-    val supportLiveData: MutableLiveData<com.rasalexman.sresult.data.dto.SResult<Any>>
+    val supportLiveData: MutableLiveData<SResult<Any>>
 
     val toolbarTitle: MutableLiveData<String>?
     val toolbarSubTitle: MutableLiveData<String>?

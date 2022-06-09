@@ -2,6 +2,9 @@ package com.rasalexman.sresultexample
 
 import androidx.lifecycle.MutableLiveData
 import com.rasalexman.sresult.common.extensions.*
+import com.rasalexman.sresult.data.dto.ISEvent
+import com.rasalexman.sresult.data.dto.SEvent
+import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresult.models.IDropDownItem
 import com.rasalexman.sresultpresentation.extensions.AnyResultMutableLiveData
 import com.rasalexman.sresultpresentation.extensions.mutableMap
@@ -54,7 +57,7 @@ class MainViewModel : BaseViewModel() {
 
     override val toolbarMenu: MutableLiveData<Int> = MutableLiveData(R.menu.menu_add)
 
-    override val resultLiveData = onEventLiveDataAnyResult<com.rasalexman.sresult.data.dto.SEvent.Fetch>(Dispatchers.Default, isDistinct = true) {
+    override val resultLiveData = onEventLiveDataAnyResult<SEvent.Fetch>(Dispatchers.Default, isDistinct = true) {
         logg { "resultLiveData event is $it" }
 
         emit(loadingResult())
@@ -83,7 +86,7 @@ class MainViewModel : BaseViewModel() {
         emit(UserAuthState.Success(user))
     }
 
-    private suspend fun getAnotherResult(): com.rasalexman.sresult.data.dto.SResult<Int> {
+    private suspend fun getAnotherResult(): SResult<Int> {
         return getResult().flatMapIfDataTypedSuspend<UserModel, Int> {
             1.toSuccessResult()
         }.flatMapIfSuccessTyped<Int, Int> {
@@ -91,7 +94,7 @@ class MainViewModel : BaseViewModel() {
         }
     }
 
-    override val supportLiveData = onEventLiveDataAnyResult<com.rasalexman.sresult.data.dto.SEvent.Refresh>(
+    override val supportLiveData = onEventLiveDataAnyResult<SEvent.Refresh>(
         dispatcher = Dispatchers.Default,
         isDistinct = true
     ) {
@@ -102,11 +105,11 @@ class MainViewModel : BaseViewModel() {
 
     fun onGenerateClicked() {
         val rand = Random.nextInt(10, 54)
-        val event: com.rasalexman.sresult.data.dto.ISEvent = if(rand % 2 == 0) com.rasalexman.sresult.data.dto.SEvent.Fetch else com.rasalexman.sresult.data.dto.SEvent.Refresh
+        val event: ISEvent = if(rand % 2 == 0) SEvent.Fetch else SEvent.Refresh
         processEvent(event)
     }
 
-    private fun getResult(): com.rasalexman.sresult.data.dto.SResult<UserModel> {
+    private fun getResult(): SResult<UserModel> {
         return UserModel(
             name = "Alex",
             email = "sphc@yandex.ru",

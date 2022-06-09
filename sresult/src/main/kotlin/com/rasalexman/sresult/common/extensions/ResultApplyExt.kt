@@ -7,101 +7,101 @@ import kotlinx.coroutines.flow.onEach
 
 
 
-suspend inline fun <reified I : Any> com.rasalexman.sresult.data.dto.SResult<I>.applyIfSuccessSuspend(crossinline block: SInHandler<I>): com.rasalexman.sresult.data.dto.SResult<I> {
-    if (this is com.rasalexman.sresult.data.dto.SResult.Success) block(this.data)
+suspend inline fun <reified I : Any> SResult<I>.applyIfSuccessSuspend(crossinline block: SInHandler<I>): SResult<I> {
+    if (this is SResult.Success) block(this.data)
     return this
 }
 
 
 suspend inline fun <reified I : Any> FlowResult<I>.applyIfFlowSuccessSuspend(crossinline block: SInHandler<I>): FlowResult<I> {
     return this.onEach { result ->
-        if (result is com.rasalexman.sresult.data.dto.SResult.Success) block(result.data)
+        if (result is SResult.Success) block(result.data)
     }
 }
 
 
-suspend inline fun <reified I : Any> com.rasalexman.sresult.data.dto.SResult<I>.applyIfEmptySuspend(crossinline block: SUnitHandler): com.rasalexman.sresult.data.dto.SResult<I> {
-    if (this is com.rasalexman.sresult.data.dto.SResult.Empty) block()
+suspend inline fun <reified I : Any> SResult<I>.applyIfEmptySuspend(crossinline block: SUnitHandler): SResult<I> {
+    if (this is SResult.Empty) block()
     return this
 }
 
 suspend inline fun <reified I : Any> FlowResult<I>.applyIfFlowEmptySuspend(crossinline block: SUnitHandler): FlowResult<I> {
     return this.onEach { result ->
-        if (result is com.rasalexman.sresult.data.dto.SResult.Empty) block()
+        if (result is SResult.Empty) block()
     }
 }
 
 
-suspend inline fun <reified I : Any> com.rasalexman.sresult.data.dto.SResult<I>.applyIfNothingSuspend(crossinline block: SUnitHandler): com.rasalexman.sresult.data.dto.SResult<I> {
-    if (this is com.rasalexman.sresult.data.dto.SResult.NothingResult) block()
+suspend inline fun <reified I : Any> SResult<I>.applyIfNothingSuspend(crossinline block: SUnitHandler): SResult<I> {
+    if (this is SResult.NothingResult) block()
     return this
 }
 
 suspend inline fun <reified I : Any> FlowResult<I>.applyIfFlowNothingSuspend(crossinline block: SUnitHandler): FlowResult<I> {
     return this.onEach { result ->
-        if (result is com.rasalexman.sresult.data.dto.SResult.NothingResult) block()
+        if (result is SResult.NothingResult) block()
     }
 }
 
 
-suspend inline fun <reified I : Any> com.rasalexman.sresult.data.dto.SResult<I>.applyIfErrorSuspend(crossinline block: SInHandler<com.rasalexman.sresult.data.dto.SResult.AbstractFailure>): com.rasalexman.sresult.data.dto.SResult<I> {
-    if (this is com.rasalexman.sresult.data.dto.SResult.AbstractFailure) block(this)
+suspend inline fun <reified I : Any> SResult<I>.applyIfErrorSuspend(crossinline block: SInHandler<SResult.AbstractFailure>): SResult<I> {
+    if (this is SResult.AbstractFailure) block(this)
     return this
 }
 
-suspend inline fun <reified I : Any> FlowResult<I>.applyIfFlowErrorSuspend(crossinline block: SInHandler<com.rasalexman.sresult.data.dto.SResult.AbstractFailure>): FlowResult<I> {
+suspend inline fun <reified I : Any> FlowResult<I>.applyIfFlowErrorSuspend(crossinline block: SInHandler<SResult.AbstractFailure>): FlowResult<I> {
     return this.onEach { result ->
-        if (result is com.rasalexman.sresult.data.dto.SResult.AbstractFailure) block(result)
+        if (result is SResult.AbstractFailure) block(result)
     }
 }
 
 
 // /--- Inline Applying functions
-inline fun <reified I : Any> com.rasalexman.sresult.data.dto.SResult<I>.applyIfSuccess(block: InHandler<I>): com.rasalexman.sresult.data.dto.SResult<I> {
-    if (this is com.rasalexman.sresult.data.dto.SResult.Success) block(this.data)
+inline fun <reified I : Any> SResult<I>.applyIfSuccess(block: InHandler<I>): SResult<I> {
+    if (this is SResult.Success) block(this.data)
     return this
 }
 
 inline fun <reified I : Any> FlowResult<I>.applyIfFlowSuccess(crossinline block: InHandler<I>): FlowResult<I> {
     return this.onEach {
-        if (it is com.rasalexman.sresult.data.dto.SResult.Success) block(it.data)
+        if (it is SResult.Success) block(it.data)
     }
 }
 
 // /--- Inline Applying functions
-inline fun <reified I> com.rasalexman.sresult.data.dto.SResult<*>.applyIfSuccessTyped(block: InHandler<I>): com.rasalexman.sresult.data.dto.SResult<*> {
-    if (this is com.rasalexman.sresult.data.dto.SResult.Success && this.data is I) block(this.data as I)
+inline fun <reified I> SResult<*>.applyIfSuccessTyped(block: InHandler<I>): SResult<*> {
+    if (this is SResult.Success && this.data is I) block(this.data as I)
     return this
 }
 
-inline fun <reified I : Any> com.rasalexman.sresult.data.dto.SResult<I>.applyIfError(block: InHandler<com.rasalexman.sresult.data.dto.SResult.AbstractFailure>): com.rasalexman.sresult.data.dto.SResult<I> {
-    if (this is com.rasalexman.sresult.data.dto.SResult.AbstractFailure) block(this)
+inline fun <reified I : Any> SResult<I>.applyIfError(block: InHandler<SResult.AbstractFailure>): SResult<I> {
+    if (this is SResult.AbstractFailure) block(this)
     return this
 }
 
-inline fun <reified I : Any> FlowResult<I>.applyIfFlowError(crossinline block: InHandler<com.rasalexman.sresult.data.dto.SResult.AbstractFailure>): FlowResult<I> {
+inline fun <reified I : Any> FlowResult<I>.applyIfFlowError(crossinline block: InHandler<SResult.AbstractFailure>): FlowResult<I> {
     return this.onEach {
-        if (it is com.rasalexman.sresult.data.dto.SResult.AbstractFailure) block(it)
+        if (it is SResult.AbstractFailure) block(it)
     }
 }
 
-inline fun <reified I : com.rasalexman.sresult.data.dto.SResult<*>> com.rasalexman.sresult.data.dto.SResult<*>.applyIfType(block: I.() -> Unit): com.rasalexman.sresult.data.dto.SResult<*> {
+inline fun <reified I : SResult<*>> SResult<*>.applyIfType(block: I.() -> Unit): SResult<*> {
     if (this is I) block(this)
     return this
 }
 
 
-suspend inline fun <reified I : com.rasalexman.sresult.data.dto.SResult<*>> com.rasalexman.sresult.data.dto.SResult<*>.applyIfTypeSuspend(crossinline block: suspend I.() -> Unit): com.rasalexman.sresult.data.dto.SResult<*> {
+suspend inline fun <reified I : SResult<*>> SResult<*>.applyIfTypeSuspend(crossinline block: suspend I.() -> Unit): SResult<*> {
     if (this is I) block(this)
     return this
 }
 
-inline fun <reified I : com.rasalexman.sresult.data.dto.SResult<*>> com.rasalexman.sresult.data.dto.SResult<*>.applyIfNotType(block: com.rasalexman.sresult.data.dto.SResult<*>.() -> Unit): com.rasalexman.sresult.data.dto.SResult<*> {
+inline fun <reified I : SResult<*>> SResult<*>.applyIfNotType(block: SResult<*>.() -> Unit): SResult<*> {
     if (this !is I) block(this)
     return this
 }
 
-suspend inline fun <reified I : com.rasalexman.sresult.data.dto.SResult<*>> com.rasalexman.sresult.data.dto.SResult<*>.applyIfNotTypeSuspend(crossinline block: suspend com.rasalexman.sresult.data.dto.SResult<*>.() -> Unit): com.rasalexman.sresult.data.dto.SResult<*> {
+suspend inline fun <reified I : SResult<*>> SResult<*>.applyIfNotTypeSuspend(crossinline block: suspend SResult<*>.() -> Unit): SResult<*> {
     if (this !is I) block(this)
     return this
 }

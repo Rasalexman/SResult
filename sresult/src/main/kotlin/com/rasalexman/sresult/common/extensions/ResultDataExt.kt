@@ -5,31 +5,31 @@ import com.rasalexman.sresult.data.dto.SResult
 
 
 
-inline fun <reified I : Any> com.rasalexman.sresult.data.dto.SResult<I>.getDataIfSuccess(default: I? = null): I? {
-    return if (this is com.rasalexman.sresult.data.dto.SResult.Success) this.data
+inline fun <reified I : Any> SResult<I>.getDataIfSuccess(default: I? = null): I? {
+    return if (this is SResult.Success) this.data
     else default
 }
 
 
-inline fun <reified I : Any, reified O : Any> com.rasalexman.sresult.data.dto.SResult<I>.flatMapDataIfSuccess(block: (I) -> O): O? {
-    return if (this is com.rasalexman.sresult.data.dto.SResult.Success) block(this.data)
+inline fun <reified I : Any, reified O : Any> SResult<I>.flatMapDataIfSuccess(block: (I) -> O): O? {
+    return if (this is SResult.Success) block(this.data)
     else null
 }
 
 
-inline fun <reified I : Any, reified O : Any> com.rasalexman.sresult.data.dto.SResult<I>.flatMapDataIfNotSuccess(block: (com.rasalexman.sresult.data.dto.SResult<I>) -> O): O? {
-    return if (this !is com.rasalexman.sresult.data.dto.SResult.Success) block(this)
+inline fun <reified I : Any, reified O : Any> SResult<I>.flatMapDataIfNotSuccess(block: (SResult<I>) -> O): O? {
+    return if (this !is SResult.Success) block(this)
     else null
 }
 
 
-inline fun <reified I : Any, reified O : Any> com.rasalexman.sresult.data.dto.SResult<I>.flatMapDataIfEmpty(block: () -> O): O? {
-    return if (this is com.rasalexman.sresult.data.dto.SResult.Empty) block()
+inline fun <reified I : Any, reified O : Any> SResult<I>.flatMapDataIfEmpty(block: () -> O): O? {
+    return if (this is SResult.Empty) block()
     else null
 }
 
 
-inline fun <reified I : Any, reified O : Any> com.rasalexman.sresult.data.dto.SResult<I>.flatMapDataIfError(block: (com.rasalexman.sresult.data.dto.SResult.AbstractFailure) -> O): O? {
-    return if (this is com.rasalexman.sresult.data.dto.SResult.AbstractFailure) block(this)
+inline fun <reified I : Any, reified O : Any> SResult<I>.flatMapDataIfError(block: (SResult.AbstractFailure) -> O): O? {
+    return if (this is SResult.AbstractFailure) block(this)
     else null
 }

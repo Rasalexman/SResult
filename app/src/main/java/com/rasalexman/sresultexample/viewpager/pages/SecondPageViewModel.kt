@@ -8,6 +8,7 @@ import com.rasalexman.easyrecyclerbinding.recyclerConfig
 import com.rasalexman.sresult.common.extensions.toNavigateResult
 import com.rasalexman.sresult.common.extensions.unsafeLazy
 import com.rasalexman.sresult.common.typealiases.AnyResult
+import com.rasalexman.sresult.data.dto.ISEvent
 import com.rasalexman.sresultexample.BR
 import com.rasalexman.sresultexample.NavigationMainDirections
 import com.rasalexman.sresultexample.R
@@ -62,6 +63,6 @@ class SecondPageViewModel : BaseViewModel(), IBindingModel {
         )
     }
 
-    class OnShowUserEvent : com.rasalexman.sresult.data.dto.ISEvent
+    class OnShowUserEvent : ISEvent
 
 }

@@ -10,26 +10,26 @@ import com.rasalexman.sresultpresentation.viewModels.IEventableViewModel
 
 ///------ INLINE SECTION ----///
 inline fun <reified T : IBaseViewModel> IBaseFragment<T>.fetch() =
-    this.viewModel?.processEvent(com.rasalexman.sresult.data.dto.SEvent.Fetch)
+    this.viewModel?.processEvent(SEvent.Fetch)
 
 fun <R : Any> IBaseFragment<IBaseViewModel>.fetchWith(data: R) =
-    this.viewModel?.processEvent(com.rasalexman.sresult.data.dto.SEvent.FetchWith(data))
+    this.viewModel?.processEvent(SEvent.FetchWith(data))
 
 inline fun <reified T : IBaseViewModel> IBaseFragment<T>.refresh() =
-    this.viewModel?.processEvent(com.rasalexman.sresult.data.dto.SEvent.Refresh)
+    this.viewModel?.processEvent(SEvent.Refresh)
 
 fun IBaseFragment<IBaseViewModel>.validateData() =
-    this.viewModel?.processEvent(com.rasalexman.sresult.data.dto.SEvent.Validate)
+    this.viewModel?.processEvent(SEvent.Validate)
 
-inline fun <reified T : IBaseViewModel> IBaseFragment<T>.postEvent(event: com.rasalexman.sresult.data.dto.ISEvent) =
+inline fun <reified T : IBaseViewModel> IBaseFragment<T>.postEvent(event: ISEvent) =
     this.viewModel?.processEvent(event)
 
 ////-------- GLOBAL VM SECTION ----///
 fun IEventableViewModel.fetch() =
-    this.processEvent(com.rasalexman.sresult.data.dto.SEvent.Fetch)
+    this.processEvent(SEvent.Fetch)
 
 fun <R : Any> IEventableViewModel.fetchWith(data: R) =
-    this.processEvent(com.rasalexman.sresult.data.dto.SEvent.FetchWith(data))
+    this.processEvent(SEvent.FetchWith(data))
 
 fun IEventableViewModel.refresh() =
-    this.processEvent(com.rasalexman.sresult.data.dto.SEvent.Refresh)
+    this.processEvent(SEvent.Refresh)

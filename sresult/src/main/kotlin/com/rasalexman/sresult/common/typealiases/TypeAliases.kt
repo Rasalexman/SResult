@@ -24,19 +24,19 @@ typealias SInOutHandler<T, R> = suspend (T) -> R
 typealias SDoubleInOutHandler<T, R, P> = suspend (T, R) -> P
 typealias SParentInOutHandler<P, T, R> = suspend P.(T) -> R
 
-typealias FlowResult<T> = Flow<com.rasalexman.sresult.data.dto.SResult<T>>
+typealias FlowResult<T> = Flow<SResult<T>>
 typealias FlowAnyResult = Flow<AnyResult>
 typealias FlowList<T> = Flow<List<T>>
-typealias FlowResultList<T> = Flow<com.rasalexman.sresult.data.dto.SResult<List<T>>>
+typealias FlowResultList<T> = Flow<SResult<List<T>>>
 typealias SharedFlowList<T> = SharedFlow<List<T>>
-typealias SharedFlowResultList<T> = SharedFlow<com.rasalexman.sresult.data.dto.SResult<List<T>>>
+typealias SharedFlowResultList<T> = SharedFlow<SResult<List<T>>>
 typealias MutableSharedFlowList<T> = MutableSharedFlow<List<T>>
 typealias MutableStateFlowList<T> = MutableStateFlow<List<T>>
-typealias MutableStateFlowResultList<T> = MutableStateFlow<com.rasalexman.sresult.data.dto.SResult<List<T>>>
+typealias MutableStateFlowResultList<T> = MutableStateFlow<SResult<List<T>>>
 
-typealias AnyResult = com.rasalexman.sresult.data.dto.SResult<Any>
+typealias AnyResult = SResult<Any>
 
-typealias ResultList<T> = com.rasalexman.sresult.data.dto.SResult<List<T>>
-typealias ResultMutableList<T> = com.rasalexman.sresult.data.dto.SResult<MutableList<T>>
-typealias ResultInHandler<T> = (com.rasalexman.sresult.data.dto.SResult<T>) -> Unit
-typealias ResultInOutHandler<T, R> = (com.rasalexman.sresult.data.dto.SResult<T>) -> com.rasalexman.sresult.data.dto.SResult<R>
+typealias ResultList<T> = SResult<List<T>>
+typealias ResultMutableList<T> = SResult<MutableList<T>>
+typealias ResultInHandler<T> = (SResult<T>) -> Unit
+typealias ResultInOutHandler<T, R> = (SResult<T>) -> SResult<R>

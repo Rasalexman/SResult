@@ -4,6 +4,7 @@ import androidx.lifecycle.*
 import com.rasalexman.easyrecyclerbinding.ScrollPosition
 import com.rasalexman.sresult.common.extensions.*
 import com.rasalexman.sresult.common.typealiases.ResultList
+import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultexample.NavigationMainDirections
 import com.rasalexman.sresultpresentation.extensions.asyncLiveData
 import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
@@ -34,7 +35,7 @@ class TopItemsViewModel : BaseViewModel() {
     }
 
     val items: LiveData<List<TopItemUI>> by unsafeLazy {
-        resultLiveData.asFlow().filter { it is com.rasalexman.sresult.data.dto.SResult.Success }.asLiveData().distinctUntilChanged().map { result ->
+        resultLiveData.asFlow().filter { it is SResult.Success }.asLiveData().distinctUntilChanged().map { result ->
             result.getList()
         }
     }
