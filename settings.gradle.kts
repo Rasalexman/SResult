@@ -14,6 +14,7 @@ pluginManagement {
         gradlePluginPortal()
         google()
         mavenCentral()
+        mavenLocal()
     }
 }
 
@@ -31,12 +32,14 @@ dependencyResolutionManagement {
      * template that requires some).
      */
 
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
     repositories {
+        gradlePluginPortal()
         google()
         mavenCentral()
+        mavenLocal()
         maven { url = uri("https://jitpack.io") }
-        maven { url = uri("https://plugins.gradle.org/m2/") }
+        //maven { url = uri("https://plugins.gradle.org/m2/") }
     }
 }
 rootProject.name = "SResultExample"

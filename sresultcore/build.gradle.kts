@@ -9,10 +9,6 @@ val appVersion: String by rootProject.extra
 group = "com.rasalexman.sresultcore"
 version = appVersion
 
-//repositories {
-//    mavenCentral()
-//}
-
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
     kotlinOptions {
         this.apiVersion = "1.6"
