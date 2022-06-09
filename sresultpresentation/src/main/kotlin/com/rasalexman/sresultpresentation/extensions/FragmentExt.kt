@@ -199,7 +199,7 @@ private fun IBaseFragment<*>.observeStateViewModel(currentFlowableVM: IFlowableV
         currentFlowableVM.resultFlow?.let {
             vmScope.launchWhenCreated {
                 it.collect { result ->
-                    if(result is SResult<*>) {
+                    if(result is com.rasalexman.sresult.data.dto.SResult<*>) {
                         result.handleResult(::onResultHandler)
                     } else {
                         onAnyDataHandler(result)
@@ -229,7 +229,7 @@ private fun IBaseFragment<*>.observeStateViewModel(currentFlowableVM: IFlowableV
 }
 
 
-fun <T : SResult<*>> Fragment.onResultChange(data: LiveData<T>?, stateHandle: InHandler<T>) {
+fun <T : com.rasalexman.sresult.data.dto.SResult<*>> Fragment.onResultChange(data: LiveData<T>?, stateHandle: InHandler<T>) {
     data?.let { currentLiveData ->
         if(!currentLiveData.hasObservers()) {
             currentLiveData.observe(this) { result ->
@@ -239,7 +239,7 @@ fun <T : SResult<*>> Fragment.onResultChange(data: LiveData<T>?, stateHandle: In
     }
 }
 
-fun <T : SResult<*>> DialogFragment.onResultChange(data: LiveData<T>?, stateHandle: InHandler<T>) {
+fun <T : com.rasalexman.sresult.data.dto.SResult<*>> DialogFragment.onResultChange(data: LiveData<T>?, stateHandle: InHandler<T>) {
     data?.let { currentLiveData ->
         if(!currentLiveData.hasObservers()) {
             currentLiveData.observe(this) { result ->
@@ -249,7 +249,7 @@ fun <T : SResult<*>> DialogFragment.onResultChange(data: LiveData<T>?, stateHand
     }
 }
 
-fun <T : SResult<*>> LifecycleOwner.onResultChange(
+fun <T : com.rasalexman.sresult.data.dto.SResult<*>> LifecycleOwner.onResultChange(
     data: LiveData<T>?,
     stateHandle: InHandler<T>
 ) {
@@ -271,7 +271,7 @@ fun <T : Any> BaseFragment<*>.onAnyChange(data: LiveData<T>?, stateHandle: InHan
 /**
  * Handle SResult optionally
  */
-private fun<T : SResult<*>> T?.handleResult(stateHandle: InHandler<T>) {
+private fun<T : com.rasalexman.sresult.data.dto.SResult<*>> T?.handleResult(stateHandle: InHandler<T>) {
     this?.let { currentResult ->
         val isAlreadyHandled = !currentResult.isHandled
         currentResult.applyIf(isAlreadyHandled, stateHandle)

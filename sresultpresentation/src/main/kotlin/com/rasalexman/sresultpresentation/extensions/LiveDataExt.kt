@@ -14,9 +14,9 @@ import com.rasalexman.sresult.models.IConvertableTo
 
 typealias AnyResultLiveData = LiveData<AnyResult>
 typealias AnyResultMutableLiveData = MutableLiveData<AnyResult>
-typealias ResultLiveData<T> = LiveData<SResult<T>>
-typealias ResultListLiveData<T> = LiveData<SResult<List<T>>>
-typealias ResultMutableLiveData<T> = MutableLiveData<SResult<T>>
+typealias ResultLiveData<T> = LiveData<com.rasalexman.sresult.data.dto.SResult<T>>
+typealias ResultListLiveData<T> = LiveData<com.rasalexman.sresult.data.dto.SResult<List<T>>>
+typealias ResultMutableLiveData<T> = MutableLiveData<com.rasalexman.sresult.data.dto.SResult<T>>
 
 @Suppress("UNCHECKED_CAST")
 inline fun <X, Y> LiveData<X>.mutableMap(
@@ -128,8 +128,8 @@ fun <T : Any> LiveData<ResultList<T>>?.getList(): List<T> {
     return this?.value?.data.orEmpty()
 }
 
-fun <T : Any> LiveData<SResult<T>>?.postResultValue(result: SResult<T>): SResult<T> {
-    (this as? MutableLiveData<SResult<T>>)?.postValue(result)
+fun <T : Any> LiveData<com.rasalexman.sresult.data.dto.SResult<T>>?.postResultValue(result: com.rasalexman.sresult.data.dto.SResult<T>): com.rasalexman.sresult.data.dto.SResult<T> {
+    (this as? MutableLiveData<com.rasalexman.sresult.data.dto.SResult<T>>)?.postValue(result)
     return result
 }
 

@@ -21,18 +21,18 @@ abstract class BaseContextViewModel : ViewModel(), IKodi, IEventableViewModel {
      *
      * @param viewEvent [ISEvent] - any implementation to handler with this fragment
      */
-    override fun processEvent(viewEvent: ISEvent) = Unit
+    override fun processEvent(viewEvent: com.rasalexman.sresult.data.dto.ISEvent) = Unit
 
     /**
      * Process [ISEvent] from Presentation View Controller (such as Activity or Fragment) to ViewModel
      *
      * @param viewEvent [ISEvent] - any implementation to handler with this fragment
      */
-    override fun processEventAsync(viewEvent: ISEvent) = Unit
+    override fun processEventAsync(viewEvent: com.rasalexman.sresult.data.dto.ISEvent) = Unit
 
     abstract fun onBackClicked()
 
-    protected open fun createFailure(errorResult: SResult.AbstractFailure): SResult.AbstractFailure {
+    protected open fun createFailure(errorResult: com.rasalexman.sresult.data.dto.SResult.AbstractFailure): com.rasalexman.sresult.data.dto.SResult.AbstractFailure {
         return errorResult(message = errorResult.message.toString(), exception = errorResult.exception)
     }
 

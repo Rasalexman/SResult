@@ -3,8 +3,6 @@ package com.rasalexman.sresultexample.state
 import androidx.lifecycle.asLiveData
 import com.rasalexman.sresult.common.extensions.*
 import com.rasalexman.sresult.common.typealiases.AnyResult
-import com.rasalexman.sresult.data.dto.ISEvent
-import com.rasalexman.sresult.data.dto.SEvent
 import com.rasalexman.sresultexample.NavigationMainDirections
 import com.rasalexman.sresultexample.R
 import com.rasalexman.sresultpresentation.extensions.launchUITryCatch
@@ -20,7 +18,7 @@ class StateFlowViewModel : FlowableViewModel() {
     override val toolbarTitle: MutableStateFlow<String> = MutableStateFlow(string(R.string.title_state_flow))
 
     override val resultFlow by unsafeLazy {
-        onEventFlow<SEvent.Fetch, AnyResult> {
+        onEventFlow<com.rasalexman.sresult.data.dto.SEvent.Fetch, AnyResult> {
             emit(loadingResult())
             delay(3000L)
             val toastText = stringSuspend(R.string.toast_state)
@@ -44,7 +42,7 @@ class StateFlowViewModel : FlowableViewModel() {
     }
 
     fun onDoActionClicked() {
-        processEvent(SEvent.Fetch)
+        processEvent(com.rasalexman.sresult.data.dto.SEvent.Fetch)
     }
 
     fun onSuccessClicked() = launchUITryCatch {

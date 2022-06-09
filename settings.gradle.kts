@@ -41,12 +41,7 @@ dependencyResolutionManagement {
 }
 rootProject.name = "SResultExample"
 include(":app")
+include(":sresultcore")
 include(":sresult")
 include(":sresultpresentation")
 
-/*buildCache {
-    local {
-        directory = File(rootDir, "build-cache")
-        removeUnusedEntriesAfterDays = 30
-    }
-}*/

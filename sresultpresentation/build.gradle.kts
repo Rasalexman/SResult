@@ -115,6 +115,7 @@ dependencies {
     val livedataKtx: String by rootProject.extra
     val viewmodelKtx: String by rootProject.extra
     val easyrecyclerbinding: String by rootProject.extra
+    val kodi: String by rootProject.extra
 
     api(coroutines)
     api(material)
@@ -128,6 +129,7 @@ dependencies {
     api(viewmodelKtx)
 
     api(easyrecyclerbinding)
+    api(kodi)
 
     api(project(":sresult"))
 

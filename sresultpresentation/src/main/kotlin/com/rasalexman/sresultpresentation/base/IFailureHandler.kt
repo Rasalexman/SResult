@@ -7,10 +7,10 @@ interface IFailureHandler : ILoadingHandler {
     /**
      * When [SResult.AbstractFailure.Error] is coming
      */
-    fun showFailure(error: SResult.AbstractFailure.Failure)
+    fun showFailure(error: com.rasalexman.sresult.data.dto.SResult.AbstractFailure.Failure)
 
     /**
      * When [SResult.AbstractFailure.Alert] is coming
      */
-    fun showAlert(alert: SResult.AbstractFailure.Alert)
+    fun showAlert(alert: com.rasalexman.sresult.data.dto.SResult.AbstractFailure.Alert)
 }

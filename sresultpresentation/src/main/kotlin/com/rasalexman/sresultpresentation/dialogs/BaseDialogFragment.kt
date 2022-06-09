@@ -76,7 +76,7 @@ abstract class BaseDialogFragment<VM : IEventableViewModel> : AppCompatDialogFra
         return true
     }
 
-    override fun onResultHandler(result: SResult<*>) {
+    override fun onResultHandler(result: com.rasalexman.sresult.data.dto.SResult<*>) {
         onBaseResultHandler(result)
     }
 
@@ -96,7 +96,7 @@ abstract class BaseDialogFragment<VM : IEventableViewModel> : AppCompatDialogFra
     override fun onNextPressed() = Unit
     override fun showProgress(progress: Int, message: Any?) = Unit
     override fun showNavigationError(e: Exception?, navResId: Int?) = Unit
-    override fun showSuccess(result: SResult.Success<*>) = Unit
+    override fun showSuccess(result: com.rasalexman.sresult.data.dto.SResult.Success<*>) = Unit
     override fun onAnyDataHandler(data: Any?) = Unit
 
     /**
@@ -155,11 +155,11 @@ abstract class BaseDialogFragment<VM : IEventableViewModel> : AppCompatDialogFra
 
     protected open fun initLayout() = Unit
 
-    override fun showFailure(error: SResult.AbstractFailure.Failure) {
+    override fun showFailure(error: com.rasalexman.sresult.data.dto.SResult.AbstractFailure.Failure) {
         this.toast(error.getMessage(), error.interval)
     }
 
-    override fun showAlert(alert: SResult.AbstractFailure.Alert) {
+    override fun showAlert(alert: com.rasalexman.sresult.data.dto.SResult.AbstractFailure.Alert) {
         this.alert(
             message = alert.getMessage(),
             dialogTitle = alert.dialogTitle,

@@ -21,14 +21,14 @@ open class FlowableViewModel : BaseContextViewModel(), IFlowableViewModel {
     protected open val navigationConfig: ISharedFlowConfig = SharedFlowConfig()
 
     override val eventsFlow by unsafeLazy {
-        MutableSharedFlow<ISEvent>(
+        MutableSharedFlow<com.rasalexman.sresult.data.dto.ISEvent>(
             replay = eventConfig.replay,
             extraBufferCapacity = eventConfig.extraBufferCapacity,
             onBufferOverflow = eventConfig.onBufferOverflow
         )
     }
     override val navigationFlow by unsafeLazy {
-        MutableSharedFlow<SResult.NavigateResult>(
+        MutableSharedFlow<com.rasalexman.sresult.data.dto.SResult.NavigateResult>(
             replay = navigationConfig.replay,
             extraBufferCapacity = navigationConfig.extraBufferCapacity,
             onBufferOverflow = navigationConfig.onBufferOverflow
@@ -53,15 +53,15 @@ open class FlowableViewModel : BaseContextViewModel(), IFlowableViewModel {
     override val toolbarTitle: MutableStateFlow<String>? = null
     override val toolbarMenu: MutableStateFlow<Int>? = null
 
-    override fun processEventAsync(viewEvent: ISEvent) {
+    override fun processEventAsync(viewEvent: com.rasalexman.sresult.data.dto.ISEvent) {
         processEvent(viewEvent)
     }
 
-    override fun processEvent(viewEvent: ISEvent) {
+    override fun processEvent(viewEvent: com.rasalexman.sresult.data.dto.ISEvent) {
         eventsFlow.tryEmit(viewEvent)
     }
 
-    override fun handleErrorState(errorResult: SResult.AbstractFailure) {
+    override fun handleErrorState(errorResult: com.rasalexman.sresult.data.dto.SResult.AbstractFailure) {
         supportFlow.tryEmit(createFailure(errorResult))
     }
 
@@ -79,6 +79,6 @@ open class FlowableViewModel : BaseContextViewModel(), IFlowableViewModel {
     }
 
     protected open fun clearEventsFlow() {
-        eventsFlow.tryEmit(SEvent.Empty)
+        eventsFlow.tryEmit(com.rasalexman.sresult.data.dto.SEvent.Empty)
     }
 }

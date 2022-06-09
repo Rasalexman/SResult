@@ -287,34 +287,34 @@ fun View.focusAndShowKeyboard() {
     }
 }
 
-fun ISResultHandler.onBaseResultHandler(result: SResult<*>) {
+fun ISResultHandler.onBaseResultHandler(result: com.rasalexman.sresult.data.dto.SResult<*>) {
     if (result.isHandled) return
     result.handle()
 
     when (result) {
-        is SResult.Success -> (this as? ISuccessHandler)?.apply {
+        is com.rasalexman.sresult.data.dto.SResult.Success -> (this as? ISuccessHandler)?.apply {
             hideLoading()
             showSuccess(result = result)
         }
-        is SResult.Loading -> (this as? ILoadingHandler)?.showLoading()
-        is SResult.Progress -> (this as? IProgressHandler)?.showProgress(result.progress, result.message)
-        is SResult.Empty -> (this as? IEmptyHandler)?.apply {
+        is com.rasalexman.sresult.data.dto.SResult.Loading -> (this as? ILoadingHandler)?.showLoading()
+        is com.rasalexman.sresult.data.dto.SResult.Progress -> (this as? IProgressHandler)?.showProgress(result.progress, result.message)
+        is com.rasalexman.sresult.data.dto.SResult.Empty -> (this as? IEmptyHandler)?.apply {
             hideLoading()
             showEmptyLayout()
         }
 
-        is SResult.Toast -> {
+        is com.rasalexman.sresult.data.dto.SResult.Toast -> {
             (this as? IToastHandler)?.apply {
                 hideLoading()
                 showToast(result.message, result.interval)
             }
         }
 
-        is SResult.AbstractFailure.Failure -> {
+        is com.rasalexman.sresult.data.dto.SResult.AbstractFailure.Failure -> {
             loggE(exception = result.exception, message = result.message.toString())
             (this as? IFailureHandler)?.apply {
                 hideLoading()
-                if(result is SResult.AbstractFailure.Alert) {
+                if(result is com.rasalexman.sresult.data.dto.SResult.AbstractFailure.Alert) {
                     showAlert(result)
                 } else {
                     showFailure(result)
@@ -322,21 +322,21 @@ fun ISResultHandler.onBaseResultHandler(result: SResult<*>) {
             }
         }
 
-        is SResult.NavigateResult.BaseNavigationResult -> {
+        is com.rasalexman.sresult.data.dto.SResult.NavigateResult.BaseNavigationResult -> {
             (this as? INavigateHandler)?.apply {
                 hideLoading()
 
                 when(result) {
-                    is SResult.NavigateResult.NavigatePop -> navigatePop(
+                    is com.rasalexman.sresult.data.dto.SResult.NavigateResult.NavigatePop -> navigatePop(
                         backArgs = result.args?.toBundle()
                     )
-                    is SResult.NavigateResult.NavigatePopTo -> navigatePopTo(
+                    is com.rasalexman.sresult.data.dto.SResult.NavigateResult.NavigatePopTo -> navigatePopTo(
                         navResId = result.navigateResourceId,
                         isInclusive = result.isInclusive,
                         backArgs = result.args?.toBundle()
                     )
-                    is SResult.NavigateResult.NavigateBack -> onBackPressed()
-                    is SResult.NavigateResult.NavigateNext -> onNextPressed()
+                    is com.rasalexman.sresult.data.dto.SResult.NavigateResult.NavigateBack -> onBackPressed()
+                    is com.rasalexman.sresult.data.dto.SResult.NavigateResult.NavigateNext -> onNextPressed()
 
                     else -> {
                         result.navDirection?.let { direction ->
@@ -350,8 +350,8 @@ fun ISResultHandler.onBaseResultHandler(result: SResult<*>) {
                 }
             }
         }
-        is SResult.AbstractFailure,
-        is SResult.NothingResult -> (this as? ILoadingHandler)?.hideLoading()
+        is com.rasalexman.sresult.data.dto.SResult.AbstractFailure,
+        is com.rasalexman.sresult.data.dto.SResult.NothingResult -> (this as? ILoadingHandler)?.hideLoading()
 
         else -> Unit
     }

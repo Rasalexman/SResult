@@ -10,11 +10,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 interface IFlowableViewModel : IEventableViewModel {
     val selectedPage: MutableStateFlow<Int>
 
-    val eventsFlow: MutableSharedFlow<ISEvent>
-    val navigationFlow: MutableSharedFlow<SResult.NavigateResult>
+    val eventsFlow: MutableSharedFlow<com.rasalexman.sresult.data.dto.ISEvent>
+    val navigationFlow: MutableSharedFlow<com.rasalexman.sresult.data.dto.SResult.NavigateResult>
     val anyDataFlow: Flow<*>?
     val resultFlow: Flow<*>?
-    val supportFlow: MutableSharedFlow<SResult<Any>>
+    val supportFlow: MutableSharedFlow<com.rasalexman.sresult.data.dto.SResult<Any>>
 
     val toolbarTitle: MutableStateFlow<String>?
     val toolbarSubTitle: MutableStateFlow<String>?

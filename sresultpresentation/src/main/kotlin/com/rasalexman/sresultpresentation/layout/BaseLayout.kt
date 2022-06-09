@@ -174,13 +174,13 @@ abstract class BaseLayout<VM : BaseContextViewModel> : FrameLayout,
         return parentLifecycle
     }
 
-    override fun showSuccess(result: SResult.Success<*>) = Unit
-    override fun showAlert(alert: SResult.AbstractFailure.Alert) = Unit
+    override fun showSuccess(result: com.rasalexman.sresult.data.dto.SResult.Success<*>) = Unit
+    override fun showAlert(alert: com.rasalexman.sresult.data.dto.SResult.AbstractFailure.Alert) = Unit
 
     /**
      * Base Result handler function
      */
-    override fun onResultHandler(result: SResult<*>) {
+    override fun onResultHandler(result: com.rasalexman.sresult.data.dto.SResult<*>) {
         onBaseResultHandler(result)
     }
 
@@ -244,7 +244,7 @@ abstract class BaseLayout<VM : BaseContextViewModel> : FrameLayout,
     override fun toolbarSubTitleHandler(subtitle: String) = Unit
     override fun toolbarMenuHandler(menuResId: Int) = Unit
 
-    override fun showFailure(error: SResult.AbstractFailure.Failure) {
+    override fun showFailure(error: com.rasalexman.sresult.data.dto.SResult.AbstractFailure.Failure) {
         this.toast(error.getMessage(), error.interval)
     }
 

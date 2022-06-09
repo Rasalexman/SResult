@@ -5,7 +5,6 @@ import com.rasalexman.sresult.common.extensions.applyIfSuccessTyped
 import com.rasalexman.sresult.common.extensions.applyIfType
 import com.rasalexman.sresult.common.extensions.logg
 import com.rasalexman.sresult.common.extensions.unsafeLazy
-import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultexample.databinding.FragmentMainBinding
 import com.rasalexman.sresultpresentation.databinding.BaseBindingFragment
 import com.rasalexman.sresultpresentation.extensions.string
@@ -23,12 +22,12 @@ class MainFragment : BaseBindingFragment<FragmentMainBinding, MainViewModel>() {
         string(R.string.title_progress)
     }
 
-    override fun onResultHandler(result: SResult<*>) {
+    override fun onResultHandler(result: com.rasalexman.sresult.data.dto.SResult<*>) {
         super.onResultHandler(result)
         result.applyIfSuccessTyped<UserModel> {
             logg { "-----> applyIfSuccessTyped = $this" }
             binding.progressTV.text = it.token
-        }.applyIfType<SResult.Progress> {
+        }.applyIfType<com.rasalexman.sresult.data.dto.SResult.Progress> {
             binding.progressTV.text = buildString {
                 append(progressText.format("$progress"))
                 append("%")

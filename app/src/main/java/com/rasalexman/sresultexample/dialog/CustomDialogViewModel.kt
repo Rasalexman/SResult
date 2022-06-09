@@ -7,7 +7,6 @@ import com.rasalexman.sresult.common.extensions.anySuccess
 import com.rasalexman.sresult.common.extensions.progressResult
 import com.rasalexman.sresult.common.extensions.unsafeLazy
 import com.rasalexman.sresult.common.typealiases.AnyResult
-import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultexample.R
 import com.rasalexman.sresultpresentation.extensions.asyncLiveData
 import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
@@ -39,7 +38,7 @@ class CustomDialogViewModel : BaseViewModel() {
 
     val progress: LiveData<String> by unsafeLazy {
         resultLiveData.map {
-            if(it is SResult.Progress) {
+            if(it is com.rasalexman.sresult.data.dto.SResult.Progress) {
                 val progress = if (it.progress < MAX_PROGRESS) it.progress else MAX_PROGRESS
                 val progressText = progressFormatted.format("$progress%")
                 progressText

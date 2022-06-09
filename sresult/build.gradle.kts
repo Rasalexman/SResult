@@ -92,12 +92,11 @@ java {
 dependencies {
     //implementation(fileTree(mapOf("include" to listOf("*.jar"), "dir" to "libs")))
     val timber: String by rootProject.extra
-    val kodi: String by rootProject.extra
     val coroutinesmanager: String by rootProject.extra
 
     api(timber)
-    api(kodi)
     api(coroutinesmanager)
+    api(project(":sresultcore"))
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test:runner:1.4.0")

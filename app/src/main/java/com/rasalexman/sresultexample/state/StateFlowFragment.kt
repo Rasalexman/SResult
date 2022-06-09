@@ -1,7 +1,6 @@
 package com.rasalexman.sresultexample.state
 
 import androidx.fragment.app.viewModels
-import com.rasalexman.sresult.data.dto.SEvent
 import com.rasalexman.sresultexample.R
 import com.rasalexman.sresultexample.databinding.FragmentStateFlowBinding
 import com.rasalexman.sresultpresentation.databinding.BaseBindingFragment
@@ -18,6 +17,6 @@ class StateFlowFragment : BaseBindingFragment<FragmentStateFlowBinding, StateFlo
 
     override fun onAnyDataHandler(data: Any?) {
         println("-----> onAnyDataHandler = $data")
-        processViewEvent(SEvent.Fetch)
+        processViewEvent(com.rasalexman.sresult.data.dto.SEvent.Fetch)
     }
 }

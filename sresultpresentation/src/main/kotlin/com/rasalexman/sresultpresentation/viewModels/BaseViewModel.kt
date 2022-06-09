@@ -11,8 +11,8 @@ import com.rasalexman.sresultpresentation.extensions.clear
 
 open class BaseViewModel : BaseContextViewModel(), IBaseViewModel {
 
-    override val eventLiveData by unsafeLazy { MutableLiveData<ISEvent>() }
-    override val navigationLiveData by unsafeLazy { MutableLiveData<SResult.NavigateResult>() }
+    override val eventLiveData by unsafeLazy { MutableLiveData<com.rasalexman.sresult.data.dto.ISEvent>() }
+    override val navigationLiveData by unsafeLazy { MutableLiveData<com.rasalexman.sresult.data.dto.SResult.NavigateResult>() }
     override val anyLiveData: LiveData<*>? = null
     override val resultLiveData: LiveData<*>? = null
     override val supportLiveData by unsafeLazy { AnyResultMutableLiveData() }
@@ -31,15 +31,15 @@ open class BaseViewModel : BaseContextViewModel(), IBaseViewModel {
     /**
      * Handle Some error states with [SResult.AbstractFailure]
      */
-    override fun handleErrorState(errorResult: SResult.AbstractFailure) {
+    override fun handleErrorState(errorResult: com.rasalexman.sresult.data.dto.SResult.AbstractFailure) {
         supportLiveData.value = createFailure(errorResult)
     }
 
-    override fun processEvent(viewEvent: ISEvent) {
+    override fun processEvent(viewEvent: com.rasalexman.sresult.data.dto.ISEvent) {
         eventLiveData.value = viewEvent
     }
 
-    override fun processEventAsync(viewEvent: ISEvent) {
+    override fun processEventAsync(viewEvent: com.rasalexman.sresult.data.dto.ISEvent) {
         eventLiveData.postValue(viewEvent)
     }
 

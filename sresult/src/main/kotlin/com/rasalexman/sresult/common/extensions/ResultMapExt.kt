@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.map
 
 inline fun <reified O : Any> ResultList<IConvertable>.mapListTo(): ResultList<O> {
     return when (this) {
-        is SResult.Success -> {
+        is com.rasalexman.sresult.data.dto.SResult.Success -> {
             data.mapNotNull { it.convert<O>() }.mapToResult()
         }
         else -> this as ResultList<O>
@@ -24,7 +24,7 @@ inline fun <reified O : Any> ResultList<IConvertable>.mapListTo(): ResultList<O>
 
 inline fun <reified O : Any, reified T : Any> ResultList<IConvertableWithParams<O, T>>.mapListToWithParams(params: T): ResultList<O> {
     return when (this) {
-        is SResult.Success -> {
+        is com.rasalexman.sresult.data.dto.SResult.Success -> {
             data.mapNotNull { it.convert(params) }.mapToResult()
         }
         else -> this as ResultList<O>
@@ -44,7 +44,7 @@ inline fun <reified O : Any, reified T : Any> FlowResultList<IConvertableWithPar
     }
 }
 
-inline fun <reified T : List<*>> T.mapToResult(default: SResult<T> = emptyResult()): SResult<T> {
+inline fun <reified T : List<*>> T.mapToResult(default: com.rasalexman.sresult.data.dto.SResult<T> = emptyResult()): com.rasalexman.sresult.data.dto.SResult<T> {
     return this.takeIf { it.isNotEmpty() }.toSuccessResult(default)
 }
 

@@ -5,8 +5,6 @@ import com.rasalexman.sresult.common.extensions.*
 import com.rasalexman.sresult.common.typealiases.AnyResult
 import com.rasalexman.sresult.common.typealiases.FlowResultList
 import com.rasalexman.sresult.common.typealiases.ResultList
-import com.rasalexman.sresult.data.dto.ISEvent
-import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresultexample.NavigationMainDirections
 import com.rasalexman.sresultexample.base.BaseItemsViewModel
 import com.rasalexman.sresultpresentation.extensions.AnyResultMutableLiveData
@@ -20,7 +18,7 @@ class UsersViewModel : BaseItemsViewModel() {
     override val supportLiveData: AnyResultMutableLiveData by unsafeLazy {
         onEventMutable<UserClickEvent, AnyResult> {
             val sresult = anySuccess()
-            val flattedResult = sresult.flatMapIfNotType<SResult.AbstractResult<Any>> {
+            val flattedResult = sresult.flatMapIfNotType<com.rasalexman.sresult.data.dto.SResult.AbstractResult<Any>> {
                 toastResult("Hello Im not this type")
             }
             supportLiveData.postValue(flattedResult)
@@ -46,5 +44,6 @@ class UsersViewModel : BaseItemsViewModel() {
 
     }
 
-    class UserClickEvent(val id: String, val item: UserItem) : ISEvent
+    class UserClickEvent(val id: String, val item: UserItem) :
+        com.rasalexman.sresult.data.dto.ISEvent
 }

@@ -14,60 +14,60 @@ import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.map
 
 // /------ ViewResult extensions
-inline fun <reified T : Any> Any.successResult(data: T): SResult<T> = SResult.Success(data)
+inline fun <reified T : Any> Any.successResult(data: T): com.rasalexman.sresult.data.dto.SResult<T> = com.rasalexman.sresult.data.dto.SResult.Success(data)
 
-fun Any?.loadingResult(isNeedHandle: Boolean = true) = SResult.Loading(isNeedHandle)
+fun Any?.loadingResult(isNeedHandle: Boolean = true) = com.rasalexman.sresult.data.dto.SResult.Loading(isNeedHandle)
 fun Any?.emptyResult(isNeedHandle: Boolean = true) = if(isNeedHandle) {
-    SResult.Empty
+    com.rasalexman.sresult.data.dto.SResult.Empty
 } else {
-    SResult.EmptyUnhandled
+    com.rasalexman.sresult.data.dto.SResult.EmptyUnhandled
 }
 
-fun Any.anySuccess() = SResult.AnySuccess
+fun Any.anySuccess() = com.rasalexman.sresult.data.dto.SResult.AnySuccess
 
 fun Any.progressResult(
     progress: Int,
     message: Any? = null,
     isPlus: Boolean = false,
     isNeedHandle: Boolean = true
-) = SResult.Progress(
+) = com.rasalexman.sresult.data.dto.SResult.Progress(
         progress = progress, message = message, isPlus = isPlus, isNeedHandle = isNeedHandle
     )
 
 fun Int.toProgress(message: Any? = null, isNeedHandle: Boolean = true) =
-    SResult.Progress(progress = this, message = message, isNeedHandle = isNeedHandle)
+    com.rasalexman.sresult.data.dto.SResult.Progress(progress = this, message = message, isNeedHandle = isNeedHandle)
 
 fun Any.navigateToResult(
     to: Any
-) = SResult.NavigateResult.NavigateTo(to)
+) = com.rasalexman.sresult.data.dto.SResult.NavigateResult.NavigateTo(to)
 
 fun Any.navigateBy(
     navigateResourceId: Int
-) = SResult.NavigateResult.NavigateBy(navigateResourceId)
+) = com.rasalexman.sresult.data.dto.SResult.NavigateResult.NavigateBy(navigateResourceId)
 
 fun Any.navigatePopTo(
     navigateResourceId: Int? = null,
     isInclusive: Boolean = false,
     backArgs: Map<String, Any?>? = null
-) = SResult.NavigateResult.NavigatePopTo(navigateResourceId, isInclusive).apply {
+) = com.rasalexman.sresult.data.dto.SResult.NavigateResult.NavigatePopTo(navigateResourceId, isInclusive).apply {
     this.args = backArgs
 }
 
-fun Any.navigatePop(backArgs: Map<String, Any?>? = null) = SResult.NavigateResult.NavigatePop().apply {
+fun Any.navigatePop(backArgs: Map<String, Any?>? = null) = com.rasalexman.sresult.data.dto.SResult.NavigateResult.NavigatePop().apply {
     this.args = backArgs
 }
 
 fun Any.navigateBackResult() =
-    SResult.NavigateResult.NavigateBack()
+    com.rasalexman.sresult.data.dto.SResult.NavigateResult.NavigateBack()
 
 fun Any.navigateNextResult() =
-    SResult.NavigateResult.NavigateNext()
+    com.rasalexman.sresult.data.dto.SResult.NavigateResult.NavigateNext()
 
 fun Any.errorResult(
     message: String = "",
     code: Int = -1,
     exception: Throwable? = null
-) = SResult.AbstractFailure.Error(message, code, exception)
+) = com.rasalexman.sresult.data.dto.SResult.AbstractFailure.Error(message, code, exception)
 
 fun Any.alertResult(
     dialogMessage: Any? = null,
@@ -77,7 +77,7 @@ fun Any.alertResult(
     cancelHandler: UnitHandler? = null,
     okTitle: Any? = null,
     cancelTitle: Any? = null
-) = SResult.AbstractFailure.Alert(
+) = com.rasalexman.sresult.data.dto.SResult.AbstractFailure.Alert(
     message = dialogMessage,
     exception = exception,
     dialogTitle = dialogTitle,
@@ -87,10 +87,10 @@ fun Any.alertResult(
     cancelTitle = cancelTitle
 )
 
-fun Any.toastResult(message: Any?) = SResult.Toast(message)
+fun Any.toastResult(message: Any?) = com.rasalexman.sresult.data.dto.SResult.Toast(message)
 
 // /-------- toState Convertables
-inline fun <reified T : Any> T?.toSuccessResult(orDefault: SResult<T> = emptyResult()): SResult<T> =
+inline fun <reified T : Any> T?.toSuccessResult(orDefault: com.rasalexman.sresult.data.dto.SResult<T> = emptyResult()): com.rasalexman.sresult.data.dto.SResult<T> =
     this?.let {
         successResult(it)
     } ?: orDefault
@@ -103,7 +103,7 @@ inline fun <reified T : Any> List<T>?.toSuccessListResult(orDefault: ResultList<
 inline fun <reified T : Throwable> T.toErrorResult() =
     errorResult(this.message ?: this.cause?.message.orEmpty(), 0, this)
 
-inline fun <reified T : Any> T.toEmptyResult() = SResult.Empty
+inline fun <reified T : Any> T.toEmptyResult() = com.rasalexman.sresult.data.dto.SResult.Empty
 
 inline fun <reified T : Throwable> T.toAlertResult(
     okTitle: Int? = null,
@@ -118,7 +118,7 @@ inline fun <reified T : Throwable> T.toAlertResult(
 inline fun <reified T : Any> T.toNavigateResult() = navigateToResult(this)
 
 // /-------- HANDLE FUNCTION
-fun SResult<*>.handle() {
+fun com.rasalexman.sresult.data.dto.SResult<*>.handle() {
     if (isNeedHandle) isHandled = true
 }
 
@@ -126,35 +126,35 @@ fun SResult<*>.handle() {
 @Suppress("UNCHECKED_CAST")
 inline fun <reified O : Any> ResultList<O>?.getList(): List<O> {
     return when (this) {
-        is SResult.Success -> data
+        is com.rasalexman.sresult.data.dto.SResult.Success -> data
         else -> emptyList()
     }
 }
 
 inline fun <reified O : Any> ResultList<O>.getMutableList(): MutableList<O> {
     return when (this) {
-        is SResult.Success -> data.toMutableList()
+        is com.rasalexman.sresult.data.dto.SResult.Success -> data.toMutableList()
         else -> mutableListOf()
     }
 }
 
 @Suppress("UNCHECKED_CAST")
-inline fun <reified O : Any, reified I : IConvertable> SResult<I>.convertTo(): SResult<O> {
+inline fun <reified O : Any, reified I : IConvertable> com.rasalexman.sresult.data.dto.SResult<I>.convertTo(): com.rasalexman.sresult.data.dto.SResult<O> {
     return when (this) {
-        is SResult.Success -> {
+        is com.rasalexman.sresult.data.dto.SResult.Success -> {
             this.data.convert<O>().toSuccessResult()
         }
-        else -> this as SResult<O>
+        else -> this as com.rasalexman.sresult.data.dto.SResult<O>
     }
 }
 
 @Suppress("UNCHECKED_CAST")
-inline fun <reified O : Any, reified S: Any, reified I : IConvertableWithParams<O, S>> SResult<I>.convertTo(param: S): SResult<O> {
+inline fun <reified O : Any, reified S: Any, reified I : IConvertableWithParams<O, S>> com.rasalexman.sresult.data.dto.SResult<I>.convertTo(param: S): com.rasalexman.sresult.data.dto.SResult<O> {
     return when (this) {
-        is SResult.Success -> {
+        is com.rasalexman.sresult.data.dto.SResult.Success -> {
             this.data.convert(param).toSuccessResult()
         }
-        else -> this as SResult<O>
+        else -> this as com.rasalexman.sresult.data.dto.SResult<O>
     }
 }
 
@@ -165,16 +165,16 @@ inline fun <reified O : Any, reified I : IConvertable> FlowResult<I>.convertFlow
 }
 
 @Suppress("UNCHECKED_CAST")
-suspend inline fun <reified O : Any, reified I : IConvertableSuspend> SResult<I>.convertToSuspend(): SResult<O> {
+suspend inline fun <reified O : Any, reified I : IConvertableSuspend> com.rasalexman.sresult.data.dto.SResult<I>.convertToSuspend(): com.rasalexman.sresult.data.dto.SResult<O> {
     return when (this) {
-        is SResult.Success -> {
+        is com.rasalexman.sresult.data.dto.SResult.Success -> {
             this.data.convert<O>().toSuccessResult(emptyResult())
         }
-        else -> this as SResult<O>
+        else -> this as com.rasalexman.sresult.data.dto.SResult<O>
     }
 }
 
-fun SResult.AbstractFailure.getMessage(): Any? {
+fun com.rasalexman.sresult.data.dto.SResult.AbstractFailure.getMessage(): Any? {
     return this.message?.takeIf { (it as? String)?.isNotEmpty() == true || ((it as? Int) != null && it > 0) }
         .or {
             (this.exception as? ISException)?.getErrorMessageResId()?.takeIf { it > 0 }
@@ -188,90 +188,90 @@ fun SResult.AbstractFailure.getMessage(): Any? {
 }
 
 
-fun SResult.AbstractFailure.getStringMessage(): String {
+fun com.rasalexman.sresult.data.dto.SResult.AbstractFailure.getStringMessage(): String {
     return (this.message as? String)?.takeIf { it.isNotEmpty() }.or {
         this.exception?.message.or { this.exception?.localizedMessage }.orEmpty()
     }
 }
 
 ///--- Inline Applying functions
-inline fun <reified I : Any> SResult<I>.doIfSuccess(block: InHandler<I>): SResult<I> {
-    if (this is SResult.Success) block(this.data)
+inline fun <reified I : Any> com.rasalexman.sresult.data.dto.SResult<I>.doIfSuccess(block: InHandler<I>): com.rasalexman.sresult.data.dto.SResult<I> {
+    if (this is com.rasalexman.sresult.data.dto.SResult.Success) block(this.data)
     return this
 }
 
 ///--- Inline Applying functions
-inline fun <reified I : Any> SResult<I>.doIfError(block: InHandler<Throwable?>): SResult<I> {
-    if (this is SResult.AbstractFailure) block(this.exception)
+inline fun <reified I : Any> com.rasalexman.sresult.data.dto.SResult<I>.doIfError(block: InHandler<Throwable?>): com.rasalexman.sresult.data.dto.SResult<I> {
+    if (this is com.rasalexman.sresult.data.dto.SResult.AbstractFailure) block(this.exception)
     return this
 }
 
 ///--- Inline Applying functions
-inline fun <reified I : Any> SResult<I>.doIfEmpty(block: UnitHandler): SResult<I> {
-    if (this is SResult.Empty) block()
+inline fun <reified I : Any> com.rasalexman.sresult.data.dto.SResult<I>.doIfEmpty(block: UnitHandler): com.rasalexman.sresult.data.dto.SResult<I> {
+    if (this is com.rasalexman.sresult.data.dto.SResult.Empty) block()
     return this
 }
 
 ///--- Inline Applying functions
-inline fun <reified I : Any> SResult<I>.logIfError(textToLog: String): SResult<I> {
-    if (this is SResult.AbstractFailure) logg { textToLog }
+inline fun <reified I : Any> com.rasalexman.sresult.data.dto.SResult<I>.logIfError(textToLog: String): com.rasalexman.sresult.data.dto.SResult<I> {
+    if (this is com.rasalexman.sresult.data.dto.SResult.AbstractFailure) logg { textToLog }
     return this
 }
 
 @Suppress("UNCHECKED_CAST")
-suspend inline fun <reified I : Any> SResult<I>.doIfSuccessSuspend(crossinline block: SInHandler<I>): SResult<I> {
-    if (this is SResult.Success) block(this.data)
+suspend inline fun <reified I : Any> com.rasalexman.sresult.data.dto.SResult<I>.doIfSuccessSuspend(crossinline block: SInHandler<I>): com.rasalexman.sresult.data.dto.SResult<I> {
+    if (this is com.rasalexman.sresult.data.dto.SResult.Success) block(this.data)
     return this
 }
 
 @Suppress("UNCHECKED_CAST")
-suspend inline fun <reified I : Any> SResult<I>.doIfEmptySuspend(crossinline block: SUnitHandler): SResult<I> {
-    if (this is SResult.Empty) block()
+suspend inline fun <reified I : Any> com.rasalexman.sresult.data.dto.SResult<I>.doIfEmptySuspend(crossinline block: SUnitHandler): com.rasalexman.sresult.data.dto.SResult<I> {
+    if (this is com.rasalexman.sresult.data.dto.SResult.Empty) block()
     return this
 }
 
 @Suppress("UNCHECKED_CAST")
-suspend inline fun <reified I : Any> SResult<I>.doIfErrorSuspend(crossinline block: SInHandler<Throwable?>): SResult<I> {
-    if (this is SResult.AbstractFailure) block(this.exception)
+suspend inline fun <reified I : Any> com.rasalexman.sresult.data.dto.SResult<I>.doIfErrorSuspend(crossinline block: SInHandler<Throwable?>): com.rasalexman.sresult.data.dto.SResult<I> {
+    if (this is com.rasalexman.sresult.data.dto.SResult.AbstractFailure) block(this.exception)
     return this
 }
 
-val <T : Any> SResult<T>.isSuccess: Boolean
-    get() = this is SResult.Success<T>
+val <T : Any> com.rasalexman.sresult.data.dto.SResult<T>.isSuccess: Boolean
+    get() = this is com.rasalexman.sresult.data.dto.SResult.Success<T>
 
-val <T : Any> SResult<T>.isError: Boolean
-    get() = this is SResult.AbstractFailure
+val <T : Any> com.rasalexman.sresult.data.dto.SResult<T>.isError: Boolean
+    get() = this is com.rasalexman.sresult.data.dto.SResult.AbstractFailure
 
-val <T : Any> SResult<T>.isEmpty: Boolean
-    get() = this is SResult.Empty
+val <T : Any> com.rasalexman.sresult.data.dto.SResult<T>.isEmpty: Boolean
+    get() = this is com.rasalexman.sresult.data.dto.SResult.Empty
 
-val <T : Any> SResult<T>.isLoading: Boolean
-    get() = this is SResult.Loading
+val <T : Any> com.rasalexman.sresult.data.dto.SResult<T>.isLoading: Boolean
+    get() = this is com.rasalexman.sresult.data.dto.SResult.Loading
 
-val <T : Any> SResult<T>.isProgress: Boolean
-    get() = this is SResult.Progress
+val <T : Any> com.rasalexman.sresult.data.dto.SResult<T>.isProgress: Boolean
+    get() = this is com.rasalexman.sresult.data.dto.SResult.Progress
 
-val <T : Any> SResult<T>.isToast: Boolean
-    get() = this is SResult.Toast
+val <T : Any> com.rasalexman.sresult.data.dto.SResult<T>.isToast: Boolean
+    get() = this is com.rasalexman.sresult.data.dto.SResult.Toast
 
-fun SResult.AbstractFailure.getErrorMessage(): Any {
+fun com.rasalexman.sresult.data.dto.SResult.AbstractFailure.getErrorMessage(): Any {
     return (this.message as? String)?.takeIf { it.isNotEmpty() }.or {
         (this.message as? Int).or { this.exception?.message.or { this.exception?.localizedMessage }.orEmpty() }
     }
 }
 
-fun <T : Any> SResult<T>?.orError(
+fun <T : Any> com.rasalexman.sresult.data.dto.SResult<T>?.orError(
     message: Any? = null,
     code: Int = 0,
     exception: Throwable? = null
-): SResult<T> = this ?: SResult.AbstractFailure.Error(message, code, exception)
+): com.rasalexman.sresult.data.dto.SResult<T> = this ?: com.rasalexman.sresult.data.dto.SResult.AbstractFailure.Error(message, code, exception)
 
 fun <T : Any> T?.toSuccessOrErrorResult(
     message: Any? = null,
     code: Int = 0,
     exception: Throwable? = null
-): SResult<T> =
-    this?.run { SResult.Success(this) } ?: SResult.AbstractFailure.Error(message, code, exception)
+): com.rasalexman.sresult.data.dto.SResult<T> =
+    this?.run { com.rasalexman.sresult.data.dto.SResult.Success(this) } ?: com.rasalexman.sresult.data.dto.SResult.AbstractFailure.Error(message, code, exception)
 
 @Suppress("UNCHECKED_CAST")
 inline fun <reified O : Any> Flow<List<O>>.toFlowSuccess(): FlowResultList<O> {

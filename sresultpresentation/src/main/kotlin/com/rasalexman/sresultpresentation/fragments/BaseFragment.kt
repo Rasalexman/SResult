@@ -178,7 +178,7 @@ abstract class BaseFragment<VM : IEventableViewModel> : Fragment(), IBaseFragmen
     /**
      * When [SResult.Success] is coming from any observer
      */
-    override fun showSuccess(result: SResult.Success<*>) = Unit
+    override fun showSuccess(result: com.rasalexman.sresult.data.dto.SResult.Success<*>) = Unit
 
     /**
      * Show loading state for [SResult.Loading]
@@ -223,7 +223,7 @@ abstract class BaseFragment<VM : IEventableViewModel> : Fragment(), IBaseFragmen
     /**
      * Show toast error from error result data
      */
-    override fun showFailure(error: SResult.AbstractFailure.Failure) {
+    override fun showFailure(error: com.rasalexman.sresult.data.dto.SResult.AbstractFailure.Failure) {
         hideLoading()
         this.toast(error.getMessage(), error.interval)
     }
@@ -231,7 +231,7 @@ abstract class BaseFragment<VM : IEventableViewModel> : Fragment(), IBaseFragmen
     /**
      * Show simple alert dialog from result data
      */
-    override fun showAlert(alert: SResult.AbstractFailure.Alert) {
+    override fun showAlert(alert: com.rasalexman.sresult.data.dto.SResult.AbstractFailure.Alert) {
         hideLoading()
         this.alert(
             message = alert.getMessage(),
@@ -300,14 +300,14 @@ abstract class BaseFragment<VM : IEventableViewModel> : Fragment(), IBaseFragmen
     /**
      * Base [SResult] handle function
      */
-    override fun onResultHandler(result: SResult<*>) {
+    override fun onResultHandler(result: com.rasalexman.sresult.data.dto.SResult<*>) {
         onBaseResultHandler(result)
     }
 
     /**
      * Process [SEvent] to view model
      */
-    protected open fun processViewEvent(viewEvent: ISEvent) {
+    protected open fun processViewEvent(viewEvent: com.rasalexman.sresult.data.dto.ISEvent) {
         this.viewModel?.processEvent(viewEvent)
     }
 
