@@ -108,11 +108,11 @@ publishing {
         // Configure all publications
         publications.withType<MavenPublication> {
             // You can then customize attributes of the publication as shown below.
-//            groupId = "com.rasalexman.sresultcore"
-//            artifactId = "kmp"
-//            version = appVersion
+            groupId = "com.rasalexman.sresultcore"
+            artifactId = "kmp"
+            version = appVersion
             // Stub javadoc.jar artifact
-            artifact(javadocJar.get())
+            //artifact(javadocJar.get())
 
             // Provide artifacts information requited by Maven Central
             pom {
