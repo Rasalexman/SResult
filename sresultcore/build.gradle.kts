@@ -92,58 +92,58 @@ kotlin.targets.withType(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarge
     }
 }
 
-publishing {
-
-//    val publicationsFromMainHost =
-//        listOf(android(), ios()).map { it.name } + "kotlinMultiplatform"
-
-    publications {
-//        matching { it.name in publicationsFromMainHost }.all {
-//            val targetPublication = this@all
-//            tasks.withType<AbstractPublishToMaven>()
-//                .matching { it.publication == targetPublication }
-//                .configureEach { onlyIf { findProperty("isMainHost") == "true" } }
+//publishing {
+//
+////    val publicationsFromMainHost =
+////        listOf(android(), ios()).map { it.name } + "kotlinMultiplatform"
+//
+//    publications {
+////        matching { it.name in publicationsFromMainHost }.all {
+////            val targetPublication = this@all
+////            tasks.withType<AbstractPublishToMaven>()
+////                .matching { it.publication == targetPublication }
+////                .configureEach { onlyIf { findProperty("isMainHost") == "true" } }
+////        }
+//
+//        // Configure all publications
+//        publications.withType<MavenPublication> {
+//            // You can then customize attributes of the publication as shown below.
+//            groupId = "com.rasalexman.sresultcore"
+//            artifactId = "kmp"
+//            version = appVersion
+//            // Stub javadoc.jar artifact
+//            //artifact(javadocJar.get())
+//
+//            // Provide artifacts information requited by Maven Central
+//            pom {
+//                name.set("SResult Kmp library")
+//                description.set("SResult Core Multiplatform library (android + ios)")
+//                url.set("https://github.com/Rasalexman/SResult")
+//
+//                licenses {
+//                    license {
+//                        name.set("MIT")
+//                        url.set("https://opensource.org/licenses/MIT")
+//                    }
+//                }
+//                developers {
+//                    developer {
+//                        id.set("Rasalexman")
+//                        name.set("Alexandr Minkin")
+//                        email.set("sphc@yandex.ru")
+//                    }
+//                }
+//                scm {
+//                    url.set("https://github.com/Rasalexman/SResult")
+//                }
+//            }
 //        }
-
-        // Configure all publications
-        publications.withType<MavenPublication> {
-            // You can then customize attributes of the publication as shown below.
-            groupId = "com.rasalexman.sresultcore"
-            artifactId = "kmp"
-            version = appVersion
-            // Stub javadoc.jar artifact
-            //artifact(javadocJar.get())
-
-            // Provide artifacts information requited by Maven Central
-            pom {
-                name.set("SResult Kmp library")
-                description.set("SResult Core Multiplatform library (android + ios)")
-                url.set("https://github.com/Rasalexman/SResult")
-
-                licenses {
-                    license {
-                        name.set("MIT")
-                        url.set("https://opensource.org/licenses/MIT")
-                    }
-                }
-                developers {
-                    developer {
-                        id.set("Rasalexman")
-                        name.set("Alexandr Minkin")
-                        email.set("sphc@yandex.ru")
-                    }
-                }
-                scm {
-                    url.set("https://github.com/Rasalexman/SResult")
-                }
-            }
-        }
-    }
-
-    repositories {
-        maven {
-            name = "sresultcore"
-            url = uri("${buildDir}/publishing-repository")
-        }
-    }
-}
+//    }
+//
+//    repositories {
+//        maven {
+//            name = "sresultcore"
+//            url = uri("${buildDir}/publishing-repository")
+//        }
+//    }
+//}
