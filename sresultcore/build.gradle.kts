@@ -1,7 +1,7 @@
 plugins {
     kotlin("multiplatform")
     id("com.android.library")
-    id("maven-publish")
+    //id("maven-publish")
 }
 
 val appVersion: String by rootProject.extra
@@ -35,7 +35,7 @@ kotlin {
 //            }
 //        }
 //    }
-    ios()
+//    ios()
 
     sourceSets {
         val commonMain by getting
@@ -53,9 +53,9 @@ kotlin {
 //                //implementation(kotlin("test-junit"))
 //            }
 //        }
-        val iosMain by getting {
-            dependsOn(commonMain)
-        }
+//        val iosMain by getting {
+//            dependsOn(commonMain)
+//        }
         //val iosTest by getting
     }
 }
