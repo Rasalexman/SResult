@@ -1,6 +1,7 @@
 //------ APP VERSION
 extra["appVersion"] = "1.3.47"
 extra["mainGroupName"] = "com.rasalexman.sresult"
+extra["coreGroupName"] = "com.rasalexman.sresultcore"
 extra["supportGroupName"] = "com.rasalexman.sresultpresentation"
 
 //------ CONFIG DATA

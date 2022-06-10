@@ -1,14 +1,15 @@
 plugins {
     kotlin("multiplatform")
     id("com.android.library")
-    //id("maven-publish")
+    id("maven-publish")
 }
 
 val appVersion: String by rootProject.extra
+val coreGroupName: String by rootProject.extra
 val buildSdkVersion: Int by rootProject.extra
 val minSdkVersion: Int by rootProject.extra
 
-group = "com.rasalexman.sresultcore"
+group = coreGroupName
 version = appVersion
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
@@ -62,14 +63,6 @@ kotlin {
     }
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
-
-//    withJavadocJar()
-//    withSourcesJar()
-}
-
 val javadocJar by tasks.registering(Jar::class) {
     archiveClassifier.set("javadoc")
 }
@@ -95,9 +88,52 @@ android {
     }
 }
 
+tasks.register<Jar>(name = "sourceJar") {
+    from(android.sourceSets["main"].java.srcDirs)
+    archiveClassifier.set("sources")
+}
+
+java {
+    sourceSets {
+        create("main") {
+            java.setSrcDirs(listOf("src/commonMain/kotlin"))
+        }
+    }
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+
+//    withJavadocJar()
+    withSourcesJar()
+}
+
 kotlin.targets.withType(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget::class.java) {
     binaries.all {
         binaryOptions["freezing"] = "disabled"
+    }
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("release") {
+                from(components["kotlin"])
+
+                // You can then customize attributes of the publication as shown below.
+                groupId = coreGroupName
+                artifactId = "sresultcore"
+                version = appVersion
+
+                //artifact("$buildDir/outputs/aar/sresult-release.aar")
+                artifact(tasks["sourceJar"])
+            }
+        }
+
+        repositories {
+            maven {
+                name = "sresultcore"
+                setUrl(layout.buildDirectory.dir("repo").toString())
+            }
+        }
     }
 }
 
