@@ -20,11 +20,6 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
     }
 }
 
-//tasks.register<Jar>(name = "sourceJar") {
-//    from(sourceSets["main"].java.srcDirs)
-//    archiveClassifier.set("sources")
-//}
-
 kotlin {
     android {
         publishLibraryVariants("release", "debug")
@@ -38,19 +33,51 @@ kotlin {
 //            }
 //        }
 //    }
-//    ios()
+    ios()
+
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach {
+        it.binaries.framework {
+            baseName = "shared"
+        }
+    }
 
     sourceSets {
         val commonMain by getting
-//        val commonTest by getting {
-//            dependencies {
-//                implementation(kotlin("test-common"))
-//                implementation(kotlin("test-annotations-common"))
-//            }
-//        }
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test-common"))
+                implementation(kotlin("test-annotations-common"))
+            }
+        }
         val androidMain by getting {
             dependsOn(commonMain)
         }
+
+        val iosX64Main by getting
+        val iosArm64Main by getting
+        val iosSimulatorArm64Main by getting
+
+        val iosMain by getting {
+            dependsOn(commonMain)
+            iosX64Main.dependsOn(this)
+            iosArm64Main.dependsOn(this)
+            iosSimulatorArm64Main.dependsOn(this)
+        }
+        val iosX64Test by getting
+        val iosArm64Test by getting
+        val iosSimulatorArm64Test by getting
+
+        val iosTest by getting {
+            //dependsOn(commonTest)
+            iosX64Test.dependsOn(this)
+            iosArm64Test.dependsOn(this)
+            iosSimulatorArm64Test.dependsOn(this)
+        }
+
 //        val jvmTest by getting {
 //            dependencies {
 //                //implementation(kotlin("test-junit"))
@@ -81,11 +108,11 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    sourceSets {
-        getByName("main") {
-            java.setSrcDirs(listOf("src/commonMain/kotlin"))
-        }
-    }
+//    sourceSets {
+//        getByName("main") {
+//            java.setSrcDirs(listOf("src/commonMain/kotlin"))
+//        }
+//    }
 }
 
 tasks.register<Jar>(name = "sourceJar") {
@@ -94,16 +121,16 @@ tasks.register<Jar>(name = "sourceJar") {
 }
 
 java {
-    sourceSets {
-        create("main") {
-            java.setSrcDirs(listOf("src/commonMain/kotlin"))
-        }
-    }
+//    sourceSets {
+//        getByName("main") {
+//            java.setSrcDirs(listOf("src/commonMain/kotlin"))
+//        }
+//    }
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
 
 //    withJavadocJar()
-    withSourcesJar()
+//    withSourcesJar()
 }
 
 kotlin.targets.withType(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget::class.java) {
@@ -114,7 +141,19 @@ kotlin.targets.withType(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarge
 
 afterEvaluate {
     publishing {
+
+        val publicationsFromMainHost =
+            listOf("android", "ios").map { it } + "kotlinMultiplatform"
+
         publications {
+
+            matching { it.name in publicationsFromMainHost }.all {
+                val targetPublication = this@all
+                tasks.withType<AbstractPublishToMaven>()
+                    .matching { it.publication == targetPublication }
+                    .configureEach { onlyIf { findProperty("isMainHost") == "true" } }
+            }
+
             create<MavenPublication>("release") {
                 from(components["kotlin"])
 
@@ -125,6 +164,30 @@ afterEvaluate {
 
                 //artifact("$buildDir/outputs/aar/sresult-release.aar")
                 artifact(tasks["sourceJar"])
+
+                // Provide artifacts information requited by Maven Central
+                pom {
+                    name.set("SResult Kmp library")
+                    description.set("SResult Core Multiplatform library (android + ios)")
+                    url.set("https://github.com/Rasalexman/SResult")
+
+                    licenses {
+                        license {
+                            name.set("MIT")
+                            url.set("https://opensource.org/licenses/MIT")
+                        }
+                    }
+                    developers {
+                        developer {
+                            id.set("Rasalexman")
+                            name.set("Alexandr Minkin")
+                            email.set("sphc@yandex.ru")
+                        }
+                    }
+                    scm {
+                        url.set("https://github.com/Rasalexman/SResult")
+                    }
+                }
             }
         }
 
