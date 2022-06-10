@@ -5,6 +5,8 @@ plugins {
 }
 
 val appVersion: String by rootProject.extra
+val buildSdkVersion: Int by rootProject.extra
+val minSdkVersion: Int by rootProject.extra
 
 group = "com.rasalexman.sresultcore"
 version = appVersion
@@ -73,16 +75,23 @@ val javadocJar by tasks.registering(Jar::class) {
 }
 
 android {
-    compileSdk = 31
+    compileSdk = buildSdkVersion
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {
-        minSdk = 18
-        targetSdk = 31
+        minSdk = minSdkVersion
+        targetSdk = buildSdkVersion
+        version = appVersion
     }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+    }
+
+    sourceSets {
+        getByName("main") {
+            java.setSrcDirs(listOf("src/commonMain/kotlin"))
+        }
     }
 }
 
