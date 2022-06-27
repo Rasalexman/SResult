@@ -96,7 +96,7 @@ dependencies {
 
     api(timber)
     api(coroutinesmanager)
-    api(project(":core"))
+    api(project(":sresultcore"))
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test:runner:1.4.0")

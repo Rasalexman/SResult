@@ -1,6 +1,6 @@
 package com.rasalexman.sresult.data.dto
 
-sealed class SEvent : ISEvent {
+abstract class SEvent : ISEvent {
 
     /**
      * Fetch data from ViewModel
