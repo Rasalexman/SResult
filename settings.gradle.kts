@@ -44,7 +44,10 @@ dependencyResolutionManagement {
 }
 rootProject.name = "SResultExample"
 include(":app")
-include(":sresultcore")
+include(":core")
+//include(":sresultcore")
 include(":sresult")
 include(":sresultpresentation")
 
+
+//include(":sresultkmm")

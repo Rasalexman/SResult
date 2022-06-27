@@ -1,7 +1,7 @@
 //------ APP VERSION
 extra["appVersion"] = "1.3.48"
 extra["mainGroupName"] = "com.rasalexman.sresult"
-extra["coreGroupName"] = "com.rasalexman.sresultcore"
+extra["coreGroupName"] = "com.rasalexman.sresultkmm"
 extra["supportGroupName"] = "com.rasalexman.sresultpresentation"
 
 //------ CONFIG DATA
@@ -30,7 +30,7 @@ val fragment: String = "1.4.1"//"1.5.0-rc01"
 val paging: String = "3.1.1"
 val timber = "5.0.1"
 val kodi = "1.6.4"
-val coroutinesManager = "1.4.1"
+val coroutinesManager = "1.4.2"
 val easyBinding = "1.2.9"
 extra["navigation"] = navigation
 

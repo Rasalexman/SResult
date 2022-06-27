@@ -41,7 +41,7 @@ kotlin {
         iosSimulatorArm64()
     ).forEach {
         it.binaries.framework {
-            baseName = "shared"
+            baseName = "sresultcore"
         }
     }
 
@@ -155,14 +155,12 @@ afterEvaluate {
             }
 
             create<MavenPublication>("release") {
-                from(components["kotlin"])
-
                 // You can then customize attributes of the publication as shown below.
                 groupId = coreGroupName
-                artifactId = "sresultcore"
+                artifactId = "kmm"
                 version = appVersion
 
-                //artifact("$buildDir/outputs/aar/sresult-release.aar")
+                from(components["kotlin"])
                 artifact(tasks["sourceJar"])
 
                 // Provide artifacts information requited by Maven Central
@@ -193,7 +191,7 @@ afterEvaluate {
 
         repositories {
             maven {
-                name = "sresultcore"
+                name = "sresultkmm"
                 setUrl(layout.buildDirectory.dir("repo").toString())
             }
         }
