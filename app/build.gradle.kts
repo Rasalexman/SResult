@@ -6,7 +6,7 @@ plugins {
     kotlin("kapt")
 }
 
-val apiVersion: String by rootProject.extra
+val kotlinApiVersion: String by rootProject.extra
 val jvmVersion: String by rootProject.extra
 android {
     val buildSdkVersion: Int by extra
@@ -62,8 +62,8 @@ android {
 
     kotlinOptions {
         jvmTarget = jvmVersion
-        languageVersion = apiVersion
-        apiVersion = apiVersion
+        languageVersion = kotlinApiVersion
+        apiVersion = kotlinApiVersion
         freeCompilerArgs = listOf(
             "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi",
             "-opt-in=kotlin.RequiresOptIn"

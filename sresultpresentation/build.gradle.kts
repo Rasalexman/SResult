@@ -8,7 +8,7 @@ plugins {
 val appVersion: String by rootProject.extra
 val codePath: String by rootProject.extra
 val supportGroupName: String by rootProject.extra
-val apiVersion: String by rootProject.extra
+val kotlinApiVersion: String by rootProject.extra
 val jvmVersion: String by rootProject.extra
 group = supportGroupName
 version = appVersion
@@ -78,8 +78,8 @@ android {
 
     kotlinOptions {
         jvmTarget = jvmVersion
-        languageVersion = apiVersion
-        apiVersion = apiVersion
+        languageVersion = kotlinApiVersion
+        apiVersion = kotlinApiVersion
     }
 }
 

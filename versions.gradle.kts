@@ -1,5 +1,5 @@
 //------ APP VERSION
-extra["appVersion"] = "1.3.50"
+extra["appVersion"] = "1.3.51"
 extra["mainGroupName"] = "com.rasalexman.sresult"
 extra["coreGroupName"] = "com.rasalexman.sresultkmm"
 extra["supportGroupName"] = "com.rasalexman.sresultpresentation"
@@ -7,30 +7,30 @@ extra["supportGroupName"] = "com.rasalexman.sresultpresentation"
 //------ CONFIG DATA
 extra["minSdkVersion"] = 18
 extra["buildSdkVersion"] = 31
-extra["apiVersion"] = "1.6"
+extra["kotlinApiVersion"] = "1.7"
 extra["jvmVersion"] = "11"
 extra["agpVersion"] = "7.2.1"
-extra["kotlinVersion"] = "1.6.21"
+extra["kotlinVersion"] = "1.7.10"
 extra["jitpackPath"] = "https://jitpack.io"
 extra["codePath"] = "src/main/kotlin"
 extra["resPath"] = "src/main/res"
 
 //------- LIBS VERSIONS
-val navigation = "2.4.2" //"2.5.0-rc01"//"2.4.2"
+val navigation = "2.5.1" //"2.5.0-rc01"//"2.4.2"
 val leakcanary = "2.9.1"
 val coroutines = "1.6.2"
 val core: String = "1.8.0"
 val constraintLayout = "2.1.4"
 val material = "1.6.1"
 val viewPager2 = "1.1.0-beta01"
-val recyclerView = "1.2.1" //"1.3.0-alpha02"
-val lifecycle = "2.4.1"//"2.5.0-rc01"
-val fragment: String = "1.4.1"//"1.5.0-rc01"
+val recyclerView = "1.2.1"
+val lifecycle = "2.5.1"
+val fragment: String = "1.5.1"
 val paging: String = "3.1.1"
 val timber = "5.0.1"
-val kodi = "1.6.4"
+val kodi = "1.6.6"
 val coroutinesManager = "1.4.2"
-val easyBinding = "1.2.9"
+val easyBinding = "1.3.0"
 extra["navigation"] = navigation
 
 //------- Libs path
