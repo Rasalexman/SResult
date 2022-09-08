@@ -1,15 +1,15 @@
 //------ APP VERSION
-extra["appVersion"] = "1.3.51"
+extra["appVersion"] = "1.3.52"
 extra["mainGroupName"] = "com.rasalexman.sresult"
 extra["coreGroupName"] = "com.rasalexman.sresultkmm"
 extra["supportGroupName"] = "com.rasalexman.sresultpresentation"
 
 //------ CONFIG DATA
 extra["minSdkVersion"] = 18
-extra["buildSdkVersion"] = 31
+extra["buildSdkVersion"] = 33
 extra["kotlinApiVersion"] = "1.7"
 extra["jvmVersion"] = "11"
-extra["agpVersion"] = "7.2.1"
+extra["agpVersion"] = "7.2.2"
 extra["kotlinVersion"] = "1.7.10"
 extra["jitpackPath"] = "https://jitpack.io"
 extra["codePath"] = "src/main/kotlin"
@@ -30,7 +30,7 @@ val paging: String = "3.1.1"
 val timber = "5.0.1"
 val kodi = "1.6.6"
 val coroutinesManager = "1.4.2"
-val easyBinding = "1.3.0"
+val easyBinding = "1.3.1"
 extra["navigation"] = navigation
 
 //------- Libs path

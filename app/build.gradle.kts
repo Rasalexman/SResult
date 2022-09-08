@@ -65,7 +65,7 @@ android {
         languageVersion = kotlinApiVersion
         apiVersion = kotlinApiVersion
         freeCompilerArgs = listOf(
-            "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi",
+            //"-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi",
             "-opt-in=kotlin.RequiresOptIn"
         )
     }
