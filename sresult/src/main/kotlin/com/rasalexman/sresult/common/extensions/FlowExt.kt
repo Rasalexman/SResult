@@ -47,6 +47,15 @@ fun <T : Any> Flow<T>.asState(
     return this.stateIn(scope, started, initialValue)
 }
 
+@Suppress("OPT_IN_USAGE")
+fun <T : Any> Flow<T>.asMutableState(
+    scope: CoroutineScope,
+    initialValue: T,
+    started: SharingStarted = SharingStarted.WhileSubscribed()
+): MutableStateFlow<T> {
+    return this.stateIn(scope, started, initialValue).flatMapConcat { MutableStateFlow(it) } as MutableStateFlow
+}
+
 /**
  * Taken from the kotlin coroutine library
  * Stops further execution of the coroutine while [predicate] == false

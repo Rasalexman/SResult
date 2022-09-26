@@ -147,6 +147,7 @@ abstract class SResult<out T : Any> : ISResult {
         open val message: Any? = null
         open val exception: Throwable? = null
         open val code: Int = 0
+        open val errors: List<Throwable>? = null
         open val interval: Int = 1
         override var isNeedHandle = true
 
@@ -158,7 +159,8 @@ abstract class SResult<out T : Any> : ISResult {
         class Error(
             override val message: Any? = null,
             override val code: Int = 0,
-            override val exception: Throwable? = null
+            override val exception: Throwable? = null,
+            override val errors: List<Throwable> = emptyList()
         ) : Failure()
 
         class Alert(

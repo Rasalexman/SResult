@@ -4,24 +4,23 @@ package com.rasalexman.sresultpresentation.extensions
 import com.rasalexman.sresult.data.dto.ISEvent
 import com.rasalexman.sresult.data.dto.SEvent
 import com.rasalexman.sresultpresentation.fragments.IBaseFragment
-import com.rasalexman.sresultpresentation.viewModels.IBaseViewModel
 import com.rasalexman.sresultpresentation.viewModels.IEventableViewModel
 
 
 ///------ INLINE SECTION ----///
-inline fun <reified T : IBaseViewModel> IBaseFragment<T>.fetch() =
+inline fun <reified T : IEventableViewModel> IBaseFragment<T>.fetch() =
     this.viewModel?.processEvent(SEvent.Fetch)
 
-fun <R : Any> IBaseFragment<IBaseViewModel>.fetchWith(data: R) =
+fun <R : Any> IBaseFragment<IEventableViewModel>.fetchWith(data: R) =
     this.viewModel?.processEvent(SEvent.FetchWith(data))
 
-inline fun <reified T : IBaseViewModel> IBaseFragment<T>.refresh() =
+inline fun <reified T : IEventableViewModel> IBaseFragment<T>.refresh() =
     this.viewModel?.processEvent(SEvent.Refresh)
 
-fun IBaseFragment<IBaseViewModel>.validateData() =
+fun IBaseFragment<IEventableViewModel>.validateData() =
     this.viewModel?.processEvent(SEvent.Validate)
 
-inline fun <reified T : IBaseViewModel> IBaseFragment<T>.postEvent(event: ISEvent) =
+inline fun <reified T : IEventableViewModel> IBaseFragment<T>.postEvent(event: ISEvent) =
     this.viewModel?.processEvent(event)
 
 ////-------- GLOBAL VM SECTION ----///
