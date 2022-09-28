@@ -66,8 +66,9 @@ fun Any.navigateNextResult() =
 fun Any.errorResult(
     message: String = "",
     code: Int = -1,
-    exception: Throwable? = null
-) = SResult.AbstractFailure.Error(message, code, exception)
+    exception: Throwable? = null,
+    errors: List<Throwable> = emptyList()
+) = SResult.AbstractFailure.Error(message, code, exception, errors)
 
 fun Any.alertResult(
     dialogMessage: Any? = null,

@@ -1,5 +1,5 @@
 //------ APP VERSION
-extra["appVersion"] = "1.3.54"
+extra["appVersion"] = "1.3.55"
 extra["mainGroupName"] = "com.rasalexman.sresult"
 extra["coreGroupName"] = "com.rasalexman.sresultkmm"
 extra["supportGroupName"] = "com.rasalexman.sresultpresentation"
