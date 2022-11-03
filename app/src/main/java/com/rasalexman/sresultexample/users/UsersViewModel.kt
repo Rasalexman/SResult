@@ -11,7 +11,9 @@ import com.rasalexman.sresultexample.NavigationMainDirections
 import com.rasalexman.sresultexample.base.BaseItemsViewModel
 import com.rasalexman.sresultpresentation.extensions.AnyResultMutableLiveData
 import com.rasalexman.sresultpresentation.extensions.onEventMutable
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 
 class UsersViewModel : BaseItemsViewModel() {
 
@@ -31,21 +33,20 @@ class UsersViewModel : BaseItemsViewModel() {
     }
 
     override suspend fun LiveDataScope<ResultList<UserItem>>.processResultFlow(searchFlow: Flow<String>): FlowResultList<UserItem> {
-        return getUsersListUseCase(searchFlow)
+        return getUsersListUseCase(searchFlow).flowOn(Dispatchers.IO)
     }
 
     fun onItemClicked(item: UserItem) {
         processEvent(UserClickEvent(item.id, item))
     }
 
-    fun onSearch(it: String) {
-        searchLD.value = it
+    fun onSearch(query: String) {
+        searchLD.value = query
     }
 
     fun cancelSearch() {
 
     }
 
-    class UserClickEvent(val id: String, val item: UserItem) :
-        ISEvent
+    data class UserClickEvent(val id: String, val item: UserItem) : ISEvent
 }

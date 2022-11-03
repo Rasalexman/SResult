@@ -1,6 +1,7 @@
 package com.rasalexman.sresultexample.users
 
 import com.rasalexman.coroutinesmanager.ICoroutinesManager
+import com.rasalexman.sresult.common.extensions.logg
 import com.rasalexman.sresult.common.extensions.mapFlowListTo
 import com.rasalexman.sresult.common.extensions.orIfNull
 import com.rasalexman.sresult.common.extensions.toSuccessResult
@@ -22,6 +23,7 @@ internal class SearchUserItemsUseCase : ISearchUserItemsUseCase, ICoroutinesMana
             val filtered = items.takeIf { query.isEmpty() }.orIfNull {
                 items.filter { it.name.contains(query, true) }
             }
+            logg { "query = $query | filtered size = ${filtered.size}" }
             filtered.toSuccessResult()
         }.mapFlowListTo()
     }

@@ -48,7 +48,7 @@ inline fun <reified O : Any, reified T : Any> FlowResultList<IConvertableWithPar
 }
 
 inline fun <reified T : List<*>> T.mapToResult(default: SResult<T> = emptyResult()): SResult<T> {
-    return this.takeIf { it.isNotEmpty() }.toSuccessResult(default)
+    return this.toSuccessResult(default)
 }
 
 inline fun <reified T : Any, reified O : Any> List<IConvertableWithParams<T, O>>.mapListToWithParams(param: O): List<T> {

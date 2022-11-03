@@ -207,7 +207,6 @@ abstract class BaseFragment<VM : IEventableViewModel> : Fragment(), IBaseFragmen
      * Hide layouts for loading
      */
     protected open fun hideLayoutLoading() {
-        hideKeyboard()
         loadingViewLayout?.hide()
     }
 
@@ -215,7 +214,6 @@ abstract class BaseFragment<VM : IEventableViewModel> : Fragment(), IBaseFragmen
      * Show toast message for [SResult.AbstractFailure.Error]
      */
     override fun showToast(message: Any?, interval: Int) {
-        hideKeyboard()
         hideLoading()
         toast(message, interval)
     }

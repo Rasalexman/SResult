@@ -151,7 +151,6 @@ abstract class BaseLayout<VM : BaseContextViewModel> : FrameLayout,
     protected open fun initLayout(view: View) = Unit
 
     override fun showToast(message: Any?, interval: Int) {
-        hideLoading()
         context?.toast(message, interval)
     }
 

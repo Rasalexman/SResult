@@ -4,6 +4,7 @@ import androidx.lifecycle.*
 import com.rasalexman.easyrecyclerbinding.ScrollPosition
 import com.rasalexman.sresult.common.extensions.emptyResult
 import com.rasalexman.sresult.common.extensions.getList
+import com.rasalexman.sresult.common.extensions.logg
 import com.rasalexman.sresult.common.extensions.unsafeLazy
 import com.rasalexman.sresult.common.typealiases.FlowResultList
 import com.rasalexman.sresult.common.typealiases.ResultList
@@ -50,8 +51,10 @@ abstract class BaseItemsViewModel : BaseViewModel() {
     }
 
    open val items: LiveData<List<UserItem>> by unsafeLazy {
-        resultLiveData.asFlow().filter { it is SResult.Success }.asLiveData().distinctUntilChanged().map { result ->
-            result.getList()
+        resultLiveData.asFlow().filter { it is SResult.Success }.asLiveData().map { result ->
+            val items = result.getList()
+            logg { "Items count = ${items.size}" }
+            items
         }
     }
 
