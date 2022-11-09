@@ -7,6 +7,7 @@ import com.rasalexman.sresult.data.dto.SEvent
 import com.rasalexman.sresult.data.dto.SResult
 import com.rasalexman.sresult.models.IDropDownItem
 import com.rasalexman.sresultpresentation.extensions.AnyResultMutableLiveData
+import com.rasalexman.sresultpresentation.extensions.launchAsyncTryCatch
 import com.rasalexman.sresultpresentation.extensions.mutableMap
 import com.rasalexman.sresultpresentation.extensions.onEventLiveDataAnyResult
 import com.rasalexman.sresultpresentation.viewModels.BaseViewModel
@@ -134,5 +135,9 @@ class MainViewModel : BaseViewModel() {
             R.menu.menu_add
         }
         toolbarMenu.value = menuResId
+    }
+
+    fun onInvokeErrorHandlerClicked() = launchAsyncTryCatch {
+        throw IllegalArgumentException("Test error message")
     }
 }

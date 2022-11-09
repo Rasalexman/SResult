@@ -23,7 +23,9 @@ fun BaseContextViewModel.launchUITryCatch(
     catchBlock: ((Throwable) -> Unit)? = null, tryBlock: suspend CoroutineScope.() -> Unit
 ) {
     val exceptionHandler = CoroutineExceptionHandler { _, e ->
-        catchBlock?.invoke(e) ?: handleErrorState(e.toErrorResult())
+        catchBlock?.invoke(e) ?: viewModelScope.launch {
+            handleErrorState(e.toErrorResult())
+        }
     }
     viewModelScope.launch(
         viewModelScope.coroutineContext + dispatcher + superVisorJob + exceptionHandler,
@@ -37,7 +39,9 @@ fun BaseContextViewModel.launchAsyncTryCatch(
     tryBlock: suspend CoroutineScope.() -> Unit
 ) {
     val exceptionHandler = CoroutineExceptionHandler { _, e ->
-        catchBlock?.invoke(e) ?: handleErrorState(e.toErrorResult())
+        catchBlock?.invoke(e) ?: viewModelScope.launch {
+            handleErrorState(e.toErrorResult())
+        }
     }
     launchAsync(exceptionHandler = exceptionHandler, block = tryBlock)
 }

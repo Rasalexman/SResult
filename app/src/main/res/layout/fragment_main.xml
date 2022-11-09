@@ -90,6 +90,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/errorHandlerButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_error_handler"
+            android:layout_marginTop="@dimen/size_16dp"
+            app:onViewClick="@{() -> vm.onInvokeErrorHandlerClicked()}"
+            app:layout_constraintTop_toBottomOf="@+id/menuButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
         <include layout="@layout/item_filter_dropdown"
             android:id="@+id/firstDropDown"
             android:layout_height="wrap_content"
@@ -98,7 +109,7 @@
             android:layout_marginTop="@dimen/size_24dp"
             android:layout_marginHorizontal="@dimen/size_16dp"
             app:selectedItem="@{vm.selectedValue}"
-            app:layout_constraintTop_toBottomOf="@+id/menuButton"
+            app:layout_constraintTop_toBottomOf="@+id/errorHandlerButton"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
