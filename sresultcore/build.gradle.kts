@@ -24,20 +24,21 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
 
 kotlin {
     android {
+        publishLibraryVariantsGroupedByFlavor = true
         publishLibraryVariants("release", "debug")
     }
     jvm()
-    //ios()
+    ios()
 
-//    listOf(
-//        iosX64(),
-//        iosArm64(),
-//        iosSimulatorArm64()
-//    ).forEach {
-//        it.binaries.framework {
-//            baseName = "sresultcore"
-//        }
-//    }
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach {
+        it.binaries.framework {
+            baseName = "sresultcore"
+        }
+    }
 
     sourceSets {
         val commonMain by getting
@@ -51,26 +52,26 @@ kotlin {
             dependsOn(commonMain)
         }
 
-//        val iosX64Main by getting
-//        val iosArm64Main by getting
+        val iosX64Main by getting
+        val iosArm64Main by getting
 //        val iosSimulatorArm64Main by getting
-//
-//        val iosMain by getting {
-//            dependsOn(commonMain)
-//            iosX64Main.dependsOn(this)
-//            iosArm64Main.dependsOn(this)
-//            iosSimulatorArm64Main.dependsOn(this)
-//        }
-//        val iosX64Test by getting
-//        val iosArm64Test by getting
-//        val iosSimulatorArm64Test by getting
-//
-//        val iosTest by getting {
-//            //dependsOn(commonTest)
-//            iosX64Test.dependsOn(this)
-//            iosArm64Test.dependsOn(this)
-//            iosSimulatorArm64Test.dependsOn(this)
-//        }
+
+        val iosMain by getting {
+            dependsOn(commonMain)
+            iosX64Main.dependsOn(this)
+            iosArm64Main.dependsOn(this)
+            //iosSimulatorArm64Main.dependsOn(this)
+        }
+        val iosX64Test by getting
+        val iosArm64Test by getting
+        //val iosSimulatorArm64Test by getting
+
+        val iosTest by getting {
+            //dependsOn(commonTest)
+            iosX64Test.dependsOn(this)
+            iosArm64Test.dependsOn(this)
+            //iosSimulatorArm64Test.dependsOn(this)
+        }
     }
 }
 
@@ -120,17 +121,17 @@ kotlin.targets.withType(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarge
 afterEvaluate {
     publishing {
 
-//        val publicationsFromMainHost =
-//            listOf("android", "ios", "jvm").map { it } + "kotlinMultiplatform"
+        val publicationsFromMainHost =
+            listOf("android", "ios", "jvm").map { it } + "kotlinMultiplatform"
 
         publications {
 
-//            matching { it.name in publicationsFromMainHost }.all {
-//                val targetPublication = this@all
-//                tasks.withType<AbstractPublishToMaven>()
-//                    .matching { it.publication == targetPublication }
-//                    .configureEach { onlyIf { findProperty("isMainHost") == "true" } }
-//            }
+            matching { it.name in publicationsFromMainHost }.all {
+                val targetPublication = this@all
+                tasks.withType<AbstractPublishToMaven>()
+                    .matching { it.publication == targetPublication }
+                    .configureEach { onlyIf { findProperty("isMainHost") == "true" } }
+            }
 
             getByName<MavenPublication>("kotlinMultiplatform") {
                 // You can then customize attributes of the publication as shown below.
