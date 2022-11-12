@@ -1,4 +1,5 @@
-import org.gradle.internal.os.OperatingSystem;
+import org.gradle.internal.os.OperatingSystem
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
     kotlin("multiplatform")
@@ -28,10 +29,12 @@ kotlin {
     val opSystem = OperatingSystem.current()
 
     android {
-        publishLibraryVariantsGroupedByFlavor = true
         publishLibraryVariants("release", "debug")
     }
+    jvm()
     if(opSystem.isMacOsX) {
+        val xcf = XCFramework()
+
         listOf(
             iosX64(),
             iosArm64(),
@@ -39,6 +42,9 @@ kotlin {
         ).forEach {
             it.binaries.framework {
                 baseName = "sresultcore"
+                version = appVersion
+                isStatic = false
+                xcf.add(this)
             }
         }
     }
@@ -116,17 +122,17 @@ kotlin.targets.withType(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarge
 afterEvaluate {
     publishing {
 
-        val publicationsFromMainHost =
-            listOf("android", "ios", "jvm").map { it } + "kotlinMultiplatform"
+//        val publicationsFromMainHost =
+//            listOf("android", "ios", "jvm").map { it } + "kotlinMultiplatform"
 
         publications {
 
-            matching { it.name in publicationsFromMainHost }.all {
-                val targetPublication = this@all
-                tasks.withType<AbstractPublishToMaven>()
-                    .matching { it.publication == targetPublication }
-                    .configureEach { onlyIf { findProperty("isMainHost") == "true" } }
-            }
+//            matching { it.name in publicationsFromMainHost }.all {
+//                val targetPublication = this@all
+//                tasks.withType<AbstractPublishToMaven>()
+//                    .matching { it.publication == targetPublication }
+//                    .configureEach { onlyIf { findProperty("isMainHost") == "true" } }
+//            }
 
             getByName<MavenPublication>("kotlinMultiplatform") {
                 // You can then customize attributes of the publication as shown below.
