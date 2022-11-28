@@ -1,8 +1,8 @@
 //------ APP VERSION
-extra["appVersion"] = "1.3.59"
+extra["appVersion"] = "1.3.61"
 extra["mainGroupName"] = "com.rasalexman.sresult"
-extra["coreGroupName"] = "com.rasalexman.sresultkmm"
 extra["supportGroupName"] = "com.rasalexman.sresultpresentation"
+extra["sresultCoreName"] = "sresultcore"
 
 //------ CONFIG DATA
 extra["minSdkVersion"] = 18

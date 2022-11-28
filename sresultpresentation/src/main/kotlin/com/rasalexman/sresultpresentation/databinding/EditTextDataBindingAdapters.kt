@@ -6,6 +6,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
+import com.rasalexman.sresultpresentation.extensions.hideKeyboard
 
 @BindingAdapter(value = ["onOkInSoftKeyboard"])
 fun setOnOkInSoftKeyboardListener(editText: EditText, onOkInSoftKeyboardListener: OnOkInSoftKeyboardListener?) {
@@ -13,17 +14,13 @@ fun setOnOkInSoftKeyboardListener(editText: EditText, onOkInSoftKeyboardListener
         editText.setOnEditorActionListener(null)
         return
     }
-    editText.setOnEditorActionListener { view: TextView?, _: Int?, _: KeyEvent? ->
-        view?.let {
-            it.clearFocus()
-            val imm = view.context.getSystemService(Context.INPUT_METHOD_SERVICE)
-                    as InputMethodManager
-            imm.hideSoftInputFromWindow(view.windowToken, 0)
-        }
-        onOkInSoftKeyboardListener.onOkInSoftKeyboard()
+    editText.setOnEditorActionListener(null)
+    editText.setOnEditorActionListener { view: TextView?, actionId: Int?, event: KeyEvent? ->
+        view?.hideKeyboard()
+        onOkInSoftKeyboardListener.onOkInSoftKeyboard(actionId, event)
     }
 }
 
 interface OnOkInSoftKeyboardListener {
-    fun onOkInSoftKeyboard(): Boolean
+    fun onOkInSoftKeyboard(actionId: Int?, event: KeyEvent?): Boolean
 }

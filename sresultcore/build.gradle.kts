@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
     kotlin("multiplatform")
+    kotlin("native.cocoapods")
     id("com.android.library")
     id("maven-publish")
 }
@@ -13,6 +14,7 @@ val buildSdkVersion: Int by rootProject.extra
 val minSdkVersion: Int by rootProject.extra
 val kotlinApiVersion: String by rootProject.extra
 val jvmVersion: String by rootProject.extra
+val sresultCoreName: String by rootProject.extra
 
 group = mainGroupName
 version = appVersion
@@ -32,21 +34,74 @@ kotlin {
         publishLibraryVariants("release", "debug")
     }
     jvm()
-    if(opSystem.isMacOsX) {
+    if (opSystem.isMacOsX) {
         val xcf = XCFramework()
-
-        listOf(
-            iosX64(),
-            iosArm64(),
-            iosSimulatorArm64()
-        ).forEach {
-            it.binaries.framework {
-                baseName = "sresultcore"
-                version = appVersion
-                isStatic = false
-                xcf.add(this)
+        ios {
+            binaries {
+                framework {
+                    baseName = sresultCoreName
+                    version = appVersion
+                    xcf.add(this)
+                }
             }
         }
+
+        iosSimulatorArm64 {
+            binaries {
+                framework {
+                    baseName = sresultCoreName
+                    version = appVersion
+                    xcf.add(this)
+                }
+            }
+        }
+
+        cocoapods {
+            // Required properties
+            // Specify the required Pod version here. Otherwise, the Gradle project version is used.
+            version = appVersion
+            summary = "SResult Core Multiplatform library (android + ios)"
+            homepage = "https://github.com/Rasalexman/SResult/$sresultCoreName"
+
+            // Optional properties
+            // Configure the Pod name here instead of changing the Gradle project name
+            name = sresultCoreName
+
+            framework {
+                // Required properties
+                // Framework name configuration. Use this property instead of deprecated 'frameworkName'
+                baseName = sresultCoreName
+
+                // Optional properties
+                // Dynamic framework support
+                isStatic = false
+                transitiveExport = false // This is default.
+                // Bitcode embedding
+                embedBitcode(org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.BITCODE)
+            }
+
+            // Maps custom Xcode configuration to NativeBuildType
+            xcodeConfigurationToNativeBuildType["CUSTOM_DEBUG"] =
+                org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType.DEBUG
+            xcodeConfigurationToNativeBuildType["CUSTOM_RELEASE"] =
+                org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType.RELEASE
+        }
+
+//        val iosPlatforms = listOf(
+//            iosX64(),
+//            iosArm64(),
+//            iosSimulatorArm64()
+//        )
+//        iosPlatforms.onEach { target ->
+//            target.binaries {
+//                framework {
+//                    baseName = "$sresultCoreName-${target.name}"
+//                    version = appVersion
+//                    isStatic = false
+//                    xcf.add(this)
+//                }
+//            }
+//        }
     }
 
     sourceSets {
@@ -61,17 +116,22 @@ kotlin {
             dependsOn(commonMain)
         }
 
-        if(opSystem.isMacOsX) {
-            val iosX64Main by getting
-            val iosArm64Main by getting
+        if (opSystem.isMacOsX) {
             val iosSimulatorArm64Main by getting
-
-            val iosMain by creating {
+            val iosMain by getting {
                 dependsOn(commonMain)
-                iosX64Main.dependsOn(this)
-                iosArm64Main.dependsOn(this)
                 iosSimulatorArm64Main.dependsOn(this)
             }
+//            val iosX64Main by getting
+//            val iosArm64Main by getting
+//            val iosSimulatorArm64Main by getting
+//
+//            val iosMain by creating {
+//                dependsOn(commonMain)
+//                iosX64Main.dependsOn(this)
+//                iosArm64Main.dependsOn(this)
+//                iosSimulatorArm64Main.dependsOn(this)
+//            }
         }
     }
 }
@@ -137,7 +197,7 @@ afterEvaluate {
             getByName<MavenPublication>("kotlinMultiplatform") {
                 // You can then customize attributes of the publication as shown below.
                 groupId = mainGroupName
-                artifactId = "sresultcore"
+                artifactId = sresultCoreName
                 version = appVersion
 
                 //from(components["kotlin"])
