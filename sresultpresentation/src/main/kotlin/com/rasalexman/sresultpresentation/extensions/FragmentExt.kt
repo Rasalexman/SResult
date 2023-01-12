@@ -421,7 +421,9 @@ fun IBaseFragment<*>.navigatePopTo(
         try {
             navigator.apply {
                 backArgs?.let {
-                    previousBackStackEntry?.savedStateHandle?.set(KEY_BACK_ARGS, backArgs)
+                    navResId?.let {
+                        getBackStackEntry(it).savedStateHandle.set(KEY_BACK_ARGS, backArgs)
+                    } ?: previousBackStackEntry?.savedStateHandle?.set(KEY_BACK_ARGS, backArgs)
                 }
                 navResId?.let {
                     popBackStack(it, isInclusive)
@@ -438,9 +440,10 @@ fun IBaseFragment<*>.navigatePopTo(
                         it,
                         mainHostFragmentId
                     ).apply {
-                        backArgs?.let {
-                            previousBackStackEntry?.savedStateHandle?.set(KEY_BACK_ARGS, backArgs)
-                        }
+                        navResId?.let {
+                            getBackStackEntry(it).savedStateHandle.set(KEY_BACK_ARGS, backArgs)
+                        } ?: previousBackStackEntry?.savedStateHandle?.set(KEY_BACK_ARGS, backArgs)
+
                         navResId?.let { currentNavID ->
                             popBackStack(currentNavID, isInclusive)
                         } ?: popBackStack()

@@ -1,5 +1,6 @@
 package com.rasalexman.sresultexample
 
+import android.os.Bundle
 import androidx.fragment.app.viewModels
 import com.rasalexman.sresult.common.extensions.applyIfSuccessTyped
 import com.rasalexman.sresult.common.extensions.applyIfType
@@ -21,6 +22,10 @@ class MainFragment : BaseBindingFragment<FragmentMainBinding, MainViewModel>() {
 
     private val progressText by unsafeLazy {
         string(R.string.title_progress)
+    }
+
+    override fun onBackArgumentsHandler(backArgs: Bundle) {
+        println("------> backArgs = $backArgs")
     }
 
     override fun onResultHandler(result: SResult<*>) {

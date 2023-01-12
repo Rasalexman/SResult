@@ -1,6 +1,7 @@
 package com.rasalexman.sresultexample.emptyvm
 
 import android.os.Bundle
+import com.rasalexman.sresult.common.extensions.navigatePopTo
 import com.rasalexman.sresult.common.extensions.toNavigateResult
 import com.rasalexman.sresultexample.NavigationMainDirections
 import com.rasalexman.sresultexample.R
@@ -26,6 +27,9 @@ class EmptyVmFragment : BaseBindingFragment<FragmentEmptyVmBinding, BaseViewMode
         }
         binding.customDialogButton.setOnClickListener {
             onResultHandler(NavigationMainDirections.showCustomDialogFragment().toNavigateResult())
+        }
+        binding.backArgsButton.setOnClickListener {
+            onResultHandler(navigatePopTo(R.id.mainFragment, backArgs = mapOf("custom_args" to "it_works")))
         }
     }
 

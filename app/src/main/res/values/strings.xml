@@ -6,6 +6,7 @@
     <string name="button_generate">Generate Data</string>
     <string name="button_bottom_recycler">Show Bottom Recycler</string>
     <string name="button_custom_dialog">Show Custom Dialog</string>
+    <string name="button_back_args">Pop to Menu with Args</string>
     <string name="button_view_pager">VP Screen</string>
     <string name="button_bottom">Bottom Screen</string>
     <string name="button_empty">Empty Screen</string>
