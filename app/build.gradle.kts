@@ -14,10 +14,11 @@ android {
 
     compileSdk = buildSdkVersion
     defaultConfig {
+        namespace = "com.rasalexman.sresultexample"
         applicationId = "com.rasalexman.sresultexample"
         minSdk = minSdkVersion
         targetSdk = buildSdkVersion
-        version = "1.0.2"
+        version = "1.0.3"
         multiDexEnabled = true
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -62,8 +63,8 @@ android {
 
     kotlinOptions {
         jvmTarget = jvmVersion
-        languageVersion = kotlinApiVersion
-        apiVersion = kotlinApiVersion
+//        languageVersion = kotlinApiVersion
+//        apiVersion = kotlinApiVersion
         freeCompilerArgs = listOf(
             //"-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi",
             "-opt-in=kotlin.RequiresOptIn"

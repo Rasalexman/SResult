@@ -19,22 +19,22 @@ typealias ResultListLiveData<T> = LiveData<SResult<List<T>>>
 typealias ResultMutableLiveData<T> = MutableLiveData<SResult<T>>
 
 @Suppress("UNCHECKED_CAST")
-inline fun <X, Y> LiveData<X>.mutableMap(
+fun <X, Y> LiveData<X>.mutableMap(
     defaultValue: Y? = null,
-    crossinline transform: (X) -> Y
+    transform: (X) -> Y
 ): MutableLiveData<Y> = (this.map(transform) as MutableLiveData<Y>).apply {
     defaultValue?.let { this.value = it }
 }
 
-inline fun <X, Y> LiveData<X>.mutableSwitchMap(
+fun <X, Y> LiveData<X>.mutableSwitchMap(
     defaultValue: Y? = null,
-    crossinline transform: (X) -> LiveData<Y>
+    transform: (X) -> LiveData<Y>
 ): MutableLiveData<Y> = (this.switchMap(transform) as MutableLiveData<Y>).apply {
     defaultValue?.let { this.value = it }
 }
 
-fun <X : IConvertableTo<Y>, Y> LiveData<X>.mapTo() {
-    this.map {
+fun <X : IConvertableTo<Y>, Y> LiveData<X>.mapTo(): LiveData<Y?> {
+    return this.map {
         it.convertTo()
     }
 }

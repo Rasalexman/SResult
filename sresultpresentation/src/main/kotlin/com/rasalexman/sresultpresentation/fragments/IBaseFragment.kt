@@ -2,6 +2,7 @@ package com.rasalexman.sresultpresentation.fragments
 
 import android.view.View
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.Lifecycle
 import com.rasalexman.sresultpresentation.R
 import com.rasalexman.sresultpresentation.base.IComplexHandler
 import com.rasalexman.sresultpresentation.viewModels.IEventableViewModel
@@ -24,6 +25,22 @@ interface IBaseFragment<out VM : IEventableViewModel> : IComplexHandler, Toolbar
         get() = R.drawable.ic_arrow_back_white_24dp
     val toolbarNavigationIconColor: Int?
         get() = null
+
+    //--- Starting collect method state call on lifecycle.repeatOnLifecycle
+    val toolbarCollectState: Lifecycle.State
+        get() = Lifecycle.State.STARTED
+
+    val resultCollectState: Lifecycle.State
+        get() = Lifecycle.State.CREATED
+
+    val navigationCollectState: Lifecycle.State
+        get() = Lifecycle.State.CREATED
+
+    val supportCollectState: Lifecycle.State
+        get() = Lifecycle.State.CREATED
+
+    val anyCollectState: Lifecycle.State
+        get() = Lifecycle.State.CREATED
 
     /**
      * Is need to call ext func on view.clearView()

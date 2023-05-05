@@ -35,6 +35,11 @@ kotlin {
     }
     jvm()
     if (opSystem.isMacOsX) {
+//        ios()
+//        iosX64()
+//        macosX64()
+//        iosSimulatorArm64()
+
         val xcf = XCFramework()
         ios {
             binaries {
@@ -55,6 +60,23 @@ kotlin {
                 }
             }
         }
+
+//        val iosPlatforms = listOf(
+//            ios(),
+//            iosX64(),
+//            iosArm64(),
+//            iosSimulatorArm64()
+//        )
+//        iosPlatforms.onEach { target ->
+//            target.binaries {
+//                framework {
+//                    baseName = "$sresultCoreName-${target.name}"
+//                    version = appVersion
+//                    isStatic = false
+//                    xcf.add(this)
+//                }
+//            }
+//        }
 
         cocoapods {
             // Required properties
@@ -86,22 +108,6 @@ kotlin {
             xcodeConfigurationToNativeBuildType["CUSTOM_RELEASE"] =
                 org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType.RELEASE
         }
-
-//        val iosPlatforms = listOf(
-//            iosX64(),
-//            iosArm64(),
-//            iosSimulatorArm64()
-//        )
-//        iosPlatforms.onEach { target ->
-//            target.binaries {
-//                framework {
-//                    baseName = "$sresultCoreName-${target.name}"
-//                    version = appVersion
-//                    isStatic = false
-//                    xcf.add(this)
-//                }
-//            }
-//        }
     }
 
     sourceSets {
@@ -170,7 +176,7 @@ java {
     targetCompatibility = JavaVersion.VERSION_11
 
 //    withJavadocJar()
-    withSourcesJar()
+//    withSourcesJar()
 }
 
 kotlin.targets.withType(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget::class.java) {

@@ -78,8 +78,8 @@ android {
 
     kotlinOptions {
         jvmTarget = jvmVersion
-        languageVersion = kotlinApiVersion
-        apiVersion = kotlinApiVersion
+//        languageVersion = kotlinApiVersion
+//        apiVersion = kotlinApiVersion
     }
 }
 
@@ -134,8 +134,8 @@ dependencies {
     api(project(":sresult"))
 
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test:runner:1.5.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.0")
+    androidTestImplementation("androidx.test:runner:1.5.2")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 }
 
 afterEvaluate {
@@ -153,18 +153,18 @@ afterEvaluate {
                 //artifact("$buildDir/outputs/aar/sresult-release.aar")
                 artifact(tasks["sourceJar"])
             }
-            /*create<MavenPublication>("debug") {
-                //println("Component ${components.asMap}")
-                from(components["debug"])
-
-                // You can then customize attributes of the publication as shown below.
-                groupId = "com.rasalexman.sresultpresentation"
-                artifactId = "sresultpresentation-debug"
-                version = appVersion
-
-                //artifact("$buildDir/outputs/aar/sresult-debug.aar")
-                artifact(tasks["sourceJar"])
-            }*/
+//            create<MavenPublication>("debug") {
+//                //println("Component ${components.asMap}")
+//                from(components["debug"])
+//
+//                // You can then customize attributes of the publication as shown below.
+//                groupId = "com.rasalexman.sresultpresentation"
+//                artifactId = "sresultpresentation-debug"
+//                version = appVersion
+//
+//                //artifact("$buildDir/outputs/aar/sresult-debug.aar")
+//                //artifact(tasks["sourceJar"])
+//            }
         }
 
         repositories {

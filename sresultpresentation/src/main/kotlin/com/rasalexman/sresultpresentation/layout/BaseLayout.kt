@@ -169,9 +169,8 @@ abstract class BaseLayout<VM : BaseContextViewModel> : FrameLayout,
     /**
      * get view [Lifecycle] from its [Context]
      */
-    override fun getLifecycle(): Lifecycle {
-        return parentLifecycle
-    }
+    override val lifecycle: Lifecycle
+        get() = parentLifecycle
 
     override fun showSuccess(result: SResult.Success<*>) = Unit
     override fun showAlert(alert: SResult.AbstractFailure.Alert) = Unit

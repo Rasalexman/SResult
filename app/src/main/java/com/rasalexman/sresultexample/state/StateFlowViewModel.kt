@@ -16,6 +16,7 @@ import java.util.*
 
 class StateFlowViewModel : FlowableViewModel() {
 
+    private val exampleString = string(R.string.app_name)
     override val toolbarTitle: MutableStateFlow<String> = MutableStateFlow(string(R.string.title_state_flow))
 
     override val resultFlow by unsafeLazy {
@@ -33,7 +34,7 @@ class StateFlowViewModel : FlowableViewModel() {
             println("------> anyDataFlow combined = $r | $s")
             val text = r.takeIf { r.isToast }?.run {
                 "result is Toast | support = ${s.data}"
-            }.orIfEmpty { string(R.string.app_name) }
+            }.orIfEmpty { exampleString }
             text
         }.flowOn(Dispatchers.Default).filter { it.isNotEmpty() }
     }
